@@ -26,34 +26,6 @@
   ],
   "main": "./out/src/extension",
   "contributes": {
-    "configuration": {
-      "type": "object",
-      "title": "TypeScript ng-alain-sip Helper configuration",
-      "properties": {
-        "ngalainsiphelper.quickpicks": {
-          "type": "array",
-          "default": [
-            {
-              "command": "npm component %input% %param%",
-              "title": "component",
-              "children": [
-                {
-                  "command": "ng g component %input% %param%",
-                  "title": "component",
-                  "children": [
-                    {
-                      "param": "",
-                      "title": "default"
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "description": "ng-alain-sip Helper quickPicks"
-        }
-      }
-    },
     "commands": [
       {
         "command": "ngalainsiphelper.quickpicks",
@@ -92,5 +64,8 @@
     "rxjs": "^5.0.3",
     "typescript": "^2.0.0",
     "vscode": "^1.1.0"
+  },
+  "dependencies": {
+    "json-stable-stringify": "^1.0.1"
   }
 }

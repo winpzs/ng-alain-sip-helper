@@ -10,14 +10,6 @@
 {
     "version": "0.1.0",
 
-    "tasks": [
-        {
-            "taskName": "vscode:package",
-            "command": "npm",
-            "args": ["run", "vscode:package", "--loglevel", "silent"]
-        }
-    ],
-
     // we want to run npm
     "command": "npm",
 
@@ -31,8 +23,8 @@
     "args": ["run", "compile", "--loglevel", "silent"],
 
     // The tsc compiler is started in watching mode
-    "isWatching": false,
+    "isWatching": true,
 
     // use the standard tsc in watch mode problem matcher to find compile problems in the output.
-    //"problemMatcher": "$tsc-watch"
+    "problemMatcher": "$tsc-watch"
 }
