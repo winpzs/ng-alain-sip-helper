@@ -1,0 +1,96 @@
+{
+  "name": "ngalainsiphelper",
+  "displayName": "ng-alain-sip Helper",
+  "description": "Run ng-alain-sip Helper from vscode commandline.",
+  "icon": "images/angular.png",
+  "version": "1.0.0",
+  "publisher": "winpzs",
+  "bugs": {
+    "url": "https://github.com/winpzs/ng-alain-sip-helper/issues",
+    "email": "winpzs@gmail.com"
+  },
+  "homepage": "https://github.com/winpzs/ng-alain-sip-helper/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/winpzs/ng-alain-sip-helper.git"
+  },
+  "categories": [
+    "Languages",
+    "Other"
+  ],
+  "engines": {
+    "vscode": "^1.5.0"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "TypeScript ng-alain-sip Helper configuration",
+      "properties": {
+        "ngalainsiphelper.quickpicks": {
+          "type": "array",
+          "default": [
+            {
+              "command": "npm component %input% %param%",
+              "title": "component",
+              "children": [
+                {
+                  "command": "ng g component %input% %param%",
+                  "title": "component",
+                  "children": [
+                    {
+                      "param": "",
+                      "title": "default"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "description": "ng-alain-sip Helper quickPicks"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "ngalainsiphelper.quickpicks",
+        "title": "ng-alain-sip"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "",
+          "command": "ngalainsiphelper.quickpicks",
+          "group": "ng-alain-sip"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "",
+          "command": "ngalainsiphelper.quickpicks",
+          "group": "ng-alain-sip"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "vscode:package": "vsce package",
+    "vscode:publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.0.0",
+    "@types/node": "^8.0.0",
+    "mocha": "^4.0.0",
+    "run-in-terminal": "^0.0.3",
+    "rxjs": "^5.0.3",
+    "typescript": "^2.0.0",
+    "vscode": "^1.1.0"
+  }
+}
