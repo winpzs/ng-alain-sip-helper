@@ -1,0 +1,26 @@
+{
+    "sip-radio": {
+        "prefix": "sip-radio",
+        "body": [
+            "<label class=\"radio inline\">",
+            "    <div class=\"radio\">",
+            "        <span>",
+            "            <input type=\"radio\" value=\"1\" name=\"isEnabled\"",
+            "                    bg-model=\"datas.isEnabled\" />",
+            "        </span>",
+            "    </div>",
+            "    是",
+            "</label>",
+            "<label class=\"radio inline\">",
+            "    <div class=\"radio\">",
+            "        <span>",
+            "            <input type=\"radio\" value=\"0\" name=\"isEnabled\"",
+            "                    bg-model=\"datas.isEnabled\" />",
+            "        </span>",
+            "    </div>",
+            "    否",
+            "</label>"
+        ],
+        "description": "radio"
+    }
+}
