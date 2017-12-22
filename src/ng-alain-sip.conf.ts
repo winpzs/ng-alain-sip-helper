@@ -208,9 +208,20 @@ const config = [
         "builtin": true
     },
     {
-        "title": "设置",
-        "command": "config",
-        "builtin": true
+        "title": "other >",
+        "command": "",
+        children:[
+            {
+                "title": "设置",
+                "command": "config",
+                "builtin": true
+            },
+            {
+                "title": "To Snippet Text",
+                "command": "snippet-text",
+                "builtin": true
+            }
+        ]
     }
 ];
 

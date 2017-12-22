@@ -35,48 +35,51 @@
         "language": "typescript",
         "path": "./snippets/typescript.json"
       }
-    ]
-  },
-  "commands": [
-    {
-      "command": "ngalainsiphelper.quickpicks",
-      "title": "ng-alain-sip"
-    }
-  ],
-  "menus": {
-    "explorer/context": [
+    ],
+    "commands": [
       {
-        "when": "",
+        "command": "ngalainsiphelper.tosnippettext",
+        "title": "To Snippet Text"
+      },
+      {
         "command": "ngalainsiphelper.quickpicks",
-        "group": "ng-alain-sip"
+        "title": "ng-alain-sip"
       }
     ],
-    "editor/context": [
-      {
-        "when": "",
-        "command": "ngalainsiphelper.quickpicks",
-        "group": "ng-alain-sip"
-      }
-    ]
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "",
+          "command": "ngalainsiphelper.quickpicks",
+          "group": "ng-alain-sip"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "",
+          "command": "ngalainsiphelper.quickpicks",
+          "group": "ng-alain-sip"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "vscode:package": "vsce package",
+    "vscode:publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.0.0",
+    "@types/node": "^8.0.0",
+    "mocha": "^4.0.0",
+    "run-in-terminal": "^0.0.3",
+    "rxjs": "^5.0.3",
+    "typescript": "^2.0.0",
+    "vscode": "^1.1.0"
+  },
+  "dependencies": {
+    "json-stable-stringify": "^1.0.1"
   }
-},
-"scripts": {
-  "vscode:prepublish": "tsc -p ./",
-  "compile": "tsc -watch -p ./",
-  "postinstall": "node ./node_modules/vscode/bin/install",
-  "vscode:package": "vsce package",
-  "vscode:publish": "vsce publish"
-},
-"devDependencies": {
-  "@types/mocha": "^2.0.0",
-  "@types/node": "^8.0.0",
-  "mocha": "^4.0.0",
-  "run-in-terminal": "^0.0.3",
-  "rxjs": "^5.0.3",
-  "typescript": "^2.0.0",
-  "vscode": "^1.1.0"
-},
-"dependencies": {
-  "json-stable-stringify": "^1.0.1"
-}
 }

@@ -1,26 +1,168 @@
 {
-    "sip-radio": {
-        "prefix": "sip-radio",
+    "sip-minitable": {
+        "prefix": "sip-minitable",
         "body": [
-            "<label class=\"radio inline\">",
-            "    <div class=\"radio\">",
-            "        <span>",
-            "            <input type=\"radio\" value=\"1\" name=\"isEnabled\"",
-            "                    bg-model=\"datas.isEnabled\" />",
-            "        </span>",
-            "    </div>",
-            "    是",
-            "</label>",
-            "<label class=\"radio inline\">",
-            "    <div class=\"radio\">",
-            "        <span>",
-            "            <input type=\"radio\" value=\"0\" name=\"isEnabled\"",
-            "                    bg-model=\"datas.isEnabled\" />",
-            "        </span>",
-            "    </div>",
-            "    否",
-            "</label>"
+            "<sip-minitable #table1 pageSize=\"10\" [multiSelect]=\"true\"",
+            "\tconnstr=\"iaas\" sqlId=\"iaas_Instance.List.GetByOwnerID\"",
+            "\t[searchParams]=\"searchParams\"",
+            "\t(onSelectChanged)=\"onSelectChanged(\\$event)\"",
+            "\t(onLoaded)=\"onLoaded(\\$event)\"",
+            "\t(onCompleted)=\"onCompleted()\"",
+            "\t(onSort)=\"onSort(\\$event)\" (onFilter)=\"onFilter(\\$event)\">",
+            "\t<sip-minicolumn name=\"Status\" title=\"状态\" [filterItems]=\"statusFilterItems\" [filterCallback]=\"statusFilterCallback\">",
+            "\t\t<ng-template #formatter let-row=\"row\" let-column=\"column\" let-data=\"data\">",
+            "\t\t\t{{column.getFilterText(data.Status)}}",
+            "\t\t</ng-template>",
+            "\t\t<ng-template #editor let-row=\"row\" let-column=\"column\" let-data=\"data\">",
+            "\t\t\t<nz-input [(ngModel)]=\"data.Status\"></nz-input>",
+            "\t\t</ng-template>",
+            "\t</sip-minicolumn>",
+            "\t<sip-minicolumn name=\"regionName\" title=\"区域\" [sortable]=\"true\" sortOrder=\"desc\" width=\"100px\"></sip-minicolumn>",
+            "</sip-minitable>$0"
         ],
-        "description": "radio"
+        "description": "minitable"
+    },
+    "sip-minitable-contextmenu": {
+        "prefix": "sip-minitable-contextmenu",
+        "body": [
+            "<ng-template #contextmenu>",
+            "\t<sip-menu width=\"140px\">",
+            "\t\t<sip-menu-sub title=\"aaaa\" icon=\"anticon anticon-mail\">",
+            "\t\t\t<sip-menu-item title=\"aaaa1\" icon=\"anticon anticon-mail\" (click)=\"ctxTest()\" ></sip-menu-item>",
+            "\t\t\t<sip-menu-item-divider></sip-menu-item-divider>",
+            "\t\t\t<sip-menu-item title=\"aaaa2\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t\t<sip-menu-group title=\"group1\">",
+            "\t\t\t\t<sip-menu-item title=\"group1111\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t\t\t<sip-menu-item title=\"group2222\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t\t</sip-menu-group>",
+            "\t\t</sip-menu-sub>",
+            "\t\t<sip-menu-sub title=\"bbbb\" icon=\"anticon anticon-appstore\"></sip-menu-sub>",
+            "\t</sip-menu>",
+            "</ng-template>$0"
+        ],
+        "description": "minitable-contextmenu"
+    },
+    "sip-minicolumn": {
+        "prefix": "sip-minicolumn",
+        "body": [
+            "<sip-minicolumn name=\"regionName\" title=\"区域\" [sortable]=\"true\" sortOrder=\"desc\" width=\"100px\"></sip-minicolumn>$0"
+        ],
+        "description": "minicolumn"
+    },
+    "sip-minicolumn-formatter": {
+        "prefix": "sip-minicolumn-formatter",
+        "body": [
+            "<ng-template #formatter let-row=\"row\" let-column=\"column\" let-data=\"data\">",
+            "\t{{column.getFilterText(data.Status)}}",
+            "</ng-template>$0"
+        ],
+        "description": "minicolumn-formatter"
+    },
+    "sip-minicolumn-editor": {
+        "prefix": "sip-minicolumn-editor",
+        "body": [
+            "<ng-template #editor let-row=\"row\" let-column=\"column\">",
+            "\t<nz-input [(ngModel)]=\"row.data.Status\"></nz-input>",
+            "</ng-template>$0"
+        ],
+        "description": "minicolumn-editor"
+    },
+    "sip-minicolumn-full": {
+        "prefix": "sip-minicolumn-full",
+        "body": [
+            "<sip-minicolumn name=\"Status\" title=\"状态\" [sortable]=\"true\" sortOrder=\"desc\" width=\"100px\"",
+            "\t[filterItems]=\"statusFilterItems\" [filterCallback]=\"statusFilterCallback\">",
+            "\t<ng-template #formatter let-row=\"row\" let-column=\"column\" let-data=\"data\">",
+            "\t\t{{column.getFilterText(data.Status)}}",
+            "\t</ng-template>",
+            "\t<ng-template #editor let-row=\"row\" let-column=\"column\" let-data=\"data\">",
+            "\t\t<nz-input [(ngModel)]=\"data.Status\"></nz-input>",
+            "\t</ng-template>",
+            "</sip-minicolumn>$0"
+        ],
+        "description": "minicolumn-full"
+    },
+    "sip-contextmenu": {
+        "prefix": "sip-contextmenu",
+        "body": [
+            "<sip-contextmenu>",
+            "\t<sip-menu width=\"140px\">",
+            "\t\t<sip-menu-sub title=\"aaaa\" icon=\"anticon anticon-mail\">",
+            "\t\t\t<sip-menu-item title=\"aaaa1\" icon=\"anticon anticon-mail\" (click)=\"ctxTest()\" ></sip-menu-item>",
+            "\t\t\t<sip-menu-item-divider></sip-menu-item-divider>",
+            "\t\t\t<sip-menu-item title=\"aaaa2\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t\t<sip-menu-group title=\"group1\">",
+            "\t\t\t\t<sip-menu-item title=\"group1111\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t\t\t<sip-menu-item title=\"group2222\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t\t</sip-menu-group>",
+            "\t\t</sip-menu-sub>",
+            "\t\t<sip-menu-sub title=\"bbbb\" icon=\"anticon anticon-appstore\"></sip-menu-sub>",
+            "\t</sip-menu>",
+            "</ng-contextmenu>$0"
+        ],
+        "description": "contextmenu"
+    },
+    "sip-contextmenu-tag": {
+        "prefix": "sip-contextmenu-tag",
+        "body": [
+            "<sip-contextmenu>",
+            "</sip-contextmenu>$0"
+        ],
+        "description": "contextmenu-tag"
+    },
+    "sip-menu": {
+        "prefix": "sip-menu",
+        "body": ["<sip-menu width=\"140px\">",
+            "\t<sip-menu-sub title=\"aaaa\" icon=\"anticon anticon-mail\">",
+            "\t\t<sip-menu-item title=\"aaaa1\" icon=\"anticon anticon-mail\" (click)=\"ctxTest()\" ></sip-menu-item>",
+            "\t\t<sip-menu-item-divider></sip-menu-item-divider>",
+            "\t\t<sip-menu-item title=\"aaaa2\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t<sip-menu-group title=\"group1\">",
+            "\t\t\t<sip-menu-item title=\"group1111\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t\t<sip-menu-item title=\"group2222\" icon=\"anticon anticon-mail\"></sip-menu-item>",
+            "\t\t</sip-menu-group>",
+            "\t</sip-menu-sub>",
+            "\t<sip-menu-sub title=\"bbbb\" icon=\"anticon anticon-appstore\"></sip-menu-sub>",
+            "</sip-menu>$0"],
+        "description": "menu"
+    },
+    "sip-menu-sub": {
+        "prefix": "sip-menu-sub",
+        "body": ["<sip-menu-sub title=\"text\" icon=\"anticon anticon-appstore\">",
+            "\t<sip-menu-item title=\"aaaa1\" icon=\"anticon anticon-mail\" (click)=\"ctxTest()\" ></sip-menu-item>",
+            "</sip-menu-sub>$0"],
+        "description": "menu-sub"
+    },
+    "sip-menu-group": {
+        "prefix": "sip-menu-group",
+        "body": ["<sip-menu-group title=\"group1\">",
+            "\t<sip-menu-item title=\"aaaa1\" icon=\"anticon anticon-mail\" (click)=\"ctxTest()\" ></sip-menu-item>",
+            "</sip-menu-group>$0"],
+        "description": "menu-group"
+    },
+    "sip-menu-item": {
+        "prefix": "sip-menu-item",
+        "body": ["<sip-menu-item title=\"aaaa1\" icon=\"anticon anticon-mail\" (click)=\"ctxTest()\" ></sip-menu-item>$0"],
+        "description": "menu-item"
+    },
+    "sip-menu-item-divider": {
+        "prefix": "sip-menu-item-divider",
+        "body": ["<sip-menu-item-divider></sip-menu-item-divider>$0"],
+        "description": "menu-item-divider"
+    },
+    "sip-template": {
+        "prefix": "sip-template",
+        "body": [
+            "<ng-template #tmpl1 [ngIf]=\"(column.isEdit && row.isEdit)\">",
+            "</ng-template>$0"
+        ],
+        "description": "template"
+    },
+    "sip-container": {
+        "prefix": "sip-container",
+        "body": [
+            "<ng-container [ngTemplateOutlet]=\"column.formatter\" [ngTemplateOutletContext]=\"{row:row, column:column, data:row.data}\"></ng-container>$0"
+        ],
+        "description": "container"
     }
 }
