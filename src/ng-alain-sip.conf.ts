@@ -203,20 +203,14 @@ const config = [
         ]
     },
     {
-        "command": "",
-        "title": "other >",
-        "children": [
-            {
-                "command": "npm",
-                "title": "npm",
-                "builtin": true
-            },
-            {
-                "command": "config",
-                "title": "设置",
-                "builtin": true
-            }
-        ]
+        "title": "npm >",
+        "command": "npm",
+        "builtin": true
+    },
+    {
+        "title": "设置",
+        "command": "config",
+        "builtin": true
     }
 ];
 
