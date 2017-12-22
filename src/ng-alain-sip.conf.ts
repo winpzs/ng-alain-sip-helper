@@ -5,7 +5,7 @@ const config = [
         "title": "serve",
         "command": "npm run serve %params%",
         "terminal": "serve-ngalainsiphelper",
-        "path": "workspaceRoot",
+        "path": "%workspaceRoot%",
         "input": false,
         "params": [
             {
@@ -27,7 +27,7 @@ const config = [
         "title": "build",
         "command": "npm run build",
         "terminal": "build-ngalainsiphelper",
-        "path": "workspaceRoot",
+        "path": "%workspaceRoot%",
         "input": false,
         "children": [
             {
@@ -47,7 +47,7 @@ const config = [
                 "title": "component",
                 "command": "ng g component %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -68,7 +68,7 @@ const config = [
                 "title": "module",
                 "command": "ng g module %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -85,7 +85,7 @@ const config = [
                 "title": "servcie",
                 "command": "ng g service %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -102,7 +102,7 @@ const config = [
                 "title": "directive",
                 "command": "ng g directive %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -119,7 +119,7 @@ const config = [
                 "title": "pipe",
                 "command": "ng g pipe %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -136,7 +136,7 @@ const config = [
                 "title": "class",
                 "command": "ng g class %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -153,7 +153,7 @@ const config = [
                 "title": "guard",
                 "command": "ng g guard %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -170,7 +170,7 @@ const config = [
                 "title": "interface",
                 "command": "ng g interface %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {
@@ -187,7 +187,7 @@ const config = [
                 "title": "enum",
                 "command": "ng g enum %input% %params%",
                 "terminal": "generate-ngalainsiphelper",
-                "path": "currentPath",
+                "path": "%currentPath%",
                 "input": true,
                 "params": [
                     {

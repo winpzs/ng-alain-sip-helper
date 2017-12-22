@@ -78,20 +78,12 @@ export function activate(context: ExtensionContext) {
             return;
         }
     };
-    let getPath = (args, pathType: string, parentPath: string): string => {
-        let path = '';
-        switch ((pathType || '').toLowerCase()) {
-            case 'currentpath':
-                path = getRelativePath(args);
-                break;
-            case 'workspaceroot':
-                path = workspace.rootPath;
-                break;
-            default:
-                path = parentPath;
-                break;
-        }
-        return path;
+    let getVarText = (text:string, params:{args:any; input:string; params:string;}):string=>{
+        text = text.replace(/\%currentpath\%/gi, getRelativePath(params.args));
+        text = text.replace(/\%workspaceroot\%/gi, workspace.rootPath);
+        text = text.replace(/\%input\%/gi, params.input);
+        text = text.replace(/\%params\%/gi, params.params);
+        return text;
     };
     let send_builtin = (config: IConfig) => {
         switch (config.command) {
@@ -111,7 +103,7 @@ export function activate(context: ExtensionContext) {
                 send_builtin(config);
                 return;
             }
-            let path = getPath(args, config.path, parentPath);
+            let path = config.path ? config.path : parentPath;
             let children = config.children;
             let params = config.params;
             if (children && children.length > 0) {
@@ -139,7 +131,14 @@ export function activate(context: ExtensionContext) {
 
     let send_command = (name: string, path: string, cmd: string, params: string, input: boolean, args, inputText = '') => {
         if (!input) {
-            cmd = cmd.replace(/\%input\%/gi, inputText).replace(/\%params\%/gi, params);
+            path = getVarText(path, {
+                args:args,
+                input:inputText, params:params
+            });
+            cmd = getVarText(cmd, {
+                args:args,
+                input:inputText, params:params
+            });
             send_terminal(name, path, cmd);
         }
         else {
