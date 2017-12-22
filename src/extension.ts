@@ -90,6 +90,9 @@ export function activate(context: ExtensionContext) {
             case 'config':
                 setConfig();
                 break;
+            case 'npm':
+                npm();
+                break;
         }
     };
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {
@@ -181,6 +184,27 @@ export function activate(context: ExtensionContext) {
         let fsPath = path.join(workspace.rootPath, './ng-alain-sip.conf.json');
         let json = stringify(require('./ng-alain-sip.conf'), { space: '    ' });
         fs.writeFileSync(fsPath, json, 'utf-8');
+    };
+
+    let npm = ()=>{
+        let fsPath = path.join(workspace.rootPath, './package.json');
+        if (!fs.existsSync(fsPath)) return;
+        let packageJson = JSON.parse(fs.readFileSync(fsPath,'utf-8'));
+        let scripts = packageJson.scripts;
+        let scriptList = Object.keys(scripts).map(key=>{
+            return {
+                command:'npm run ' + key,
+                title:key
+            };
+        });
+        let picks = scriptList.map(item => item.title);
+
+        window.showQuickPick(picks).then((title) => {
+            if (!title) return;
+            let item:any = scriptList.find(item => item.title == title);
+            if (!item) return;
+            send_terminal('npm-ngalainsiphelper', workspace.rootPath, item.command);
+        });
     };
 
 }
