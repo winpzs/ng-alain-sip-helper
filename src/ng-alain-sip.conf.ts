@@ -212,13 +212,13 @@ const config = [
         "command": "",
         children:[
             {
-                "title": "设置",
-                "command": "config",
+                "title": "To Snippet Text",
+                "command": "snippet-text",
                 "builtin": true
             },
             {
-                "title": "To Snippet Text",
-                "command": "snippet-text",
+                "title": "设置",
+                "command": "config",
                 "builtin": true
             }
         ]
