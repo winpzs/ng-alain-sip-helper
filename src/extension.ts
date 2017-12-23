@@ -1,7 +1,12 @@
 'use strict';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ExtensionContext, commands, window, QuickPickItem, Terminal, workspace, env } from 'vscode';
+
+let argv = require('yargs-parser');
+
+import { ExtensionContext, commands, window, QuickPickItem, Terminal, workspace, env, TextDocument } from 'vscode';
+import { SipPageComponent } from './contents/sip-page-component';
+import { SipModalComponent } from './contents/sip-modal-component';
 
 let stringify = require('json-stable-stringify');
 
@@ -85,7 +90,14 @@ export function activate(context: ExtensionContext) {
         text = text.replace(/\%params\%/gi, params.params);
         return text;
     };
-    let send_builtin = (config: IConfig) => {
+    let openFile = (file:string):PromiseLike<TextDocument> => {
+        return workspace.openTextDocument(file).then(r=>{
+            window.showTextDocument(r);
+            return r;
+        });
+    };
+    let send_builtin = (config: IConfig, args, params:string, path:string, inputText:string) => {
+        let p = argv(params||'');
         switch (config.command) {
             case 'config':
                 setConfig();
@@ -96,6 +108,21 @@ export function activate(context: ExtensionContext) {
             case 'snippet-text':
                 snippetText();
                 break;
+            case 'sip-generate':
+                let generateConfigs:IConfig[] = require('./sip-generate.conf');
+                showQuickPick(generateConfigs, workspace.rootPath, args);
+                break;
+            case 'sip-page':
+                openFile(new SipPageComponent().generate(Object.assign({
+                    name:inputText,
+                    path:path
+                }, p)));
+            case 'sip-modal':
+                openFile(new SipModalComponent().generate(Object.assign({
+                    name:inputText,
+                    path:path
+                }, p)));
+            break;
         }
     };
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {
@@ -105,10 +132,6 @@ export function activate(context: ExtensionContext) {
             if (!title) return;
             let config: IConfig = configs.find(item => item.title == title);
             if (!config) return;
-            if (config.builtin) {
-                send_builtin(config);
-                return;
-            }
             let path = config.path ? config.path : parentPath;
             let children = config.children;
             let params = config.params;
@@ -117,7 +140,7 @@ export function activate(context: ExtensionContext) {
             } else if (params && params.length > 0) {
                 showParamsQuickPick(config, path, args);
             } else {
-                send_command(config.terminal, path, config.command, '', config.input, args);
+                send_command(config.terminal, path, config.command, '', config.input, args, config);
             }
         });
 
@@ -131,21 +154,25 @@ export function activate(context: ExtensionContext) {
             let param: IParam = params.find(item => item.title == title);
             let cmd = config.command;
             if (!param || !config.command) return;
-            send_command(config.terminal, path, config.command, param.param, config.input, args);
+            send_command(config.terminal, path, config.command, param.param, config.input, args,config);
         });
     };
 
-    let send_command = (name: string, path: string, cmd: string, params: string, input: boolean, args, inputText = '') => {
+    let send_command = (name: string, path: string, cmd: string, params: string, input: boolean, args, config:IConfig, inputText = '') => {
         if (!input) {
             path = getVarText(path, {
                 args: args,
                 input: inputText, params: params
             });
-            cmd = getVarText(cmd, {
-                args: args,
-                input: inputText, params: params
-            });
-            send_terminal(name, path, cmd);
+            if (config.builtin) {
+                send_builtin(config, args, params, path, inputText);
+            } else {
+                cmd = getVarText(cmd, {
+                    args: args,
+                    input: inputText, params: params
+                });
+                send_terminal(name, path, cmd);
+            }
         }
         else {
             window.showInputBox({
@@ -156,7 +183,7 @@ export function activate(context: ExtensionContext) {
                     if (/[~`!#$%\^&*+=\[\]\\';,{}|\\":<>\?]/g.test(fileName)) {
                         window.showInformationMessage('文件名称存在不合法字符!');
                     } else {
-                        send_command(name, path, cmd, params, false, args, fileName);
+                        send_command(name, path, cmd, params, false, args,config, fileName);
                     }
                 }
             },
@@ -222,17 +249,17 @@ export function activate(context: ExtensionContext) {
         edit.replace(textEditor.selection, text);
     }))
 
-    let formatSnippetText = (text:string):string=>{
+    let formatSnippetText = (text: string): string => {
 
         let preLen = -1;
-        text = ['["',text.replace(/(\n\r)/g, '\n').split('\n').map(item=>{
-            if (preLen == -1){
+        text = ['["', text.replace(/(\n\r)/g, '\n').split('\n').map(item => {
+            if (preLen == -1) {
                 preLen = /^\s*/.exec(item)[0].length || 0;
             }
             return item.replace(/(\"|\\)/g, '\\$1').replace(/(\$)/g, '\\\\$1').substr(preLen).replace(/\t/g, '\\t');
         }).join('",\n"'), '$0"]'].join('');
 
-        return text;        
+        return text;
     };
 
 }

@@ -12,6 +12,13 @@
         ],
         "description": "getset"
     },
+    "sip-lambda": {
+        "prefix": "sip-lambda",
+        "body": [
+            "(${p})=>{$0}"
+        ],
+        "description": "lambda"
+    },
     "sip-list-page": {
         "prefix": "sip-list-page",
         "body": [
@@ -27,8 +34,7 @@
             "",
             "@Component({",
             "    selector: 'sip-demo-list',",
-            "    templateUrl: './list.component.html',",
-            "    providers: []",
+            "    templateUrl: './list.component.html'",
             "})",
             "export class ListComponent extends SipUiPage {",
             "$0",
@@ -130,7 +136,7 @@
             "",
             "@Component({",
             "\tselector: 'sip-detail',",
-            "\ttemplateUrl: './detail.component.html',",
+            "\ttemplateUrl: './detail.component.html'",
             "})",
             "export class DetailComponent extends SipUiPage {",
             "$0",
@@ -206,7 +212,7 @@
             "",
             "@Component({",
             "\tselector: 'sip-${page}',",
-            "\ttemplateUrl: './${page}.component.html',",
+            "\ttemplateUrl: './${page}.component.html'",
             "})",
             "export class $0${page}Component extends SipUiPage {",
             "",
@@ -239,8 +245,7 @@
             "",
             "@Component({",
             "  selector: 'sip-test-modal',",
-            "  templateUrl: './test-modal.component.html',",
-            "  styles: []",
+            "  templateUrl: './test-modal.component.html'",
             "})",
             "export class TestModalComponent extends SipUiModal {",
             "$0",

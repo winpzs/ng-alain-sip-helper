@@ -203,6 +203,11 @@ const config = [
         ]
     },
     {
+        "title": "sip-generate >",
+        "command": "sip-generate",
+        "builtin": true
+    },
+    {
         "title": "npm >",
         "command": "npm",
         "builtin": true
