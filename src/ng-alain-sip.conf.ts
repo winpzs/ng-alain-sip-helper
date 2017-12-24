@@ -217,6 +217,11 @@ const config = [
         "command": "",
         children:[
             {
+                "title": "JSON To Class",
+                "command": "json-class",
+                "builtin": true
+            },
+            {
                 "title": "To Snippet Text",
                 "command": "snippet-text",
                 "builtin": true

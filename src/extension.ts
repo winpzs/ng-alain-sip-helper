@@ -4,9 +4,10 @@ import * as fs from 'fs';
 
 let argv = require('yargs-parser');
 
-import { ExtensionContext, commands, window, QuickPickItem, Terminal, workspace, env, TextDocument } from 'vscode';
+import { ExtensionContext, commands, window, QuickPickItem, Terminal, workspace, env, TextDocument, Extension, Range, Position } from 'vscode';
 import { SipPageComponent } from './contents/sip-page-component';
 import { SipModalComponent } from './contents/sip-modal-component';
+import { Lib } from './lib';
 
 let stringify = require('json-stable-stringify');
 
@@ -90,14 +91,14 @@ export function activate(context: ExtensionContext) {
         text = text.replace(/\%params\%/gi, params.params);
         return text;
     };
-    let openFile = (file:string):PromiseLike<TextDocument> => {
-        return workspace.openTextDocument(file).then(r=>{
+    let openFile = (file: string): PromiseLike<TextDocument> => {
+        return workspace.openTextDocument(file).then(r => {
             window.showTextDocument(r);
             return r;
         });
     };
-    let send_builtin = (config: IConfig, args, params:string, path:string, inputText:string) => {
-        let p = argv(params||'');
+    let send_builtin = (config: IConfig, args, params: string, path: string, inputText: string) => {
+        let p = argv(params || '');
         switch (config.command) {
             case 'config':
                 setConfig();
@@ -106,23 +107,26 @@ export function activate(context: ExtensionContext) {
                 npm();
                 break;
             case 'snippet-text':
-                snippetText();
+                commands.executeCommand('ngalainsiphelper.tosnippettext');
+                break;
+            case 'json-class':
+                commands.executeCommand('ngalainsiphelper.jsontoclass');
                 break;
             case 'sip-generate':
-                let generateConfigs:IConfig[] = require('./sip-generate.conf');
+                let generateConfigs: IConfig[] = require('./sip-generate.conf');
                 showQuickPick(generateConfigs, workspace.rootPath, args);
                 break;
             case 'sip-page':
                 openFile(new SipPageComponent().generate(Object.assign({
-                    name:inputText,
-                    path:path
+                    name: inputText,
+                    path: path
                 }, p)));
             case 'sip-modal':
                 openFile(new SipModalComponent().generate(Object.assign({
-                    name:inputText,
-                    path:path
+                    name: inputText,
+                    path: path
                 }, p)));
-            break;
+                break;
         }
     };
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {
@@ -154,11 +158,11 @@ export function activate(context: ExtensionContext) {
             let param: IParam = params.find(item => item.title == title);
             let cmd = config.command;
             if (!param || !config.command) return;
-            send_command(config.terminal, path, config.command, param.param, config.input, args,config);
+            send_command(config.terminal, path, config.command, param.param, config.input, args, config);
         });
     };
 
-    let send_command = (name: string, path: string, cmd: string, params: string, input: boolean, args, config:IConfig, inputText = '') => {
+    let send_command = (name: string, path: string, cmd: string, params: string, input: boolean, args, config: IConfig, inputText = '') => {
         if (!input) {
             path = getVarText(path, {
                 args: args,
@@ -183,7 +187,7 @@ export function activate(context: ExtensionContext) {
                     if (/[~`!#$%\^&*+=\[\]\\';,{}|\\":<>\?]/g.test(fileName)) {
                         window.showInformationMessage('文件名称存在不合法字符!');
                     } else {
-                        send_command(name, path, cmd, params, false, args,config, fileName);
+                        send_command(name, path, cmd, params, false, args, config, fileName);
                     }
                 }
             },
@@ -237,16 +241,14 @@ export function activate(context: ExtensionContext) {
         });
     };
 
-    let snippetText = () => {
-        commands.executeCommand('ngalainsiphelper.tosnippettext');
-    };
-
     context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.tosnippettext', (textEditor, edit) => {
         var { document, selection } = textEditor
+        let isEmpty = textEditor.selection.isEmpty;
 
-        var text = document.getText(textEditor.selection);
+        var text = isEmpty ? document.getText() : document.getText(textEditor.selection);
         text = formatSnippetText(text);
-        edit.replace(textEditor.selection, text);
+        edit.replace(isEmpty ? new Range(new Position(0,0), new Position(100000,100000)) :
+            textEditor.selection, text);
     }))
 
     let formatSnippetText = (text: string): string => {
@@ -260,6 +262,65 @@ export function activate(context: ExtensionContext) {
         }).join('",\n"'), '$0"]'].join('');
 
         return text;
+    };
+
+
+    context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.jsontoclass', (textEditor, edit) => {
+        let { document, selection } = textEditor
+
+        let isEmpty = textEditor.selection.isEmpty;
+
+        let text = isEmpty ?
+            document.getText() :
+            document.getText(textEditor.selection);
+        try {
+            
+            text = jsonToClass(JSON.parse(text));
+            edit.replace(isEmpty ? new Range(new Position(0,0), new Position(100000,100000)) :
+                textEditor.selection, text);
+        } catch (e) {
+            window.showErrorMessage(e.message);
+        }
+    }))
+
+    let jsonToClass = (json: object): string => {
+
+        let props = [], defs = [], item, defName;
+        Object.keys(json).forEach(key => {
+            item = json[key];
+            if (Lib.isString(item)){
+                defName = key + ': string';
+                props.push('    ' + defName +' = "";');
+            } else if (Lib.isBoolean(item)) {
+                defName = key + ': boolean';
+                props.push('    ' + defName + ' = false;');
+            } else if (Lib.isNumeric(item)) {
+                defName = key + ': number';
+                props.push('    ' + defName + ' = 0;');
+            } else if (Lib.isArray(item)) {
+                defName = key + ': any[]';
+                props.push('    ' + defName + ' = [];');
+            } else {
+                defName = key + ': any';
+                props.push('    ' + defName + ' = null;');
+            }
+            defs.push(defName.replace(':', '?:'));
+        });
+
+        let classText = `export class Class1 {
+
+${props.join('\n')}
+
+    constructor(p?:{
+        ${defs.join(';\n        ')};
+    }) {
+        if (p){
+            Object.assign(this, p);
+        }
+    }
+}`;
+
+        return classText;
     };
 
 }
