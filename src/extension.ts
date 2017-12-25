@@ -8,6 +8,8 @@ import { ExtensionContext, commands, window, QuickPickItem, Terminal, workspace,
 import { SipPageComponent } from './contents/sip-page-component';
 import { SipModalComponent } from './contents/sip-modal-component';
 import { Lib } from './lib';
+import { SipClass } from './contents/sip-class';
+import { ContentBase } from './contents/content-base';
 
 let stringify = require('json-stable-stringify');
 
@@ -99,6 +101,10 @@ export function activate(context: ExtensionContext) {
     };
     let send_builtin = (config: IConfig, args, params: string, path: string, inputText: string) => {
         let p = argv(params || '');
+        let gParam = Object.assign({
+            name: inputText,
+            path: path
+        }, p);
         switch (config.command) {
             case 'config':
                 setConfig();
@@ -117,18 +123,19 @@ export function activate(context: ExtensionContext) {
                 showQuickPick(generateConfigs, workspace.rootPath, args);
                 break;
             case 'sip-page':
-                openFile(new SipPageComponent().generate(Object.assign({
-                    name: inputText,
-                    path: path
-                }, p)));
+                sipGenerate(new SipPageComponent(), gParam);
+                break;
             case 'sip-modal':
-                openFile(new SipModalComponent().generate(Object.assign({
-                    name: inputText,
-                    path: path
-                }, p)));
+                sipGenerate(new SipModalComponent(), gParam);
+                break;
+            case 'sip-class':
+                sipGenerate(new SipClass(), gParam);
                 break;
         }
     };
+    let sipGenerate = (genObj: ContentBase, p: any) => {
+        openFile(genObj.generate(p));
+    }
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {
         let picks = configs.map(item => item.title);
 
@@ -247,7 +254,7 @@ export function activate(context: ExtensionContext) {
 
         var text = isEmpty ? document.getText() : document.getText(textEditor.selection);
         text = formatSnippetText(text);
-        edit.replace(isEmpty ? new Range(new Position(0,0), new Position(100000,100000)) :
+        edit.replace(isEmpty ? new Range(new Position(0, 0), new Position(100000, 100000)) :
             textEditor.selection, text);
     }))
 
@@ -274,9 +281,9 @@ export function activate(context: ExtensionContext) {
             document.getText() :
             document.getText(textEditor.selection);
         try {
-            
+
             text = jsonToClass(JSON.parse(text));
-            edit.replace(isEmpty ? new Range(new Position(0,0), new Position(100000,100000)) :
+            edit.replace(isEmpty ? new Range(new Position(0, 0), new Position(100000, 100000)) :
                 textEditor.selection, text);
         } catch (e) {
             window.showErrorMessage(e.message);
@@ -288,9 +295,9 @@ export function activate(context: ExtensionContext) {
         let props = [], defs = [], item, defName;
         Object.keys(json).forEach(key => {
             item = json[key];
-            if (Lib.isString(item)){
+            if (Lib.isString(item)) {
                 defName = key + ': string';
-                props.push('    ' + defName +' = "";');
+                props.push('    ' + defName + ' = "";');
             } else if (Lib.isBoolean(item)) {
                 defName = key + ': boolean';
                 props.push('    ' + defName + ' = false;');
