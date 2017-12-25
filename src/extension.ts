@@ -13,6 +13,7 @@ import { ContentBase } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
 import { SipService } from './contents/sip-service';
 import { SipDirective } from './contents/sip-directive';
+import { SipPipe } from './contents/sip-pipe';
 
 let stringify = require('json-stable-stringify');
 
@@ -139,6 +140,9 @@ export function activate(context: ExtensionContext) {
                 break;
             case 'sip-directive':
                 sipGenerate(new SipDirective(), gParam);
+                break;
+            case 'sip-pipe':
+                sipGenerate(new SipPipe(), gParam);
                 break;
             case 'sip-class':
                 sipGenerate(new SipClass(), gParam);

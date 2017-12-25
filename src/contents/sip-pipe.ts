@@ -3,9 +3,9 @@ import * as fs from 'fs';
 
 import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./content-base";
 
-export class SipDirective implements ContentBase {
+export class SipPipe implements ContentBase {
 
-    prefix = 'directive'
+    prefix = 'pipe'
 
     generate(params: GenerateParam):string {
         let name = params.name,
@@ -40,14 +40,16 @@ export class SipDirective implements ContentBase {
         let name = params.name;
         name = MakeClassName(name, '');
 
-        let content = `import { Directive } from '@angular/core';
+        let content = `import { Pipe, PipeTransform } from '@angular/core';
 
-@Directive({
-    selector: '[sip${name}]'
+@Pipe({
+    name: '${name}'
 })
-export class ${name}Directive {
+export class ${name}Pipe implements PipeTransform {
 
-    constructor() { }
+    transform(value: any, args?: any): any {
+        return null;
+    }
 
 }
 `;
@@ -62,9 +64,9 @@ export class ${name}Directive {
         let content = `import { ${className} } from './${name}.${prefix}';
 
 describe('${className}', () => {
-    it('should create an instance', () => {
-        const directive = new ${className}();
-        expect(directive).toBeTruthy();
+    it('create an instance', () => {
+        const pipe = new ${className}();
+        expect(pipe).toBeTruthy();
     });
 });
 `;
