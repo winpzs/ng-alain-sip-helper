@@ -33,6 +33,7 @@ function getRelativePath(args): string {
 export interface IParam {
     param: string;
     title: string;
+    terminal?:string;
 }
 
 export interface IConfig {
@@ -200,7 +201,7 @@ export function activate(context: ExtensionContext) {
             let param: IParam = params.find(item => item.title == title);
             let cmd = config.command;
             if (!param || !config.command) return;
-            send_command(config.terminal, path, config.command, param.param, config.input, args, config);
+            send_command(param.terminal || config.terminal, path, config.command, param.param, config.input, args, config);
         });
     };
 

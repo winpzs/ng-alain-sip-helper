@@ -17,7 +17,9 @@ const config = [
         "params": [
             {
                 "param": "-- -o -e=dev",
-                "title": "dev"
+                "title": "dev",
+                //vscod terminal 名称, 如果没有，取config.terminal
+                "terminal": "",
             }, {
                 "param": "-- -o --e=dev -pc=\"proxy.conf.js\"",
                 "title": "dev proxy"
