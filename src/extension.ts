@@ -12,6 +12,7 @@ import { SipClass } from './contents/sip-class';
 import { ContentBase } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
 import { SipService } from './contents/sip-service';
+import { SipDirective } from './contents/sip-directive';
 
 let stringify = require('json-stable-stringify');
 
@@ -130,11 +131,14 @@ export function activate(context: ExtensionContext) {
             case 'sip-modal':
                 sipGenerate(new SipModalComponent(), gParam);
                 break;
+            case 'sip-module':
+                sipGenerate(new SipModule(), gParam);
+                break;
             case 'sip-service':
                 sipGenerate(new SipService(), gParam);
                 break;
-            case 'sip-module':
-                sipGenerate(new SipModule(), gParam);
+            case 'sip-directive':
+                sipGenerate(new SipDirective(), gParam);
                 break;
             case 'sip-class':
                 sipGenerate(new SipClass(), gParam);
