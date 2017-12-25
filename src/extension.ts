@@ -9,7 +9,7 @@ import { SipPageComponent } from './contents/sip-page-component';
 import { SipModalComponent } from './contents/sip-modal-component';
 import { Lib } from './lib';
 import { SipClass } from './contents/sip-class';
-import { ContentBase } from './contents/content-base';
+import { ContentBase, IsInRootPath, FindPathUpward, CalcPath } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
 import { SipService } from './contents/sip-service';
 import { SipDirective } from './contents/sip-directive';
@@ -27,10 +27,7 @@ function getCurrentPath(args): string {
 function getRelativePath(args): string {
     let fsPath = getCurrentPath(args);
 
-    let stats = fs.lstatSync(fsPath),
-        isDir = stats.isDirectory();
-
-    return isDir ? fsPath : path.parse(fsPath).dir;
+    return CalcPath(fsPath);
 }
 
 export interface IParam {
@@ -51,7 +48,15 @@ export interface IConfig {
 
 export function activate(context: ExtensionContext) {
     //console.log(context.storagePath);
-
+    let _rootPath = workspace.rootPath;
+    let _getRootPath = ():string=>{
+        return _rootPath;
+    },
+    _calcRootPath = (curPath:string) => {
+        curPath = CalcPath(curPath);
+        _rootPath = FindPathUpward(workspace.rootPath, curPath, 'package.json')
+            && workspace.rootPath;
+    };
 
     context.subscriptions.push({
         dispose: () => {
@@ -67,9 +72,11 @@ export function activate(context: ExtensionContext) {
             defaultName = path.basename(curPath);
         _fileName = defaultName.split('.')[0];
 
+        _calcRootPath(curPath);
+
         let configs = getConfig();
 
-        showQuickPick(configs, workspace.rootPath, args);
+        showQuickPick(configs, _getRootPath(), args);
 
     }));
 
@@ -95,7 +102,7 @@ export function activate(context: ExtensionContext) {
     };
     let getVarText = (text: string, params: { args: any; input: string; params: string; }): string => {
         text = text.replace(/\%currentpath\%/gi, getRelativePath(params.args));
-        text = text.replace(/\%workspaceroot\%/gi, workspace.rootPath);
+        text = text.replace(/\%workspaceroot\%/gi, _getRootPath());
         text = text.replace(/\%input\%/gi, params.input);
         text = text.replace(/\%params\%/gi, params.params);
         return text;
@@ -127,7 +134,7 @@ export function activate(context: ExtensionContext) {
                 break;
             case 'sip-generate':
                 let generateConfigs: IConfig[] = require('./sip-generate.conf');
-                showQuickPick(generateConfigs, workspace.rootPath, args);
+                showQuickPick(generateConfigs, _getRootPath(), args);
                 break;
             case 'sip-page':
                 sipGenerate(new SipPageComponent(), gParam);
@@ -205,7 +212,7 @@ export function activate(context: ExtensionContext) {
             });
             if (config.builtin) {
                 send_builtin(config, args, params, path, inputText);
-            } else {
+            } else if (cmd) {
                 cmd = getVarText(cmd, {
                     args: args,
                     input: inputText, params: params
@@ -232,12 +239,12 @@ export function activate(context: ExtensionContext) {
 
 
     let getConfig = (): IConfig[] => {
-        let fsPath = path.join(workspace.rootPath, './ng-alain-sip.conf.json');
+        let fsPath = path.join(_getRootPath(), './ng-alain-sip.conf.json');
         return (!fs.existsSync(fsPath)) ? require('./ng-alain-sip.conf') : JSON.parse(fs.readFileSync(fsPath, 'utf-8'));
     };
 
     let setConfig = () => {
-        let fsPath = path.join(workspace.rootPath, './ng-alain-sip.conf.json');
+        let fsPath = path.join(_getRootPath(), './ng-alain-sip.conf.json');
         if (!fs.existsSync(fsPath))
             saveDefaultConfig();
 
@@ -250,13 +257,13 @@ export function activate(context: ExtensionContext) {
     };
 
     let saveDefaultConfig = () => {
-        let fsPath = path.join(workspace.rootPath, './ng-alain-sip.conf.json');
+        let fsPath = path.join(_getRootPath(), './ng-alain-sip.conf.json');
         let json = stringify(require('./ng-alain-sip.conf'), { space: '    ' });
         fs.writeFileSync(fsPath, json, 'utf-8');
     };
 
     let npm = () => {
-        let fsPath = path.join(workspace.rootPath, './package.json');
+        let fsPath = path.join(_getRootPath(), './package.json');
         if (!fs.existsSync(fsPath)) return;
         let packageJson = JSON.parse(fs.readFileSync(fsPath, 'utf-8'));
         let scripts = packageJson.scripts;
@@ -272,11 +279,13 @@ export function activate(context: ExtensionContext) {
             if (!title) return;
             let item: any = scriptList.find(item => item.title == title);
             if (!item) return;
-            send_terminal('npm-ngalainsiphelper', workspace.rootPath, item.command);
+            send_terminal('npm-ngalainsiphelper', _getRootPath(), item.command);
         });
     };
 
     context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.tosnippettext', (textEditor, edit) => {
+        _calcRootPath(textEditor.document.fileName);
+        
         var { document, selection } = textEditor
         let isEmpty = textEditor.selection.isEmpty;
 
@@ -299,8 +308,9 @@ export function activate(context: ExtensionContext) {
         return text;
     };
 
-
     context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.jsontoclass', (textEditor, edit) => {
+        _calcRootPath(textEditor.document.fileName);
+
         let { document, selection } = textEditor
 
         let isEmpty = textEditor.selection.isEmpty;

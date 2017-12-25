@@ -11,8 +11,8 @@ const config = [
         "path": "%workspaceRoot%",
         //是否需要输入内容, 并压入%input%变更
         "input": false,
-        //是否内至指令
-        "builtin": true,
+        //是否内置指令
+        "builtin": false,
         //指令参数(二级选择), 并压入%params%变更
         "params": [
             {
@@ -36,7 +36,7 @@ const config = [
         "terminal": "build-ngalainsiphelper",
         "path": "%workspaceRoot%",
         "input": false,
-        "children": [
+        "params": [
             {
                 "param": "",
                 "title": "build"

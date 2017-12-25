@@ -1,3 +1,5 @@
+import * as path from 'path';
+import * as fs from 'fs';
 
 export interface GenerateParam {
     name: string;
@@ -37,3 +39,28 @@ export function MakeClassName(name: string, prefix: string) {
     let className = prefix ? [name, prefix].join('.') : name;
     return MakeName(className);
 }
+
+
+export function CalcPath(fsPath:string):string {
+    let stats = fs.lstatSync(fsPath),
+    isDir = stats.isDirectory();
+
+    return isDir ? fsPath : path.dirname(fsPath);
+}
+
+const _rootRegex = /^\.\./;
+export function IsInRootPath(rootPath:string, fsPath:string):boolean{
+   return !_rootRegex.test(path.relative(rootPath, fsPath));
+}
+
+ export function FindPathUpward(rootPath:string, curPath:string, name:string):string {
+     let fsPath = path.join(curPath, name);
+     let exists = fs.existsSync(fsPath);
+     if (exists)
+        return curPath;
+    else{
+        if (!IsInRootPath(rootPath, curPath)) return '';
+        curPath = FindPathUpward(rootPath, path.dirname(curPath), name);
+        return curPath;
+    }
+ }
