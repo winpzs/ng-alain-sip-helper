@@ -3,10 +3,17 @@
 const config = [
     {
         "title": "serve >",
+        //指令可以使用变量 %params%, %input%, %workspaceRoot%, %currentPath%"
         "command": "npm run serve %params%",
+        //vscod terminal 名称
         "terminal": "serve-ngalainsiphelper",
+        //路径可以使用变量 %params%, %input%, %workspaceRoot%, %currentPath%"
         "path": "%workspaceRoot%",
+        //是否需要输入内容, 并压入%input%变更
         "input": false,
+        //是否内至指令
+        "builtin": true,
+        //指令参数(会二选择), 并压入%params%变更
         "params": [
             {
                 "param": "-- -o -e=dev",

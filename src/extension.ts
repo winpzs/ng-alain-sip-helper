@@ -215,7 +215,7 @@ export function activate(context: ExtensionContext) {
         }
         else {
             window.showInputBox({
-                prompt: '请输入文件名称？',
+                prompt: '请输入文件名称/内容？',
                 value: _fileName
             }).then((fileName) => {
                 if (fileName) {
