@@ -15,6 +15,7 @@ import { SipService } from './contents/sip-service';
 import { SipDirective } from './contents/sip-directive';
 import { SipPipe } from './contents/sip-pipe';
 import { SipGuard } from './contents/sip-guard';
+import { SipInterface } from './contents/sip-interface';
 
 let stringify = require('json-stable-stringify');
 
@@ -145,8 +146,11 @@ export function activate(context: ExtensionContext) {
             case 'sip-pipe':
                 sipGenerate(new SipPipe(), gParam);
                 break;
-            case 'sip-guard':
+                case 'sip-guard':
                 sipGenerate(new SipGuard(), gParam);
+                break;
+                case 'sip-interface':
+                sipGenerate(new SipInterface(), gParam);
                 break;
             case 'sip-class':
                 sipGenerate(new SipClass(), gParam);
