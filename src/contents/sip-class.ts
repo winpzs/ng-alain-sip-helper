@@ -33,7 +33,8 @@ export class SipClass implements ContentBase {
         let prefix = '';
         let className = MakeClassName(name, prefix);
         let content = `export class ${className} {
-}`;
+}
+`;
         return content;
     }
 

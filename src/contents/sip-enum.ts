@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./content-base";
 
-export class SipInterface implements ContentBase {
+export class SipEnum implements ContentBase {
 
     generate(params: GenerateParam):string {
         let name = params.name,
@@ -32,7 +32,7 @@ export class SipInterface implements ContentBase {
         let name = params.name;
         let prefix = '';
         let className = MakeClassName(name, prefix);
-        let content = `export interface I${className} {
+        let content = `export enum ${className} {
 }
 `;
         return content;

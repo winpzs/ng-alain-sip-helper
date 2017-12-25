@@ -205,6 +205,23 @@ const gen_config = [
                 "title": "ts"
             }
         ]
+    },
+    {
+        "title": "enum >",
+        "command": "sip-enum",
+        "path": "%currentPath%",
+        "builtin": true,
+        "input": true,
+        "params": [
+            {
+                "param": "--ts --dir",
+                "title": "创建目录, ts"
+            },
+            {
+                "param": "--ts",
+                "title": "ts"
+            }
+        ]
     }
 ];
 
