@@ -152,6 +152,27 @@ const gen_config = [
         ]
     },
     {
+        "title": "guard >",
+        "command": "sip-guard",
+        "path": "%currentPath%",
+        "builtin": true,
+        "input": true,
+        "params": [
+            {
+                "param": "--ts --dir",
+                "title": "创建目录, ts"
+            },
+            {
+                "param": "--ts",
+                "title": "ts"
+            },
+            {
+                "param": "--spec",
+                "title": "spec"
+            }
+        ]
+    },
+    {
         "title": "class >",
         "command": "sip-class",
         "path": "%currentPath%",
