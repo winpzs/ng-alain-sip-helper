@@ -16,6 +16,7 @@
   },
   "categories": [
     "Languages",
+    "Snippets",
     "Other"
   ],
   "engines": {
@@ -23,6 +24,12 @@
   },
   "activationEvents": [
     "*"
+  ],
+  "keywords": [
+    "Angular",
+    "Angular 5",
+    "ng-alain-sip",
+    "TypeScript"
   ],
   "main": "./out/src/extension",
   "contributes": {
