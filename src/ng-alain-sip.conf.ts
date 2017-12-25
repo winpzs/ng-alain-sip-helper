@@ -13,7 +13,7 @@ const config = [
         "input": false,
         //是否内至指令
         "builtin": true,
-        //指令参数(会二选择), 并压入%params%变更
+        //指令参数(二级选择), 并压入%params%变更
         "params": [
             {
                 "param": "-- -o -e=dev",
