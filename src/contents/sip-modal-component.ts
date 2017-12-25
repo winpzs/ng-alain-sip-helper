@@ -9,7 +9,7 @@ export class SipModalComponent extends SipComponent {
     contentTS(params: GenerateParam): string {
 
         let name = params.name;
-        let prefix = 'component';
+        let prefix = this.prefix;
         let className = MakeClassName(name, prefix);
 
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;

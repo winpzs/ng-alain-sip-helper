@@ -11,6 +11,7 @@ import { Lib } from './lib';
 import { SipClass } from './contents/sip-class';
 import { ContentBase } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
+import { SipService } from './contents/sip-service';
 
 let stringify = require('json-stable-stringify');
 
@@ -128,6 +129,9 @@ export function activate(context: ExtensionContext) {
                 break;
             case 'sip-modal':
                 sipGenerate(new SipModalComponent(), gParam);
+                break;
+            case 'sip-service':
+                sipGenerate(new SipService(), gParam);
                 break;
             case 'sip-module':
                 sipGenerate(new SipModule(), gParam);

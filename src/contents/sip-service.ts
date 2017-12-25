@@ -3,9 +3,9 @@ import * as fs from 'fs';
 
 import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./content-base";
 
-export class SipModule implements ContentBase {
+export class SipService implements ContentBase {
 
-    prefix = 'module';
+    prefix = 'service'
 
     generate(params: GenerateParam):string {
         let name = params.name,
@@ -41,20 +41,14 @@ export class SipModule implements ContentBase {
         let prefix = this.prefix;
         let className = MakeClassName(name, prefix);
 
-        let content = `import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { SharedModule } from '@shared/shared.module';
+        let content = `import { Injectable } from '@angular/core';
 
-@NgModule({
-    imports: [
-        CommonModule,
-        SharedModule
-    ],
-    declarations: [],
-    providers: [],
-    entryComponents:[]
-})
-export class ${className} { }
+@Injectable()
+export class ${className} {
+
+    constructor() { }
+
+}
 `;
         return content;
     }
@@ -64,18 +58,20 @@ export class ${className} { }
         let prefix = this.prefix;
         let className = MakeClassName(name, prefix);
 
-        let content = `import { ${className} } from './${name}.${prefix}';
+        let content = `import { TestBed, inject } from '@angular/core/testing';
+
+import { ${className} } from './${name}.${prefix}';
 
 describe('${className}', () => {
-    let instance: ${className};
-
     beforeEach(() => {
-        instance = new ${className}();
+        TestBed.configureTestingModule({
+            providers: [${className}]
+        });
     });
 
-    it('should create an instance', () => {
-        expect(instance).toBeTruthy();
-    });
+    it('should be created', inject([${className}], (service: ${className}) => {
+        expect(service).toBeTruthy();
+    }));
 });
 `;
         return content;

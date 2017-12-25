@@ -5,9 +5,11 @@ import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./conte
 
 export class SipComponent implements ContentBase {
 
+    prefix = 'component';
+
     generate(params: GenerateParam):string {
         let name = params.name,
-            prefix = 'component';
+            prefix = this.prefix;
         let fsPath = params.path;
         fsPath = params.dir ? path.join(fsPath, name) : fsPath;
 
@@ -64,7 +66,7 @@ export class SipComponent implements ContentBase {
 
     contentSpec(params: GenerateParam): string {
         let name = params.name;
-        let prefix = 'component';
+        let prefix = this.prefix;
         let className = MakeClassName(name, prefix);
 
         let content = `import { async, ComponentFixture, TestBed } from '@angular/core/testing';
