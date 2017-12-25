@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, pushToModuleDeclarations } from "./content-base";
 
 export class SipComponent implements ContentBase {
 
@@ -43,6 +43,8 @@ export class SipComponent implements ContentBase {
             retFile || (retFile = fsFile);
             fs.existsSync(fsFile) || fs.writeFileSync(fsFile, this.contentSpec(params), 'utf-8');
         }
+
+        this.pushToModule(params);
 
         return retFile;
 
@@ -119,6 +121,18 @@ describe('${className}', () => {
 });
 `;
         return content;
+    }
+
+    pushToModule(params: GenerateParam){
+        let moduleFile = params.moduleFile;
+        if (!moduleFile) return;
+
+        let name = params.name;
+        let prefix = this.prefix;
+        let className = MakeClassName(name, prefix);
+
+        pushToModuleDeclarations(moduleFile, className, 'aaaa/asdf');
+
     }
 
 }

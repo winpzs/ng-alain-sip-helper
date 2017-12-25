@@ -1,10 +1,12 @@
 import * as path from 'path';
 import * as fs from 'fs';
+import { Lib } from '../lib';
 
 export interface GenerateParam {
     name: string;
     path: string;
     moduleFile:string;
+    rootPath:string;
     [key: string]: any;
 }
 
@@ -110,3 +112,32 @@ export function FindModuleFile(rootPath:string, curPath:string):string{
             return '';
     }
 };
+
+function makeImport(content:string, className:string, importPath:string):string{
+
+    let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
+    let importRegex = /^\s*import\s+/;
+    let index  = contentList.findIndex(item=>{ return importRegex.test(item);});
+
+    if (index > -1){
+        let text = contentList[index];
+        text += ["\nimport { ", className, " } from './",importPath, "';"].join('');
+        return contentList.reverse().join('\n');
+    } else
+        return content;
+
+}
+
+export function pushToModuleDeclarations(moduleFile:string, className:string, importPath:string){
+    if (!fs.existsSync(moduleFile)) return;
+
+    let content:string = fs.readFileSync(moduleFile, 'utf-8');
+    content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function(find, text, index){
+        let isEmpty = !!Lib.trim(text);
+        return find.replace(text, isEmpty ? className: ','+className);
+    });
+
+    content = makeImport(content, className, importPath);
+
+    fs.writeFileSync(moduleFile, content, 'utf-8');
+}

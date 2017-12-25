@@ -121,6 +121,7 @@ export function activate(context: ExtensionContext) {
         let gParam = Object.assign({
             name: inputText,
             path: path,
+            rootPath:rootPath,
             moduleFile: FindModuleFile(rootPath, path)
         }, p);
         switch (config.command) {
