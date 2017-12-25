@@ -49,13 +49,36 @@ export class SipComponent implements ContentBase {
     }
 
     contentTS(params: GenerateParam): string {
+        let name = params.name;
+        let prefix = this.prefix;
+        let className = MakeClassName(name, prefix);
 
-        let content = ``;
+        let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
+        let style = !params.style ? `styles:['']` : `styleUrls: ['./${name}.${prefix}.less']`;
+
+        let content = `import { Component, OnInit } from '@angular/core';
+
+@Component({
+    selector: 'sip-aaaa',
+    ${template},
+    ${style}
+})
+export class ${className} implements OnInit {
+
+    constructor() { }
+
+    ngOnInit() {
+    }
+
+}
+`;
         return content;
     }
 
     contentHtml(params: GenerateParam): string {
-        let content = ``;
+        let content = `<p>
+    aaaa works!
+</p>`;
         return content;
     }
 

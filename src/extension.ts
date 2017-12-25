@@ -9,7 +9,7 @@ import { SipPageComponent } from './contents/sip-page-component';
 import { SipModalComponent } from './contents/sip-modal-component';
 import { Lib } from './lib';
 import { SipClass } from './contents/sip-class';
-import { ContentBase, IsInRootPath, FindPathUpward, CalcPath } from './contents/content-base';
+import { ContentBase, IsInRootPath, FindPathUpward, CalcPath, FindModuleFile } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
 import { SipService } from './contents/sip-service';
 import { SipDirective } from './contents/sip-directive';
@@ -17,6 +17,7 @@ import { SipPipe } from './contents/sip-pipe';
 import { SipGuard } from './contents/sip-guard';
 import { SipInterface } from './contents/sip-interface';
 import { SipEnum } from './contents/sip-enum';
+import { SipComponent } from './contents/sip-component';
 
 let stringify = require('json-stable-stringify');
 
@@ -33,7 +34,7 @@ function getRelativePath(args): string {
 export interface IParam {
     param: string;
     title: string;
-    terminal?:string;
+    terminal?: string;
 }
 
 export interface IConfig {
@@ -48,16 +49,16 @@ export interface IConfig {
 }
 
 export function activate(context: ExtensionContext) {
-    //console.log(context.storagePath);
+
     let _rootPath = workspace.rootPath;
-    let _getRootPath = ():string=>{
+    let _getRootPath = (): string => {
         return _rootPath;
     },
-    _calcRootPath = (curPath:string) => {
-        curPath = CalcPath(curPath);
-        _rootPath = FindPathUpward(workspace.rootPath, curPath, 'package.json')
-            && workspace.rootPath;
-    };
+        _calcRootPath = (curPath: string) => {
+            curPath = CalcPath(curPath);
+            _rootPath = FindPathUpward(workspace.rootPath, curPath, 'package.json')
+                && workspace.rootPath;
+        };
 
     context.subscriptions.push({
         dispose: () => {
@@ -116,9 +117,11 @@ export function activate(context: ExtensionContext) {
     };
     let send_builtin = (config: IConfig, args, params: string, path: string, inputText: string) => {
         let p = argv(params || '');
+        let rootPath = _getRootPath();
         let gParam = Object.assign({
             name: inputText,
-            path: path
+            path: path,
+            moduleFile: FindModuleFile(rootPath, path)
         }, p);
         switch (config.command) {
             case 'config':
@@ -135,13 +138,16 @@ export function activate(context: ExtensionContext) {
                 break;
             case 'sip-generate':
                 let generateConfigs: IConfig[] = require('./sip-generate.conf');
-                showQuickPick(generateConfigs, _getRootPath(), args);
+                showQuickPick(generateConfigs, rootPath, args);
                 break;
             case 'sip-page':
                 sipGenerate(new SipPageComponent(), gParam);
                 break;
             case 'sip-modal':
                 sipGenerate(new SipModalComponent(), gParam);
+                break;
+            case 'sip-component':
+                sipGenerate(new SipComponent(), gParam);
                 break;
             case 'sip-module':
                 sipGenerate(new SipModule(), gParam);
@@ -286,7 +292,7 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.tosnippettext', (textEditor, edit) => {
         _calcRootPath(textEditor.document.fileName);
-        
+
         var { document, selection } = textEditor
         let isEmpty = textEditor.selection.isEmpty;
 
