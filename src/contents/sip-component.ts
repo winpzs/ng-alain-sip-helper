@@ -48,9 +48,6 @@ export class SipComponent implements ContentBase {
 
     contentTS(params: GenerateParam): string {
 
-        let inlineHtml = params['inlineHtml'],
-            inlineStyle = params['inlineStyle'];
-
         let content = ``;
         return content;
     }
