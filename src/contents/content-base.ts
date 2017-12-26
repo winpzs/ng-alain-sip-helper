@@ -121,32 +121,44 @@ export function CalcImportPath(moduleFile: string, tsFile: string) {
     return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './');
 }
 
-export function PushToImport(content: string, className: string, importPath: string, isExport:boolean): string {
+export function PushToImport(content: string, className: string, importPath: string, isExport: boolean): string {
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
     let importRegex = /^\s*import\s+/;
     let index = contentList.findIndex(item => { return importRegex.test(item); });
+    if (index < 0) {
+        index = contentList.length - 1;
+    }
 
-    if (index > -1) {
-        contentList[index] = contentList[index] + ["\nimport { ", className, " } from '", importPath, "';"].join('');
-        if (isExport)
-            contentList[index] = contentList[index] + ["\nexport * from '", importPath, "';"].join('');
-        return contentList.reverse().join('\n');
-    } else
-        return content;
+    contentList[index] = contentList[index] + ["\nimport { ", className, " } from '", importPath, "';"].join('');
+    if (isExport)
+        _pushToExport(contentList, index, importPath);
+    return contentList.reverse().join('\n');
 
+}
+
+function _pushToExport(contentList: string[], importIndex: number, importPath: string): string[] {
+
+    let exportRegex = /^\s*export\s+\*/;
+    let index = contentList.findIndex(item => { return exportRegex.test(item); });
+    if (index < 0) {
+        index = importIndex;
+    }
+
+    contentList[index] = contentList[index] + ["\nexport * from '", importPath, "';"].join('');
+    return contentList
 }
 
 export function PushToModuleDeclarations(content: string, className: string) {
 
     content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
-        if (!isEmpty){
+        if (!isEmpty) {
             let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
             classText = classText.replace(/,/g, ',\n        ');
             classText = ['\n        ', classText, '\n    '].join('');
             return find.replace(text, classText);
-        } else 
+        } else
             return 'declarations: [ ' + className + ' ]'
     });
 
@@ -157,12 +169,12 @@ export function PushToModuleEntryComponents(content: string, className: string) 
 
     content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
-        if (!isEmpty){
+        if (!isEmpty) {
             let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
             classText = classText.replace(/,/g, ',\n        ');
             classText = ['\n        ', classText, '\n    '].join('');
             return find.replace(text, classText);
-        } else 
+        } else
             return 'entryComponents: [ ' + className + ' ]'
     });
 
@@ -173,12 +185,12 @@ export function PushToModuleImports(content: string, className: string) {
 
     content = content.replace(/imports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
-        if (!isEmpty){
+        if (!isEmpty) {
             let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
             classText = classText.replace(/,/g, ',\n        ');
             classText = ['\n        ', classText, '\n    '].join('');
             return find.replace(text, classText);
-        } else 
+        } else
             return 'imports: [ ' + className + ' ]'
     });
 
@@ -189,12 +201,12 @@ export function PushToModuleExports(content: string, className: string) {
 
     content = content.replace(/exports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
-        if (!isEmpty){
+        if (!isEmpty) {
             let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
             classText = classText.replace(/,/g, ',\n        ');
             classText = ['\n        ', classText, '\n    '].join('');
             return find.replace(text, classText);
-        } else 
+        } else
             return 'exports: [ ' + className + ' ]'
     });
 
@@ -205,12 +217,12 @@ export function PushToModuleProviders(content: string, className: string) {
 
     content = content.replace(/providers\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
-        if (!isEmpty){
+        if (!isEmpty) {
             let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
             classText = classText.replace(/,/g, ',\n        ');
             classText = ['\n        ', classText, '\n    '].join('');
             return find.replace(text, classText);
-        } else 
+        } else
             return 'providers: [ ' + className + ' ]'
     });
 

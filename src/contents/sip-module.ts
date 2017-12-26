@@ -25,7 +25,7 @@ export class SipModule implements ContentBase {
             retFile = fsFile;
             if (!fs.existsSync(fsFile)) {
                 fs.writeFileSync(fsFile, this.contentTS(params), 'utf-8');
-                this.pushToModule(fsFile, params);
+                if (params.moudle) this.pushToModule(fsFile, params);
             }
         }
 

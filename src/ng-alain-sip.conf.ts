@@ -49,172 +49,274 @@ const config = [
         ]
     },
     {
+        "title": "generate >",
         "command": "",
-        "title": "ng-generate >",
-        "children": [
+        "builtin": false,
+        children: [
             {
-                "title": "component >",
-                "command": "ng g component %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "title": "page >",
+                "command": "sip-page",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false --inline-style true --inline-template false",
+                        "param": "--ts --html --style --dir",
+                        "title": "创建目录, ts, html, style"
+                    },
+                    {
+                        "param": "--ts --html --dir",
                         "title": "创建目录, ts, html"
                     },
                     {
-                        "param": "--flat true --spec false --inline-style true --inline-template false",
-                        "title": "ts, html"
+                        "param": "--ts",
+                        "title": "ts"
                     },
                     {
-                        "param": "--flat true --spec false --inline-style true --inline-template true",
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--style",
+                        "title": "style"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "modal >",
+                "command": "sip-modal",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --style --dir",
+                        "title": "创建目录, ts, html, style"
+                    },
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts",
                         "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--style",
+                        "title": "style"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "component >",
+                "command": "sip-component",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --style --dir",
+                        "title": "创建目录, ts, html, style"
+                    },
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--style",
+                        "title": "style"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
                     }
                 ]
             },
             {
                 "title": "module >",
-                "command": "ng g module %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "command": "sip-module",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false",
+                        "param": "--ts --dir --moudle",
+                        "title": "创建目录, ts, moudle"
+                    },
+                    {
+                        "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
+                        "param": "--ts --moudle",
+                        "title": "ts, moudle"
+                    },
+                    {
+                        "param": "--ts",
                         "title": "ts"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
                     }
                 ]
             },
             {
-                "title": "servcie >",
-                "command": "ng g service %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "title": "service >",
+                "command": "sip-service",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false",
+                        "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
+                        "param": "--ts",
                         "title": "ts"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
                     }
                 ]
             },
             {
                 "title": "directive >",
-                "command": "ng g directive %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "command": "sip-directive",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false",
+                        "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
+                        "param": "--ts",
                         "title": "ts"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
                     }
                 ]
             },
             {
                 "title": "pipe >",
-                "command": "ng g pipe %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "command": "sip-pipe",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false",
+                        "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
+                        "param": "--ts",
                         "title": "ts"
-                    }
-                ]
-            },
-            {
-                "title": "class >",
-                "command": "ng g class %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
-                "path": "%currentPath%",
-                "input": true,
-                "params": [
-                    {
-                        "param": "--flat false --spec false",
-                        "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
-                        "title": "ts"
+                        "param": "--spec",
+                        "title": "spec"
                     }
                 ]
             },
             {
                 "title": "guard >",
-                "command": "ng g guard %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "command": "sip-guard",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false",
+                        "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "class >",
+                "command": "sip-class",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --dir",
+                        "title": "创建目录, ts"
+                    },
+                    {
+                        "param": "--ts",
                         "title": "ts"
                     }
                 ]
             },
             {
                 "title": "interface >",
-                "command": "ng g interface %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "command": "sip-interface",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false",
+                        "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
+                        "param": "--ts",
                         "title": "ts"
                     }
                 ]
             },
             {
                 "title": "enum >",
-                "command": "ng g enum %input% %params%",
-                "terminal": "generate-ngalainsiphelper",
+                "command": "sip-enum",
                 "path": "%currentPath%",
+                "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--flat false --spec false",
+                        "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--flat true --spec false",
+                        "param": "--ts",
                         "title": "ts"
                     }
                 ]
             }
         ]
-    },
-    {
-        "title": "sip-generate >",
-        "command": "sip-generate",
-        "builtin": true
     },
     {
         "title": "npm >",
@@ -224,7 +326,7 @@ const config = [
     {
         "title": "other >",
         "command": "",
-        children:[
+        children: [
             {
                 "title": "JSON To Class",
                 "command": "json-class",

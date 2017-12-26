@@ -137,8 +137,8 @@ export function activate(context: ExtensionContext) {
             case 'json-class':
                 commands.executeCommand('ngalainsiphelper.jsontoclass');
                 break;
-            case 'sip-generate':
-                let generateConfigs: IConfig[] = require('./sip-generate.conf');
+            case 'ng-generate':
+                let generateConfigs: IConfig[] = require('./ng-generate.conf');
                 showQuickPick(generateConfigs, rootPath, args);
                 break;
             case 'sip-page':
