@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, CalcImportPath, PushToImport, PushToModuleDeclarations, PushToModuleExports } from "./content-base";
 
 export class SipPipe implements ContentBase {
 
@@ -23,7 +23,10 @@ export class SipPipe implements ContentBase {
         if (params.ts){
             fsFile = path.join(fsPath, MakeFileName(name, prefix, 'ts'));
             retFile = fsFile;
-            fs.existsSync(fsFile) || fs.writeFileSync(fsFile, this.contentTS(params), 'utf-8');
+            if (!fs.existsSync(fsFile)) {
+                fs.writeFileSync(fsFile, this.contentTS(params), 'utf-8');
+                this.pushToModule(fsFile, params);
+            }
         }
 
         if (params.spec) {
@@ -71,6 +74,28 @@ describe('${className}', () => {
 });
 `;
         return content;
+    }
+
+    pushToModule(tsFile:string, params: GenerateParam) {
+        let moduleFile = params.moduleFile;
+        if (!moduleFile) return;
+        if (!fs.existsSync(moduleFile)) return;
+
+        let importPath = CalcImportPath(moduleFile, tsFile);
+
+        let name = params.name;
+        let prefix = this.prefix;
+        let className = MakeClassName(name, prefix);
+
+        let content: string = fs.readFileSync(moduleFile, 'utf-8');
+
+        content = PushToImport(content, className, importPath, true);
+
+        content = PushToModuleDeclarations(content, className);
+        content = PushToModuleExports(content, className);
+
+        fs.writeFileSync(moduleFile, content, 'utf-8');
+
     }
 
 }

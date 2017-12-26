@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, CalcImportPath, PushToImport, PushToModuleDeclarations, PushToModuleEntryComponents, PushToModuleExports } from "./content-base";
 import { SipComponent } from './sip-component';
 
 export class SipModalComponent extends SipComponent {
@@ -71,6 +71,29 @@ export class ${className} extends SipUiModal {
     </sip-modal-footer>
 </sip-modal>`;
         return content;
+    }
+
+    pushToModule(tsFile:string, params: GenerateParam) {
+        let moduleFile = params.moduleFile;
+        if (!moduleFile) return;
+        if (!fs.existsSync(moduleFile)) return;
+
+        let importPath = CalcImportPath(moduleFile, tsFile);
+
+        let name = params.name;
+        let prefix = this.prefix;
+        let className = MakeClassName(name, prefix);
+
+        let content: string = fs.readFileSync(moduleFile, 'utf-8');
+
+        content = PushToImport(content, className, importPath, true);
+
+        content = PushToModuleDeclarations(content, className);
+        content = PushToModuleEntryComponents(content, className);
+        content = PushToModuleExports(content, className);
+
+        fs.writeFileSync(moduleFile, content, 'utf-8');
+
     }
 
 }

@@ -5,8 +5,8 @@ import { Lib } from '../lib';
 export interface GenerateParam {
     name: string;
     path: string;
-    moduleFile:string;
-    rootPath:string;
+    moduleFile: string;
+    rootPath: string;
     [key: string]: any;
 }
 
@@ -99,7 +99,7 @@ function FindPathUpwardIn(rootPath: string, curPath: string, fileName: string): 
     }
 }
 
-export function FindModuleFile(rootPath:string, curPath:string):string{
+export function FindModuleFile(rootPath: string, curPath: string): string {
     let baseName = path.basename(curPath);
     let fsPath = path.join(curPath, [baseName, 'module.ts'].join('.'));
     if (fs.existsSync(fsPath))
@@ -113,31 +113,106 @@ export function FindModuleFile(rootPath:string, curPath:string):string{
     }
 };
 
-function makeImport(content:string, className:string, importPath:string):string{
+export function CalcImportPath(moduleFile: string, tsFile: string) {
+    let mdPath = path.dirname(moduleFile);
+    let tsPath = path.dirname(tsFile);
+    let fileName = path.parse(tsFile).name;
+    let importPath = ['.', path.relative(mdPath, tsPath), fileName].join('/');
+    return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './');
+}
+
+export function PushToImport(content: string, className: string, importPath: string, isExport:boolean): string {
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
     let importRegex = /^\s*import\s+/;
-    let index  = contentList.findIndex(item=>{ return importRegex.test(item);});
+    let index = contentList.findIndex(item => { return importRegex.test(item); });
 
-    if (index > -1){
-        let text = contentList[index];
-        text += ["\nimport { ", className, " } from './",importPath, "';"].join('');
+    if (index > -1) {
+        contentList[index] = contentList[index] + ["\nimport { ", className, " } from '", importPath, "';"].join('');
+        if (isExport)
+            contentList[index] = contentList[index] + ["\nexport * from '", importPath, "';"].join('');
         return contentList.reverse().join('\n');
     } else
         return content;
 
 }
 
-export function pushToModuleDeclarations(moduleFile:string, className:string, importPath:string){
-    if (!fs.existsSync(moduleFile)) return;
+export function PushToModuleDeclarations(content: string, className: string) {
 
-    let content:string = fs.readFileSync(moduleFile, 'utf-8');
-    content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function(find, text, index){
-        let isEmpty = !!Lib.trim(text);
-        return find.replace(text, isEmpty ? className: ','+className);
+    content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty){
+            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
+            classText = classText.replace(/,/g, ',\n        ');
+            classText = ['\n        ', classText, '\n    '].join('');
+            return find.replace(text, classText);
+        } else 
+            return 'declarations: [ ' + className + ' ]'
     });
 
-    content = makeImport(content, className, importPath);
+    return content;
+}
 
-    fs.writeFileSync(moduleFile, content, 'utf-8');
+export function PushToModuleEntryComponents(content: string, className: string) {
+
+    content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty){
+            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
+            classText = classText.replace(/,/g, ',\n        ');
+            classText = ['\n        ', classText, '\n    '].join('');
+            return find.replace(text, classText);
+        } else 
+            return 'entryComponents: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function PushToModuleImports(content: string, className: string) {
+
+    content = content.replace(/imports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty){
+            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
+            classText = classText.replace(/,/g, ',\n        ');
+            classText = ['\n        ', classText, '\n    '].join('');
+            return find.replace(text, classText);
+        } else 
+            return 'imports: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function PushToModuleExports(content: string, className: string) {
+
+    content = content.replace(/exports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty){
+            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
+            classText = classText.replace(/,/g, ',\n        ');
+            classText = ['\n        ', classText, '\n    '].join('');
+            return find.replace(text, classText);
+        } else 
+            return 'exports: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function PushToModuleProviders(content: string, className: string) {
+
+    content = content.replace(/providers\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty){
+            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
+            classText = classText.replace(/,/g, ',\n        ');
+            classText = ['\n        ', classText, '\n    '].join('');
+            return find.replace(text, classText);
+        } else 
+            return 'providers: [ ' + className + ' ]'
+    });
+
+    return content;
 }
