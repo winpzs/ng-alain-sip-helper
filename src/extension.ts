@@ -195,7 +195,6 @@ export function activate(context: ExtensionContext) {
             file = path.join(rootPath, file);
             p.moduleFile = file;
             genObj.generate(p);
-            // window.showInformationMessage(file);
         });
     };
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {

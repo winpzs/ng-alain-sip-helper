@@ -173,17 +173,45 @@ function _pushToExport(contentList: string[], importIndex: number, importPath: s
     return contentList
 }
 
+function _pushClassName(text:string, className:string):string{
+    let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
+    classText = classText.replace(/,/g, ',\n        ');
+    classText = ['\n        ', classText, '\n    '].join('');
+    return classText;
+}
+
+function _removeClassName(text:string, className:string):string{
+    let classText = text.replace(/[\r\n\s]+/g, '')
+        .split(',').filter(item=>item != className).join(',');
+
+    classText = classText.replace(/,/g, ',\n        ');
+    classText = ['\n        ', classText, '\n    '].join('');
+    return classText;
+}
+
 export function PushToModuleDeclarations(content: string, className: string) {
 
     content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
-            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
-            classText = classText.replace(/,/g, ',\n        ');
-            classText = ['\n        ', classText, '\n    '].join('');
+            let classText = _pushClassName(text, className);
             return find.replace(text, classText);
         } else
             return 'declarations: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function RemoveFromModuleDeclarations(content: string, className: string) {
+
+    content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty) {
+            let classText = _removeClassName(text, className);
+            return find.replace(text, classText);
+        } else
+            return find;
     });
 
     return content;
@@ -194,9 +222,21 @@ export function PushToModuleEntryComponents(content: string, className: string) 
     content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
-            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
-            classText = classText.replace(/,/g, ',\n        ');
-            classText = ['\n        ', classText, '\n    '].join('');
+            let classText = _pushClassName(text, className);
+            return find.replace(text, classText);
+        } else
+            return 'entryComponents: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function RemoveModuleEntryComponents(content: string, className: string) {
+
+    content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty) {
+            let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
             return 'entryComponents: [ ' + className + ' ]'
@@ -210,9 +250,21 @@ export function PushToModuleImports(content: string, className: string) {
     content = content.replace(/imports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
-            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
-            classText = classText.replace(/,/g, ',\n        ');
-            classText = ['\n        ', classText, '\n    '].join('');
+            let classText = _pushClassName(text, className);
+            return find.replace(text, classText);
+        } else
+            return 'imports: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function RemoveFromModuleImports(content: string, className: string) {
+
+    content = content.replace(/imports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty) {
+            let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
             return 'imports: [ ' + className + ' ]'
@@ -226,9 +278,21 @@ export function PushToModuleExports(content: string, className: string) {
     content = content.replace(/exports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
-            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
-            classText = classText.replace(/,/g, ',\n        ');
-            classText = ['\n        ', classText, '\n    '].join('');
+            let classText = _pushClassName(text, className);
+            return find.replace(text, classText);
+        } else
+            return 'exports: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function RemoveFromModuleExports(content: string, className: string) {
+
+    content = content.replace(/exports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty) {
+            let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
             return 'exports: [ ' + className + ' ]'
@@ -242,9 +306,21 @@ export function PushToModuleProviders(content: string, className: string) {
     content = content.replace(/providers\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
-            let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
-            classText = classText.replace(/,/g, ',\n        ');
-            classText = ['\n        ', classText, '\n    '].join('');
+            let classText = _pushClassName(text, className);
+            return find.replace(text, classText);
+        } else
+            return 'providers: [ ' + className + ' ]'
+    });
+
+    return content;
+}
+
+export function RemoveFromModuleProviders(content: string, className: string) {
+
+    content = content.replace(/providers\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        if (!isEmpty) {
+            let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
             return 'providers: [ ' + className + ' ]'
