@@ -160,20 +160,16 @@ const config = [
                 "input": true,
                 "params": [
                     {
-                        "param": "--ts --dir --moudle",
-                        "title": "创建目录, ts, moudle"
-                    },
-                    {
                         "param": "--ts --dir",
                         "title": "创建目录, ts"
                     },
                     {
-                        "param": "--ts --moudle",
-                        "title": "ts, moudle"
-                    },
-                    {
                         "param": "--ts",
                         "title": "ts"
+                    },
+                    {
+                        "param": "--routing",
+                        "title": "routing"
                     },
                     {
                         "param": "--spec",

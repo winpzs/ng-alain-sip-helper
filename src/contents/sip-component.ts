@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting } from "./content-base";
 
 export class SipComponent implements ContentBase {
 
@@ -62,7 +62,7 @@ export class SipComponent implements ContentBase {
         let content = `import { Component, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'sip-aaaa',
+    selector: 'sip-${name}',
     ${template},
     ${style}
 })
@@ -141,6 +141,8 @@ describe('${className}', () => {
 
         content = PushToModuleDeclarations(content, className);
         content = PushToModuleExports(content, className);
+
+        content = PushToModuleRouting(content, name, className, importPath);
 
         fs.writeFileSync(moduleFile, content, 'utf-8');
 

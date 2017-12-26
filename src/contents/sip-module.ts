@@ -29,6 +29,13 @@ export class SipModule implements ContentBase {
             }
         }
 
+        if (params.routing) {
+            let routingName = [name, 'routing'].join('-');
+            fsFile = path.join(fsPath, MakeFileName(routingName, prefix, 'ts'));
+            retFile || (retFile = fsFile);
+            fs.existsSync(fsFile) || fs.writeFileSync(fsFile, this.contentRoutingTS(params), 'utf-8');
+        }
+
         if (params.spec) {
             fsFile = path.join(fsPath, MakeFileName(name, prefix + '.spec', 'ts'));
             retFile || (retFile = fsFile);
@@ -57,6 +64,31 @@ import { SharedModule } from '@shared/shared.module';
     providers: [],
     exports:[],
     entryComponents:[]
+})
+export class ${className} { }
+`;
+        return content;
+    }
+
+    contentRoutingTS(params: GenerateParam): string {
+        let name = [params.name, 'routing'].join('-');
+        let prefix = this.prefix;
+        let className = MakeClassName(name, prefix);
+
+        let content = `import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { RouterModule, Routes } from '@angular/router';
+import { SharedModule } from '@shared/shared.module';
+
+const routes: Routes = [];
+
+@NgModule({
+    imports: [
+        CommonModule,
+        SharedModule,
+        RouterModule.forChild(routes)
+    ]
 })
 export class ${className} { }
 `;

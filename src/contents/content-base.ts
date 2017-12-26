@@ -228,3 +228,68 @@ export function PushToModuleProviders(content: string, className: string) {
 
     return content;
 }
+
+let _routingRegex = /const\s+routes\s*:\s*Routes\s*\=\s*\[((?:\n|\r|.)*)\]\s*\;/m;
+function _isRoutingModule(content: string):boolean{
+    return _routingRegex.test(content);
+}
+function _getRoutingContent(content:string):string {
+    let finds = /\s*\/\/\-\-\s*register(?:\n|\r|.)*\/\/\-\-\s*end\s+register/m.exec(content);
+    return finds ? finds[0] : '';
+}
+function _getRoutingItems(content:string):string[]{
+    let contentList = content.replace(/[\r\n]+/g, '\n').split('\n');
+    let retList:string[] = [],
+        temp = '';
+    contentList.forEach(item=>{
+        if (/^\s*\/\/\-\-\s*register/.test(item))
+            temp = '';
+        else if (/^\s*\/\/\-\-\s*end\s+register/.test(item))
+            retList.push(temp);
+        else
+            temp = [temp, item].join('\n');
+    });
+    return retList;
+}
+function _makeRoutingItems(contentList:string[]):string{
+    let len =contentList.length;
+    let notEnd:boolean = len <= 1 ? false : /\,\s*$/.test(contentList[len-2]);
+    if (notEnd)
+        contentList[len-1] += ',';
+    else if (len > 1){
+        contentList[len-2] += ',';
+    }
+
+    let content:string = contentList.map(item=>{
+        return ['    //-- register', item , '    //-- end register'].join('\n');
+    }).join('\n').replace(/\n{2,}/g, '\n');
+    return content;
+}
+
+export function PushToModuleRouting(content: string, name:string, className: string, importPath: string, isChild?:boolean) {
+
+    content = content.replace(_routingRegex, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        let routingContent = _getRoutingContent(text);
+        let routingItems = _getRoutingItems(routingContent);
+        if (isChild){
+            routingItems.push(`    {
+        path: '${name}',
+        loadChildren: '${importPath}#${className}'
+    }`);
+        } else {
+            routingItems.push(`    {
+        path: '${name}',
+        component: ${className}
+    }`);
+        }
+        let retContent = text.replace(routingContent,  '\n' + _makeRoutingItems(routingItems));
+
+        if (!isEmpty) {
+            return find.replace(text, retContent);
+        } else
+            return 'const routes: Routes = [' + retContent + '\n];'
+    });
+
+    return content;
+}
