@@ -9,7 +9,7 @@ import { SipPageComponent } from './contents/sip-page-component';
 import { SipModalComponent } from './contents/sip-modal-component';
 import { Lib } from './lib';
 import { SipClass } from './contents/sip-class';
-import { ContentBase, IsInRootPath, FindPathUpward, CalcPath, FindModuleFile } from './contents/content-base';
+import { ContentBase, IsInRootPath, FindPathUpward, CalcPath, FindModuleFile, FindUpwardModuleFiles, _FindUpwardModuleFiles } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
 import { SipService } from './contents/sip-service';
 import { SipDirective } from './contents/sip-directive';
@@ -34,6 +34,7 @@ function getRelativePath(args): string {
 export interface IParam {
     param: string;
     title: string;
+    input: boolean;
     terminal?: string;
 }
 
@@ -68,9 +69,9 @@ export function activate(context: ExtensionContext) {
         }
     });
 
-    let _fileName = '';
+    let _fileName = '', _curFile = '';
     context.subscriptions.push(commands.registerCommand('ngalainsiphelper.quickpicks', (args) => {
-        let curPath = getCurrentPath(args),
+        let curPath = _curFile = getCurrentPath(args),
             defaultName = path.basename(curPath);
         _fileName = defaultName.split('.')[0];
 
@@ -110,10 +111,10 @@ export function activate(context: ExtensionContext) {
         return text;
     };
     let openFile = (file: string): PromiseLike<TextDocument> => {
-        return workspace.openTextDocument(file).then(r => {
+        return file ? workspace.openTextDocument(file).then(r => {
             window.showTextDocument(r);
             return r;
-        });
+        }) : Promise.resolve<any>(null);
     };
     let send_builtin = (config: IConfig, args, params: string, path: string, inputText: string) => {
         let p = argv(params || '');
@@ -176,9 +177,22 @@ export function activate(context: ExtensionContext) {
                 break;
         }
     };
-    let sipGenerate = (genObj: ContentBase, p: any) => {
-        openFile(genObj.generate(p));
-    }
+    let sipGenerate = (genObj: ContentBase, p: any, args?:any) => {
+        if (p.regmodlue || p.cleanmodlue){
+            let rootPath = p.rootPath;
+            let curFile = _curFile;
+            p.name = path.basename(_curFile).split('.')[0];
+            let files = FindUpwardModuleFiles(rootPath, curFile);
+            let picks = files.map(file=>path.relative(rootPath, file));
+             window.showQuickPick(picks).then(file=>{
+                file = path.join(rootPath, file);
+                p.moduleFile = file;
+                openFile(genObj.generate(p));
+            });
+        } else {
+            openFile(genObj.generate(p));
+        }
+    };
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {
         let picks = configs.map(item => item.title);
 
@@ -207,8 +221,9 @@ export function activate(context: ExtensionContext) {
             if (!title) return;
             let param: IParam = params.find(item => item.title == title);
             let cmd = config.command;
+            let input = 'input' in param ? param.input : config.input;
             if (!param || !config.command) return;
-            send_command(param.terminal || config.terminal, path, config.command, param.param, config.input, args, config);
+            send_command(param.terminal || config.terminal, path, config.command, param.param, input, args, config);
         });
     };
 

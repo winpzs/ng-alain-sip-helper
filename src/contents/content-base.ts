@@ -113,6 +113,30 @@ export function FindModuleFile(rootPath: string, curPath: string): string {
     }
 };
 
+export function _FindUpwardModuleFiles(files:string[], rootPath: string, curPath:string, curFile: string, lv:number) {
+    if (!IsInRootPath(rootPath, curFile)) return;
+
+    let mdRegex = /module\.ts\s*$/i;
+    let file, hasFile = false;
+    fs.readdirSync(curPath).forEach(fileName=>{
+        if (mdRegex.test(fileName)){
+            file = path.join(curPath, fileName);
+            if (file != curFile)
+                files.push(file);
+        }
+    });
+    if (lv < 2){
+        _FindUpwardModuleFiles(files, rootPath, path.dirname(curPath), curFile, lv+1);
+    }
+};
+
+export function FindUpwardModuleFiles(rootPath: string, curFile: string): string[] {
+    let files = [];
+    _FindUpwardModuleFiles(files, rootPath, CalcPath(curFile), curFile, 0);
+    return files;
+};
+
+
 export function CalcImportPath(moduleFile: string, tsFile: string) {
     let mdPath = path.dirname(moduleFile);
     let tsPath = path.dirname(tsFile);
@@ -237,6 +261,9 @@ function _getRoutingContent(content:string):string {
     let finds = /\s*\/\/\-\-\s*register(?:\n|\r|.)*\/\/\-\-\s*end\s+register/m.exec(content);
     return finds ? finds[0] : '';
 }
+export function IsRoutingModule(content: string):boolean{
+    return _isRoutingModule(content);
+}
 function _getRoutingItems(content:string):string[]{
     let contentList = content.replace(/[\r\n]+/g, '\n').split('\n');
     let retList:string[] = [],
@@ -251,9 +278,8 @@ function _getRoutingItems(content:string):string[]{
     });
     return retList;
 }
-function _makeRoutingItems(contentList:string[]):string{
+function _makeRoutingItems(contentList:string[], notEnd:boolean):string{
     let len =contentList.length;
-    let notEnd:boolean = len <= 1 ? false : /\,\s*$/.test(contentList[len-2]);
     if (notEnd)
         contentList[len-1] += ',';
     else if (len > 1){
@@ -261,7 +287,7 @@ function _makeRoutingItems(contentList:string[]):string{
     }
 
     let content:string = contentList.map(item=>{
-        return ['    //-- register', item , '    //-- end register'].join('\n');
+        return ['    //-- register', item , '    //-- end register\n'].join('\n');
     }).join('\n').replace(/\n{2,}/g, '\n');
     return content;
 }
@@ -283,13 +309,18 @@ export function PushToModuleRouting(content: string, name:string, className: str
         component: ${className}
     }`);
         }
-        let retContent = text.replace(routingContent,  '\n' + _makeRoutingItems(routingItems));
+        let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
+        let retContent = text.replace(routingContent,  '\n' + _makeRoutingItems(routingItems, notEnd));
 
-        if (!isEmpty) {
-            return find.replace(text, retContent);
-        } else
-            return 'const routes: Routes = [' + retContent + '\n];'
+        let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
+            : find.replace(text, retContent);
+        return retFind.replace(/\n{2,}/g, '\n')
+
     });
 
     return content;
+}
+
+export function IsInModuel(content:string, className:string):boolean{
+    return new RegExp('\\b'+className+'\\b').test(content);
 }

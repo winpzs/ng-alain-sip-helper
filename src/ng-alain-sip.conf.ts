@@ -20,6 +20,8 @@ const config = [
                 "title": "dev",
                 //vscod terminal 名称, 如果没有，取config.terminal
                 "terminal": "",
+                //是否需要输入内容, 并压入%input%变更, 如果没有，取config.input
+                "input": false
             }, {
                 "param": "-- -o --e=dev -pc=\"proxy.conf.js\"",
                 "title": "dev proxy"
@@ -83,6 +85,21 @@ const config = [
                     {
                         "param": "--spec",
                         "title": "spec"
+                    },
+                    {
+                        "param": "--regmodlue",
+                        "title": "注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--cleanmodlue",
+                        "title": "撤消注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--del",
+                        "title": "删除",
+                        "input": false
                     }
                 ]
             },
@@ -116,6 +133,21 @@ const config = [
                     {
                         "param": "--spec",
                         "title": "spec"
+                    },
+                    {
+                        "param": "--regmodlue",
+                        "title": "注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--cleanmodlue",
+                        "title": "撤消注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--del",
+                        "title": "删除",
+                        "input": false
                     }
                 ]
             },
@@ -149,6 +181,21 @@ const config = [
                     {
                         "param": "--spec",
                         "title": "spec"
+                    },
+                    {
+                        "param": "--regmodlue",
+                        "title": "注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--cleanmodlue",
+                        "title": "撤消注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--del",
+                        "title": "删除",
+                        "input": false
                     }
                 ]
             },
@@ -174,6 +221,21 @@ const config = [
                     {
                         "param": "--spec",
                         "title": "spec"
+                    },
+                    {
+                        "param": "--regmodlue",
+                        "title": "注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--cleanmodlue",
+                        "title": "撤消注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--del",
+                        "title": "删除",
+                        "input": false
                     }
                 ]
             },
@@ -195,6 +257,21 @@ const config = [
                     {
                         "param": "--spec",
                         "title": "spec"
+                    },
+                    {
+                        "param": "--regmodlue",
+                        "title": "注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--cleanmodlue",
+                        "title": "撤消注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--del",
+                        "title": "删除",
+                        "input": false
                     }
                 ]
             },
@@ -216,6 +293,21 @@ const config = [
                     {
                         "param": "--spec",
                         "title": "spec"
+                    },
+                    {
+                        "param": "--regmodlue",
+                        "title": "注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--cleanmodlue",
+                        "title": "撤消注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--del",
+                        "title": "删除",
+                        "input": false
                     }
                 ]
             },
@@ -237,6 +329,21 @@ const config = [
                     {
                         "param": "--spec",
                         "title": "spec"
+                    },
+                    {
+                        "param": "--regmodlue",
+                        "title": "注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--cleanmodlue",
+                        "title": "撤消注册modlue",
+                        "input": false
+                    },
+                    {
+                        "param": "--del",
+                        "title": "删除",
+                        "input": false
                     }
                 ]
             },

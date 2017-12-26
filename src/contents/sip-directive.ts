@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, CalcImportPath, PushToImport, PushToModuleDeclarations, PushToModuleExports } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, CalcImportPath, PushToImport, PushToModuleDeclarations, PushToModuleExports, IsInModuel, IsRoutingModule, PushToModuleRouting } from "./content-base";
 
 export class SipDirective implements ContentBase {
 
@@ -20,12 +20,17 @@ export class SipDirective implements ContentBase {
         let retFile = '',
             fsFile;
 
+        if (params.regmodlue) {
+            fsFile = path.join(fsPath, MakeFileName(name, prefix, 'ts'));
+            this.pushToModule(fsFile, params);
+            return;
+        }
+    
         if (params.ts){
             fsFile = path.join(fsPath, MakeFileName(name, prefix, 'ts'));
             retFile = fsFile;
             if (!fs.existsSync(fsFile)){
                 fs.writeFileSync(fsFile, this.contentTS(params), 'utf-8');
-                this.pushToModule(fsFile, params);
             }
         }
 
@@ -86,11 +91,13 @@ describe('${className}', () => {
         let className = MakeClassName(name, prefix);
 
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
+        if (IsInModuel(content, className)) return;
 
-        content = PushToImport(content, className, importPath, true);
+        content = PushToImport(content, className, importPath, !IsRoutingModule(content));
 
         content = PushToModuleDeclarations(content, className);
         content = PushToModuleExports(content, className);
+        content = PushToModuleRouting(content, name, className, importPath);
 
         fs.writeFileSync(moduleFile, content, 'utf-8');
 

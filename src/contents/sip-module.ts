@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, CalcImportPath, PushToImport, PushToModuleImports, PushToModuleExports } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, CalcImportPath, PushToImport, PushToModuleImports, PushToModuleExports, IsInModuel, PushToModuleRouting, IsRoutingModule } from "./content-base";
 
 export class SipModule implements ContentBase {
 
@@ -20,12 +20,17 @@ export class SipModule implements ContentBase {
         let retFile = '',
             fsFile;
 
+        if (params.regmodlue) {
+            fsFile = path.join(fsPath, MakeFileName(name, prefix, 'ts'));
+            this.pushToModule(fsFile, params);
+            return;
+        }
+
         if (params.ts) {
             fsFile = path.join(fsPath, MakeFileName(name, prefix, 'ts'));
             retFile = fsFile;
             if (!fs.existsSync(fsFile)) {
                 fs.writeFileSync(fsFile, this.contentTS(params), 'utf-8');
-                if (params.moudle) this.pushToModule(fsFile, params);
             }
         }
 
@@ -128,12 +133,16 @@ describe('${className}', () => {
         let prefix = this.prefix;
         let className = MakeClassName(name, prefix);
 
-        let content: string = fs.readFileSync(moduleFile, 'utf-8');
+        let isRouting = IsRoutingModule(fs.readFileSync(tsFile, 'utf-8'));
 
-        content = PushToImport(content, className, importPath, true);
+        let content: string = fs.readFileSync(moduleFile, 'utf-8');
+        if (IsInModuel(content, className)) return;
+
+        content = PushToImport(content, className, importPath, false);
 
         content = PushToModuleImports(content, className);
         content = PushToModuleExports(content, className);
+        content = PushToModuleRouting(content, name, className, importPath, isRouting);
 
         fs.writeFileSync(moduleFile, content, 'utf-8');
 
