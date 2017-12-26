@@ -18,6 +18,7 @@ import { SipGuard } from './contents/sip-guard';
 import { SipInterface } from './contents/sip-interface';
 import { SipEnum } from './contents/sip-enum';
 import { SipComponent } from './contents/sip-component';
+import { SipRegModule } from './contents/sip-reg-module';
 
 let stringify = require('json-stable-stringify');
 
@@ -122,7 +123,7 @@ export function activate(context: ExtensionContext) {
         let gParam = Object.assign({
             name: inputText,
             path: path,
-            rootPath:rootPath,
+            rootPath: rootPath,
             moduleFile: FindModuleFile(rootPath, path)
         }, p);
         switch (config.command) {
@@ -175,23 +176,27 @@ export function activate(context: ExtensionContext) {
             case 'sip-enum':
                 sipGenerate(new SipEnum(), gParam);
                 break;
+            case 'sip-regmodlue':
+                sipRegmodlue(new SipRegModule(), gParam);
+                break;
         }
     };
-    let sipGenerate = (genObj: ContentBase, p: any, args?:any) => {
-        if (p.regmodlue || p.cleanmodlue){
-            let rootPath = p.rootPath;
-            let curFile = _curFile;
-            p.name = path.basename(_curFile).split('.')[0];
-            let files = FindUpwardModuleFiles(rootPath, curFile);
-            let picks = files.map(file=>path.relative(rootPath, file));
-             window.showQuickPick(picks).then(file=>{
-                file = path.join(rootPath, file);
-                p.moduleFile = file;
-                openFile(genObj.generate(p));
-            });
-        } else {
-            openFile(genObj.generate(p));
-        }
+    let sipGenerate = (genObj: ContentBase, p: any, args?: any) => {
+        openFile(genObj.generate(p));
+    };
+    let sipRegmodlue = (genObj: ContentBase, p: any) => {
+        let rootPath = p.rootPath;
+        let curFile = p.path = _curFile;
+        p.name = path.basename(_curFile).split('.')[0];
+        let files = FindUpwardModuleFiles(rootPath, curFile);
+        let picks = files.map(file => path.relative(rootPath, file));
+        window.showQuickPick(picks).then(file => {
+            if (!file) return;
+            file = path.join(rootPath, file);
+            p.moduleFile = file;
+            genObj.generate(p);
+            // window.showInformationMessage(file);
+        });
     };
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {
         let picks = configs.map(item => item.title);
