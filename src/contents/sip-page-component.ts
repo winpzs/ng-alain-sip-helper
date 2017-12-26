@@ -13,7 +13,7 @@ export class SipPageComponent extends SipComponent {
         let className = MakeClassName(name, prefix);
 
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
-        let style = !params.style ? `styles:['']` : `styleUrls: ['./${name}.${prefix}.less']`;
+        let style = !params.style ? `styles:[]` : `styleUrls: ['./${name}.${prefix}.less']`;
 
         let content = `import { Component } from '@angular/core';
 
