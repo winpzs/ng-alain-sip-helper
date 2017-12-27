@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, IsRoutingModule, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, IsRoutingModule, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport, RemoveFromModuleRouting } from "./content-base";
 
 export class SipRegModule implements ContentBase {
 
@@ -57,7 +57,7 @@ export class SipRegModule implements ContentBase {
             if (isRouting && isTargetRouting)
                 content = PushToModuleRouting(content, name, className, importPath, true);
             else {
-                content = PushToImport(content, className, importPath, true);
+                content = PushToImport(content, className, importPath, !isTargetRouting);
                 content = PushToModuleImports(content, className);
                 //如果目标不是路由module, 成生module.exports
                 if (!isTargetRouting)
@@ -83,7 +83,9 @@ export class SipRegModule implements ContentBase {
         let className = MakeClassName(name, prefix);
 
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
-        if (!IsInModuel(content, className)) return;
+        // if (!IsInModuel(content, className)) return;
+
+        let isModule = /module/i.test(prefix);
 
         content = RemoveFromImport(content, className, importPath);
         content = RemoveFromModuleDeclarations(content, className);
@@ -91,19 +93,7 @@ export class SipRegModule implements ContentBase {
         content = RemoveFromModuleImports(content, className);
         content = RemoveFromModuleProviders(content, className);
         content = RemoveModuleEntryComponents(content, className);
-
-        let isTargetRouting = /-routing\./i.test(moduleFile);
-        if (/component/i.test(prefix)
-            || /directive/i.test(prefix)
-            || /pipe/i.test(prefix)) {
-
-
-
-        } else if (/service/i.test(prefix)) {
-
-        } else if (/module/i.test(prefix)) {
-
-        }
+        content = RemoveFromModuleRouting(content, name, className, importPath, isModule);
 
         fs.writeFileSync(moduleFile, content, 'utf-8');
 

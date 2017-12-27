@@ -408,6 +408,10 @@ function _makeRoutingItems(contentList: string[], notEnd: boolean): string {
     let content: string = contentList.map(item => {
         return ['    //-- register', item, '    //-- end register\n'].join('\n');
     }).join('\n').replace(/\n{2,}/g, '\n');
+    if (!notEnd){
+        content = content.replace(/}\s*\,[^\{\}]+$/, '}\n    //-- end register');
+    }
+
     return content;
 }
 
@@ -430,10 +434,37 @@ export function PushToModuleRouting(content: string, name: string, className: st
         }
         let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
         let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
+        retContent = retContent.replace(/\,{2,}/g, ',');
 
         let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
             : find.replace(text, retContent);
         return retFind.replace(/\n{2,}/g, '\n')
+
+    });
+
+    return content;
+}
+
+export function RemoveFromModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
+
+    let compRegex = new RegExp('\\b'+className+'\\b');
+    let filterChild = `'${importPath}#${className}'`;
+    content = content.replace(_routingRegex, function (find, text, index) {
+        let isEmpty = !Lib.trim(text);
+        let routingContent = _getRoutingContent(text);
+        let routingItems = _getRoutingItems(routingContent);
+        routingItems = routingItems.filter((item)=>{
+            return isChild ? item.indexOf(filterChild) < 0
+                : !compRegex.test(item);
+        })
+        
+        let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
+        let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
+        retContent = retContent.replace(/\,{2,}/g, ',');
+
+        let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
+            : find.replace(text, retContent);
+        return retFind.replace(/\n{2,}/g, '\n');
 
     });
 
