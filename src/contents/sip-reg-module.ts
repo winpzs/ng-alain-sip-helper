@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, IsRoutingModule, PushToModuleProviders, PushToModuleImports } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, IsRoutingModule, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport } from "./content-base";
 
 export class SipRegModule implements ContentBase {
 
@@ -16,7 +16,10 @@ export class SipRegModule implements ContentBase {
         let prefix = fInfo.ext;
         prefix = prefix ? prefix.substr(1) : prefix;
 
-        this.pushToModule(fsFile, params.moduleFile, name, prefix);
+        if (params.cleanmodlue)
+            this.removeFromModule(fsFile, params.moduleFile, name, prefix);
+        else
+            this.pushToModule(fsFile, params.moduleFile, name, prefix);
 
     }
 
@@ -31,29 +34,78 @@ export class SipRegModule implements ContentBase {
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
         if (IsInModuel(content, className)) return;
 
-        let isModule = false;
+        let isTargetRouting = /-routing\./i.test(moduleFile);
         if (/component/i.test(prefix)
             || /directive/i.test(prefix)
             || /pipe/i.test(prefix)) {
 
-            content = PushToImport(content, className, importPath, true);
+            content = PushToImport(content, className, importPath, !isTargetRouting);
             content = PushToModuleDeclarations(content, className);
             content = PushToModuleExports(content, className);
+            content = PushToModuleRouting(content, name, className, importPath, false);
 
         } else if (/service/i.test(prefix)) {
 
-            content = PushToImport(content, className, importPath, true);
+            content = PushToImport(content, className, importPath, !isTargetRouting);
             content = PushToModuleProviders(content, className);
+            content = PushToModuleRouting(content, name, className, importPath, false);
 
-        } else if (isModule = /module/i.test(prefix)) {
+        } else if (/module/i.test(prefix)) {
 
-            let isRouting = /-routing$/i.test(name);
-            content = PushToImport(content, className, importPath, !isRouting);
-            content = PushToModuleImports(content, className);
+
+            if (!isTargetRouting) {
+                content = PushToImport(content, className, importPath, true);
+                content = PushToModuleImports(content, className);
+                content = PushToModuleExports(content, className);
+                content = PushToModuleRouting(content, name, className, importPath, true);
+            } else {
+                if (CalcPath(fsFile) == CalcPath(moduleFile)) {
+                    content = PushToImport(content, className, importPath, false);
+                    content = PushToModuleImports(content, className);
+                } else
+                    content = PushToModuleRouting(content, name, className, importPath, true);
+            }
+
+        } else {
+
+            if (!isTargetRouting)
+                content = PushToExport(content, className, importPath, !isTargetRouting);
 
         }
 
-        content = PushToModuleRouting(content, name, className, importPath, isModule);
+        fs.writeFileSync(moduleFile, content, 'utf-8');
+
+    }
+
+    removeFromModule(fsFile: string, moduleFile: string, name: string, prefix: string) {
+        if (!moduleFile) return;
+        if (!fs.existsSync(moduleFile)) return;
+        let importPath = CalcImportPath(moduleFile, fsFile);
+
+        let className = MakeClassName(name, prefix);
+
+        let content: string = fs.readFileSync(moduleFile, 'utf-8');
+        if (!IsInModuel(content, className)) return;
+
+        content = RemoveFromImport(content, className, importPath);
+        content = RemoveFromModuleDeclarations(content, className);
+        content = RemoveFromModuleExports(content, className);
+        content = RemoveFromModuleImports(content, className);
+        content = RemoveFromModuleProviders(content, className);
+        content = RemoveModuleEntryComponents(content, className);
+
+        let isTargetRouting = /-routing\./i.test(moduleFile);
+        if (/component/i.test(prefix)
+            || /directive/i.test(prefix)
+            || /pipe/i.test(prefix)) {
+
+
+
+        } else if (/service/i.test(prefix)) {
+
+        } else if (/module/i.test(prefix)) {
+
+        }
 
         fs.writeFileSync(moduleFile, content, 'utf-8');
 

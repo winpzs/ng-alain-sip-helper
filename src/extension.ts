@@ -179,6 +179,10 @@ export function activate(context: ExtensionContext) {
             case 'sip-regmodlue':
                 sipRegmodlue(new SipRegModule(), gParam);
                 break;
+            case 'sip-cleanmodlue':
+                gParam.cleanmodlue = true;
+                sipRegmodlue(new SipRegModule(), gParam);
+            break;
         }
     };
     let sipGenerate = (genObj: ContentBase, p: any, args?: any) => {

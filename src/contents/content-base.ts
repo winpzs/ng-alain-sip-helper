@@ -113,20 +113,20 @@ export function FindModuleFile(rootPath: string, curPath: string): string {
     }
 };
 
-export function _FindUpwardModuleFiles(files:string[], rootPath: string, curPath:string, curFile: string, lv:number) {
+export function _FindUpwardModuleFiles(files: string[], rootPath: string, curPath: string, curFile: string, lv: number) {
     if (!IsInRootPath(rootPath, curFile)) return;
 
     let mdRegex = /module\.ts\s*$/i;
     let file, hasFile = false;
-    fs.readdirSync(curPath).forEach(fileName=>{
-        if (mdRegex.test(fileName)){
+    fs.readdirSync(curPath).forEach(fileName => {
+        if (mdRegex.test(fileName)) {
             file = path.join(curPath, fileName);
             if (file != curFile)
                 files.push(file);
         }
     });
-    if (lv < 2){
-        _FindUpwardModuleFiles(files, rootPath, path.dirname(curPath), curFile, lv+1);
+    if (lv < 2) {
+        _FindUpwardModuleFiles(files, rootPath, path.dirname(curPath), curFile, lv + 1);
     }
 };
 
@@ -145,44 +145,87 @@ export function CalcImportPath(moduleFile: string, tsFile: string) {
     return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './');
 }
 
+let _importRegex = /\/\/\-\-\s*register\s+import/i;
+let _importEndRegex = /\/\/\-\-\s*end\s+import/i;
 export function PushToImport(content: string, className: string, importPath: string, isExport: boolean): string {
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
+    let hasImport = _importRegex.test(content);
     let importRegex = /^\s*import\s+/;
-    let index = contentList.findIndex(item => { return importRegex.test(item); });
+    let index = contentList.findIndex(item => { return hasImport ? _importEndRegex.test(item) : importRegex.test(item); });
     if (index < 0) {
         index = contentList.length - 1;
     }
 
-    contentList[index] = contentList[index] + ["\nimport { ", className, " } from '", importPath, "';"].join('');
+    if (hasImport)
+        contentList[index] = ["import { ", className, " } from '", importPath, "';\n"].join('') + contentList[index];
+    else
+        contentList[index] = contentList[index] + ["\n\n//-- register import\nimport { ", className, " } from '", importPath, "';"].join('') + '\n//-- end import';
+
     if (isExport)
-        _pushToExport(contentList, index, importPath);
+        _pushToExport(contentList, index, importPath, _exportRegex.test(content));
     return contentList.reverse().join('\n');
 
 }
 
-function _pushToExport(contentList: string[], importIndex: number, importPath: string): string[] {
+export function RemoveFromImport(content: string, className: string, importPath:string): string {
+
+    let contentList = content.replace(/\n\r/g, '\n').split('\n');
+    let importRegex = new RegExp('^\\s*\\bimport\\b.*\\b'+className+'\\b');
+    let exportRegex = new RegExp('^\\s*\\bexport\\b.*\\bfrom\\b');
+    let exportPath = '\''+importPath+'\'';
+    let index = contentList.findIndex(item => {
+         return importRegex.test(item)
+            || (exportRegex.test(item) && item.indexOf(exportPath) > 0)
+         });
+    if (index > -1) {
+        contentList.splice(index, 1);
+        return RemoveFromImport(contentList.join('\n'), className, importPath);
+    }
+
+    return contentList.join('\n');
+
+}
+
+let _exportRegex = /\/\/\-\-\s*register\s+export/i;
+let _exportEndRegex = /\/\/\-\-\s*end\s+export/i;
+export function PushToExport(content: string, className: string, importPath: string, isExport: boolean): string {
+
+    let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
+    let hasImport = _importRegex.test(content);
+    let importRegex = /^\s*import\s+/;
+    let index = contentList.findIndex(item => { return hasImport ? _importEndRegex.test(item) : importRegex.test(item); });
+
+    _pushToExport(contentList, index, importPath, _exportRegex.test(content));
+    return contentList.reverse().join('\n');
+
+}
+function _pushToExport(contentList: string[], importIndex: number, importPath: string, hasExport: boolean): string[] {
 
     let exportRegex = /^\s*export\s+\*/;
-    let index = contentList.findIndex(item => { return exportRegex.test(item); });
+    let index = contentList.findIndex(item => { return hasExport ? _exportEndRegex.test(item) : exportRegex.test(item); });
     if (index < 0) {
         index = importIndex;
     }
 
-    contentList[index] = contentList[index] + ["\nexport * from '", importPath, "';"].join('');
+    if (hasExport)
+        contentList[index] = ["export * from '", importPath, "';\n"].join('') + contentList[index];
+    else
+        contentList[index] = contentList[index] + ["\n\n//-- register export\nexport * from '", importPath, "';"].join('') + '\n//-- end export';
+
     return contentList
 }
 
-function _pushClassName(text:string, className:string):string{
+function _pushClassName(text: string, className: string): string {
     let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
     classText = classText.replace(/,/g, ',\n        ');
     classText = ['\n        ', classText, '\n    '].join('');
     return classText;
 }
 
-function _removeClassName(text:string, className:string):string{
+function _removeClassName(text: string, className: string): string {
     let classText = text.replace(/[\r\n\s]+/g, '')
-        .split(',').filter(item=>item != className).join(',');
+        .split(',').filter(item => item != className).join(',');
 
     classText = classText.replace(/,/g, ',\n        ');
     classText = ['\n        ', classText, '\n    '].join('');
@@ -239,7 +282,7 @@ export function RemoveModuleEntryComponents(content: string, className: string) 
             let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
-            return 'entryComponents: [ ' + className + ' ]'
+            return find;
     });
 
     return content;
@@ -267,7 +310,7 @@ export function RemoveFromModuleImports(content: string, className: string) {
             let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
-            return 'imports: [ ' + className + ' ]'
+            return find;
     });
 
     return content;
@@ -295,7 +338,7 @@ export function RemoveFromModuleExports(content: string, className: string) {
             let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
-            return 'exports: [ ' + className + ' ]'
+            return find;
     });
 
     return content;
@@ -323,28 +366,28 @@ export function RemoveFromModuleProviders(content: string, className: string) {
             let classText = _removeClassName(text, className);
             return find.replace(text, classText);
         } else
-            return 'providers: [ ' + className + ' ]'
+            return find;
     });
 
     return content;
 }
 
 let _routingRegex = /const\s+routes\s*:\s*Routes\s*\=\s*\[((?:\n|\r|.)*)\]\s*\;/m;
-function _isRoutingModule(content: string):boolean{
+function _isRoutingModule(content: string): boolean {
     return _routingRegex.test(content);
 }
-function _getRoutingContent(content:string):string {
+function _getRoutingContent(content: string): string {
     let finds = /\s*\/\/\-\-\s*register(?:\n|\r|.)*\/\/\-\-\s*end\s+register/m.exec(content);
     return finds ? finds[0] : '';
 }
-export function IsRoutingModule(content: string):boolean{
+export function IsRoutingModule(content: string): boolean {
     return _isRoutingModule(content);
 }
-function _getRoutingItems(content:string):string[]{
+function _getRoutingItems(content: string): string[] {
     let contentList = content.replace(/[\r\n]+/g, '\n').split('\n');
-    let retList:string[] = [],
+    let retList: string[] = [],
         temp = '';
-    contentList.forEach(item=>{
+    contentList.forEach(item => {
         if (/^\s*\/\/\-\-\s*register/.test(item))
             temp = '';
         else if (/^\s*\/\/\-\-\s*end\s+register/.test(item))
@@ -354,29 +397,29 @@ function _getRoutingItems(content:string):string[]{
     });
     return retList;
 }
-function _makeRoutingItems(contentList:string[], notEnd:boolean):string{
-    let len =contentList.length;
+function _makeRoutingItems(contentList: string[], notEnd: boolean): string {
+    let len = contentList.length;
     if (notEnd)
-        contentList[len-1] += ',';
-    else if (len > 1){
-        contentList[len-2] += ',';
+        contentList[len - 1] += ',';
+    else if (len > 1) {
+        contentList[len - 2] += ',';
     }
 
-    let content:string = contentList.map(item=>{
-        return ['    //-- register', item , '    //-- end register\n'].join('\n');
+    let content: string = contentList.map(item => {
+        return ['    //-- register', item, '    //-- end register\n'].join('\n');
     }).join('\n').replace(/\n{2,}/g, '\n');
     return content;
 }
 
-export function PushToModuleRouting(content: string, name:string, className: string, importPath: string, isChild?:boolean) {
+export function PushToModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
 
     content = content.replace(_routingRegex, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
         let routingContent = _getRoutingContent(text);
         let routingItems = _getRoutingItems(routingContent);
-        if (isChild){
+        if (isChild) {
             routingItems.push(`    {
-        path: '${name}',
+        path: '${name.replace(/-routing$/i, '')}',
         loadChildren: '${importPath}#${className}'
     }`);
         } else {
@@ -386,7 +429,7 @@ export function PushToModuleRouting(content: string, name:string, className: str
     }`);
         }
         let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
-        let retContent = text.replace(routingContent,  '\n' + _makeRoutingItems(routingItems, notEnd));
+        let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
 
         let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
             : find.replace(text, retContent);
@@ -397,6 +440,6 @@ export function PushToModuleRouting(content: string, name:string, className: str
     return content;
 }
 
-export function IsInModuel(content:string, className:string):boolean{
-    return new RegExp('\\b'+className+'\\b').test(content);
+export function IsInModuel(content: string, className: string): boolean {
+    return new RegExp('\\b' + className + '\\b').test(content);
 }
