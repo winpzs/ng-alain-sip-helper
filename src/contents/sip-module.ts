@@ -24,7 +24,10 @@ export class SipModule implements ContentBase {
             fsFile = path.join(fsPath, MakeFileName(name, prefix, 'ts'));
             retFile = fsFile;
             if (!fs.existsSync(fsFile)) {
-                fs.writeFileSync(fsFile, this.contentTS(params), 'utf-8');
+                if (params.routingfull)
+                    fs.writeFileSync(fsFile, this.contentFullTS(params), 'utf-8');
+                else
+                    fs.writeFileSync(fsFile, this.contentTS(params), 'utf-8');
             }
         }
 
@@ -69,6 +72,34 @@ export class ${className} { }
         return content;
     }
 
+    contentFullTS(params: GenerateParam): string {
+        let name = params.name;
+        let prefix = this.prefix;
+        let className = MakeClassName(name, prefix);
+
+        let content = `import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router'
+import { SharedModule } from '@shared/shared.module';
+
+const routes: Routes = [];
+
+@NgModule({
+    imports: [
+        CommonModule,
+        SharedModule,
+        RouterModule.forChild(routes)
+    ],
+    declarations: [],
+    providers: [],
+    exports:[],
+    entryComponents:[]
+})
+export class ${className} { }
+`;
+        return content;
+    }
+
     contentRoutingTS(params: GenerateParam): string {
         let name = [params.name, 'routing'].join('-');
         let prefix = this.prefix;
@@ -76,7 +107,6 @@ export class ${className} { }
 
         let content = `import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '@shared/shared.module';
 

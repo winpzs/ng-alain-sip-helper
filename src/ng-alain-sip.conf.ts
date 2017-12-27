@@ -129,12 +129,12 @@ const config = [
                 "input": true,
                 "params": [
                     {
-                        "param": "--ts --html --style --dir",
-                        "title": "创建目录, ts, html, style"
-                    },
-                    {
                         "param": "--ts --html --dir",
                         "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --style --dir",
+                        "title": "创建目录, ts, html, style"
                     },
                     {
                         "param": "--ts",
@@ -170,8 +170,12 @@ const config = [
                         "title": "ts"
                     },
                     {
+                        "param": "--routingfull",
+                        "title": "routing moudle full（module和routing结合）"
+                    },
+                    {
                         "param": "--routing",
-                        "title": "routing"
+                        "title": "routing moudle（只做routing）"
                     },
                     {
                         "param": "--spec",

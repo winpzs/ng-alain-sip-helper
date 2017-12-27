@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, IsRoutingModule, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport, RemoveFromModuleRouting } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, IsRoutingModule, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport, RemoveFromModuleRouting, PushToModuleEntryComponents } from "./content-base";
 
 export class SipRegModule implements ContentBase {
 
@@ -33,9 +33,11 @@ export class SipRegModule implements ContentBase {
 
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
         if (IsInModuel(content, className)) return;
+        let curContent: string = fs.readFileSync(fsFile, 'utf-8');
 
         let isTargetRouting = /-routing\./i.test(moduleFile);
-        if (/component/i.test(prefix)
+        let isComponent = false;
+        if (isComponent = /component/i.test(prefix)
             || /directive/i.test(prefix)
             || /pipe/i.test(prefix)) {
 
@@ -43,6 +45,10 @@ export class SipRegModule implements ContentBase {
             content = PushToModuleDeclarations(content, className);
             content = PushToModuleExports(content, className);
             content = PushToModuleRouting(content, name, className, importPath, false);
+
+            //将SipUiModal加入到module.entryComponents
+            if (isComponent &&  /\s+extends\s+SipUiModal\s+/.test(curContent))
+                content = PushToModuleEntryComponents(content, className);
 
         } else if (/service/i.test(prefix)) {
 
@@ -57,6 +63,7 @@ export class SipRegModule implements ContentBase {
             if (isRouting && isTargetRouting)
                 content = PushToModuleRouting(content, name, className, importPath, true);
             else {
+                content = PushToModuleRouting(content, name, className, importPath, true);
                 content = PushToImport(content, className, importPath, !isTargetRouting);
                 content = PushToModuleImports(content, className);
                 //如果目标不是路由module, 成生module.exports
