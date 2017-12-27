@@ -9,7 +9,7 @@ import { SipPageComponent } from './contents/sip-page-component';
 import { SipModalComponent } from './contents/sip-modal-component';
 import { Lib } from './lib';
 import { SipClass } from './contents/sip-class';
-import { ContentBase, IsInRootPath, FindPathUpward, CalcPath, FindModuleFile, FindUpwardModuleFiles, _FindUpwardModuleFiles } from './contents/content-base';
+import { ContentBase, IsInRootPath, FindPathUpward, CalcPath, FindModuleFile, FindUpwardModuleFiles, _FindUpwardModuleFiles, IsDirectory, IsEmptyDirectory } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
 import { SipService } from './contents/sip-service';
 import { SipDirective } from './contents/sip-directive';
@@ -117,14 +117,14 @@ export function activate(context: ExtensionContext) {
             return r;
         }) : Promise.resolve<any>(null);
     };
-    let send_builtin = (config: IConfig, args, params: string, path: string, inputText: string) => {
+    let send_builtin = (config: IConfig, args, params: string, fsPath: string, inputText: string) => {
         let p = argv(params || '');
         let rootPath = _getRootPath();
         let gParam = Object.assign({
             name: inputText,
-            path: path,
+            path: fsPath,
             rootPath: rootPath,
-            moduleFile: FindModuleFile(rootPath, path)
+            moduleFile: FindModuleFile(rootPath, fsPath)
         }, p);
         switch (config.command) {
             case 'config':
@@ -182,13 +182,27 @@ export function activate(context: ExtensionContext) {
             case 'sip-cleanmodlue':
                 gParam.cleanmodlue = true;
                 sipRegmodlue(new SipRegModule(), gParam);
-            break;
+                break;
+            case 'sip-gen-del':
+                if (IsDirectory(_curFile)) {
+                    window.showWarningMessage('不能处理目录!');
+                } else {
+                    window.showInformationMessage(`确定要删除 ${path.basename(_curFile)} 吗?`, '确定').then((text) => {
+                        if (text == '确定')
+                            sipGenerateDel(gParam);
+                    });
+                }
+                break;
         }
     };
     let sipGenerate = (genObj: ContentBase, p: any, args?: any) => {
         openFile(genObj.generate(p));
     };
     let sipRegmodlue = (genObj: ContentBase, p: any) => {
+        if (IsDirectory(_curFile)) {
+            window.showWarningMessage('不能处理目录!');
+            return;
+        }
         let rootPath = p.rootPath;
         let curFile = p.path = _curFile;
         p.name = path.basename(_curFile).split('.')[0];
@@ -200,6 +214,29 @@ export function activate(context: ExtensionContext) {
             p.moduleFile = file;
             genObj.generate(p);
         });
+    };
+    let sipGenerateDel = (p: any, args?: any) => {
+        p.cleanmodlue = true;
+        let rootPath = p.rootPath;
+        let curFile = p.path = _curFile;
+        p.name = path.basename(_curFile).split('.')[0];
+        let files = FindUpwardModuleFiles(rootPath, curFile);
+        files.forEach((file) => {
+            if (!file) return;
+            p.moduleFile = file;
+            new SipRegModule().generate(p);
+        });
+
+        let delInfo = path.parse(curFile);
+        let delPath = path.join(delInfo.dir, delInfo.name);
+        ['html', 'ts', 'css', 'less', 'spec.ts'].map((item) => {
+            let file = [delPath, item].join('.');
+            if (fs.existsSync(file)) {
+                fs.unlinkSync(file);
+            }
+        })
+        if (IsEmptyDirectory(delInfo.dir))
+            fs.rmdirSync(delInfo.dir);
     };
     let showQuickPick = (configs: IConfig[], parentPath: string, args) => {
         let picks = configs.map(item => item.title);

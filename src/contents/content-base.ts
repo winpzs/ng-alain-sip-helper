@@ -44,12 +44,30 @@ export function MakeClassName(name: string, prefix: string) {
 }
 
 /**
+ * 是否文件夹
+ * @param fsPath 可以文件或目录
+ */
+export function IsDirectory(fsPath: string): boolean {
+    let stats = fs.lstatSync(fsPath),
+        isDir = stats.isDirectory();
+
+    return isDir;
+}
+
+/**
+ * 是否空文件夹
+ * @param fsPath 可以文件或目录
+ */
+export function IsEmptyDirectory(fsPath: string): boolean {
+    if (!IsDirectory(fsPath)) return false;
+    return fs.readdirSync(fsPath).length <= 0;
+}
+/**
  * 如果是文件，返回文件所在目录；如果是目录直接返回
  * @param fsPath 可以文件或目录
  */
 export function CalcPath(fsPath: string): string {
-    let stats = fs.lstatSync(fsPath),
-        isDir = stats.isDirectory();
+    let isDir = IsDirectory(fsPath);
 
     return isDir ? fsPath : path.dirname(fsPath);
 }
