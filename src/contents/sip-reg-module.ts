@@ -51,19 +51,17 @@ export class SipRegModule implements ContentBase {
             content = PushToModuleRouting(content, name, className, importPath, false);
 
         } else if (/module/i.test(prefix)) {
+            let isRouting = /-routing\./i.test(fsFile);
 
-
-            if (!isTargetRouting) {
+            //如果两都是路由moudle才生成Routes
+            if (isRouting && isTargetRouting)
+                content = PushToModuleRouting(content, name, className, importPath, true);
+            else {
                 content = PushToImport(content, className, importPath, true);
                 content = PushToModuleImports(content, className);
-                content = PushToModuleExports(content, className);
-                content = PushToModuleRouting(content, name, className, importPath, true);
-            } else {
-                if (CalcPath(fsFile) == CalcPath(moduleFile)) {
-                    content = PushToImport(content, className, importPath, false);
-                    content = PushToModuleImports(content, className);
-                } else
-                    content = PushToModuleRouting(content, name, className, importPath, true);
+                //如果目标不是路由module, 成生module.exports
+                if (!isTargetRouting)
+                    content = PushToModuleExports(content, className);
             }
 
         } else {
