@@ -413,6 +413,9 @@ export function activate(context: ExtensionContext) {
             } else if (Lib.isArray(item)) {
                 defName = key + ': any[]';
                 props.push('    ' + defName + ' = [];');
+            } else if (Lib.isObject(item)) {
+                defName = key + ': object';
+                props.push('    ' + defName + ' = {};');
             } else {
                 defName = key + ': any';
                 props.push('    ' + defName + ' = null;');
