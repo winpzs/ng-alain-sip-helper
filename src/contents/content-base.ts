@@ -186,19 +186,19 @@ export function PushToImport(content: string, className: string, importPath: str
 
 }
 
-export function RemoveFromImport(content: string, className: string, importPath:string): string {
+export function RemoveFromImport(content: string, className: string, importPath: string): string {
 
     if (!_importRegex.test(content) && !_exportRegex.test(content))
         return content;
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n');
-    let importRegex = new RegExp('^\\s*\\bimport\\b.*\\b'+className+'\\b');
+    let importRegex = new RegExp('^\\s*\\bimport\\b.*\\b' + className + '\\b');
     let exportRegex = new RegExp('^\\s*\\bexport\\b.*\\bfrom\\b');
-    let exportPath = '\''+importPath+'\'';
+    let exportPath = '\'' + importPath + '\'';
     let index = contentList.findIndex(item => {
-         return importRegex.test(item)
+        return importRegex.test(item)
             || (exportRegex.test(item) && item.indexOf(exportPath) > 0)
-         });
+    });
     if (index > -1) {
         contentList.splice(index, 1);
         return RemoveFromImport(contentList.join('\n'), className, importPath);
@@ -253,6 +253,48 @@ function _removeClassName(text: string, className: string): string {
     return classText;
 }
 
+function _getModuleDeclarContent(content: string, propName: string): {
+    start: number;
+    content: string;
+    end: number;
+} {
+    let ret = {
+        start: -1,
+        content: '',
+        end: -1
+    };
+    let typeRegex = new RegExp('\\b'+propName+'\\b\\s*\\:\\s*\\[');
+    let regText = typeRegex.exec(content);
+    if (regText){
+
+        let start = ret.start = regText.index + regText[0].length;
+        let contentLen = content.length;
+        let inStr = false, strSplitRegex = /['"`]/;
+        let prec, preSplitc,c, contentList = [];
+        let splitCount = 1;
+        for (let i = start;i<contentLen;i++){
+            c = content.charAt(i);
+            if (!inStr && c == '[')
+                splitCount++;
+            else if (!inStr && c == ']'){
+                splitCount--
+                if (!inStr && splitCount <= 0){
+                    break;
+                }
+            } else if (strSplitRegex.test(c)){
+                if (prec != '\\' && (!preSplitc || preSplitc == c))
+                    inStr = !inStr;
+            }
+            contentList.push(c);
+            prec = prec == '\\' ? '' : c;
+        }
+        ret.content = contentList.join('');
+    }
+
+    return ret;
+
+};
+
 export function PushToModuleDeclarations(content: string, className: string) {
 
     content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
@@ -267,8 +309,8 @@ export function PushToModuleDeclarations(content: string, className: string) {
     return content;
 }
 
-function _newWordRegex(work:string){
-    return new RegExp('\\b'+work+'\\b');
+function _newWordRegex(work: string) {
+    return new RegExp('\\b' + work + '\\b');
 }
 
 export function RemoveFromModuleDeclarations(content: string, className: string) {
@@ -438,7 +480,7 @@ function _makeRoutingItems(contentList: string[], notEnd: boolean): string {
     let content: string = contentList.map(item => {
         return ['    //-- register', item, '    //-- end register\n'].join('\n');
     }).join('\n').replace(/\n{2,}/g, '\n');
-    if (!notEnd){
+    if (!notEnd) {
         content = content.replace(/}\s*\,[^\{\}]+$/, '}\n    //-- end register');
     }
 
@@ -477,18 +519,18 @@ export function PushToModuleRouting(content: string, name: string, className: st
 
 export function RemoveFromModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
 
-    let compRegex = new RegExp('\\b'+className+'\\b');
+    let compRegex = new RegExp('\\b' + className + '\\b');
     let filterChild = `'${importPath}#${className}'`;
     content = content.replace(_routingRegex, function (find, text, index) {
         if (!/\/\/\-\-\s*register/i.test(find)) return find;
         let isEmpty = !Lib.trim(text);
         let routingContent = _getRoutingContent(text);
         let routingItems = _getRoutingItems(routingContent);
-        routingItems = routingItems.filter((item)=>{
+        routingItems = routingItems.filter((item) => {
             return isChild ? item.indexOf(filterChild) < 0
                 : !compRegex.test(item);
         })
-        
+
         let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
         let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
         retContent = retContent.replace(/\,{2,}/g, ',');
