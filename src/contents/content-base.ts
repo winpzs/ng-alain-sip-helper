@@ -188,6 +188,9 @@ export function PushToImport(content: string, className: string, importPath: str
 
 export function RemoveFromImport(content: string, className: string, importPath:string): string {
 
+    if (!_importRegex.test(content) && !_exportRegex.test(content))
+        return content;
+
     let contentList = content.replace(/\n\r/g, '\n').split('\n');
     let importRegex = new RegExp('^\\s*\\bimport\\b.*\\b'+className+'\\b');
     let exportRegex = new RegExp('^\\s*\\bexport\\b.*\\bfrom\\b');
@@ -264,9 +267,14 @@ export function PushToModuleDeclarations(content: string, className: string) {
     return content;
 }
 
+function _newWordRegex(work:string){
+    return new RegExp('\\b'+work+'\\b');
+}
+
 export function RemoveFromModuleDeclarations(content: string, className: string) {
 
     content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        if (!_newWordRegex(className).test(text)) return find;
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
             let classText = _removeClassName(text, className);
@@ -295,6 +303,7 @@ export function PushToModuleEntryComponents(content: string, className: string) 
 export function RemoveModuleEntryComponents(content: string, className: string) {
 
     content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        if (!_newWordRegex(className).test(text)) return find;
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
             let classText = _removeClassName(text, className);
@@ -323,6 +332,7 @@ export function PushToModuleImports(content: string, className: string) {
 export function RemoveFromModuleImports(content: string, className: string) {
 
     content = content.replace(/imports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        if (!_newWordRegex(className).test(text)) return find;
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
             let classText = _removeClassName(text, className);
@@ -351,6 +361,7 @@ export function PushToModuleExports(content: string, className: string) {
 export function RemoveFromModuleExports(content: string, className: string) {
 
     content = content.replace(/exports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        if (!_newWordRegex(className).test(text)) return find;
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
             let classText = _removeClassName(text, className);
@@ -379,6 +390,7 @@ export function PushToModuleProviders(content: string, className: string) {
 export function RemoveFromModuleProviders(content: string, className: string) {
 
     content = content.replace(/providers\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+        if (!_newWordRegex(className).test(text)) return find;
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
             let classText = _removeClassName(text, className);
@@ -468,6 +480,7 @@ export function RemoveFromModuleRouting(content: string, name: string, className
     let compRegex = new RegExp('\\b'+className+'\\b');
     let filterChild = `'${importPath}#${className}'`;
     content = content.replace(_routingRegex, function (find, text, index) {
+        if (!/\/\/\-\-\s*register/i.test(find)) return find;
         let isEmpty = !Lib.trim(text);
         let routingContent = _getRoutingContent(text);
         let routingItems = _getRoutingItems(routingContent);
