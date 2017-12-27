@@ -9,7 +9,7 @@ import { SipPageComponent } from './contents/sip-page-component';
 import { SipModalComponent } from './contents/sip-modal-component';
 import { Lib } from './lib';
 import { SipClass } from './contents/sip-class';
-import { ContentBase, IsInRootPath, FindPathUpward, CalcPath, FindModuleFile, FindUpwardModuleFiles, _FindUpwardModuleFiles, IsDirectory, IsEmptyDirectory } from './contents/content-base';
+import { ContentBase, IsInRootPath, FindPathUpward, CalcPath, FindModuleFile, FindUpwardModuleFiles, _FindUpwardModuleFiles, IsDirectory, IsEmptyDirectory, MakeClassName } from './contents/content-base';
 import { SipModule } from './contents/sip-module';
 import { SipService } from './contents/sip-service';
 import { SipDirective } from './contents/sip-directive';
@@ -377,7 +377,8 @@ export function activate(context: ExtensionContext) {
     };
 
     context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.jsontoclass', (textEditor, edit) => {
-        _calcRootPath(textEditor.document.fileName);
+        let fsFile:string = textEditor.document.fileName;
+        _calcRootPath(fsFile);
 
         let { document, selection } = textEditor
 
@@ -388,7 +389,7 @@ export function activate(context: ExtensionContext) {
             document.getText(textEditor.selection);
         try {
 
-            text = jsonToClass(JSON.parse(text));
+            text = jsonToClass(JSON.parse(text), fsFile);
             edit.replace(isEmpty ? new Range(new Position(0, 0), new Position(100000, 100000)) :
                 textEditor.selection, text);
         } catch (e) {
@@ -396,8 +397,7 @@ export function activate(context: ExtensionContext) {
         }
     }))
 
-    let jsonToClass = (json: object): string => {
-
+    let jsonToClass = (json: object, fsFile:string): string => {
         let props = [], defs = [], item, defName;
         Object.keys(json).forEach(key => {
             item = json[key];
@@ -420,7 +420,9 @@ export function activate(context: ExtensionContext) {
             defs.push(defName.replace(':', '?:'));
         });
 
-        let classText = `export class Class1 {
+        let fInfo = path.parse(fsFile);
+        let className = MakeClassName(fInfo.name, '');
+        let classText = `export class ${className} {
 
 ${props.join('\n')}
 
