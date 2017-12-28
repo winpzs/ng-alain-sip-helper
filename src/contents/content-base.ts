@@ -592,7 +592,6 @@ function _makeRouteItems(list: IRouteItem[]): string {
             retList.push(['    {', item.content, '}', item.endRoute ? '' : ','].join(''));
         } else {
             temp = _trimRouteItem(item.content);
-            console.log('!'+temp+'!');
             !temp || retList.push('    ' + temp);
         }
     });
@@ -600,7 +599,6 @@ function _makeRouteItems(list: IRouteItem[]): string {
 }
 
 export function PushToModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
-    console.log(_getRoutingInfo(content));
     let info = _getRoutingInfo(content);
     if (info) {
         let routeList: IRouteItem[] = info.routes;
