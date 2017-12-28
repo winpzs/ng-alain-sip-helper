@@ -244,15 +244,6 @@ function _pushClassName(text: string, className: string): string {
     return classText;
 }
 
-function _removeClassName(text: string, className: string): string {
-    let classText = text.replace(/[\r\n\s]+/g, '')
-        .split(',').filter(item => item != className).join(',');
-
-    classText = classText.replace(/,/g, ',\n        ');
-    classText = ['\n        ', classText, '\n    '].join('');
-    return classText;
-}
-
 interface IContentInfo {
     start: number;
     content: string;
@@ -464,120 +455,34 @@ export function RemoveFromModuleDeclarations(content: string, className: string)
 
 export function PushToModuleEntryComponents(content: string, className: string) {
     return _pushNgModulePropClass(content, 'entryComponents',className);
-
-    // content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-    //     let isEmpty = !Lib.trim(text);
-    //     if (!isEmpty) {
-    //         let classText = _pushClassName(text, className);
-    //         return find.replace(text, classText);
-    //     } else
-    //         return 'entryComponents: [ ' + className + ' ]'
-    // });
-
-    // return content;
 }
 
 export function RemoveModuleEntryComponents(content: string, className: string) {
     return _removeNgModulePropClass(content, 'entryComponents',className);
-
-    // content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-    //     if (!_newWordRegex(className).test(text)) return find;
-    //     let isEmpty = !Lib.trim(text);
-    //     if (!isEmpty) {
-    //         let classText = _removeClassName(text, className);
-    //         return find.replace(text, classText);
-    //     } else
-    //         return find;
-    // });
-
-    // return content;
 }
 
 export function PushToModuleImports(content: string, className: string) {
-
-    content = content.replace(/imports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _pushClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return 'imports: [ ' + className + ' ]'
-    });
-
-    return content;
+    return _pushNgModulePropClass(content, 'imports',className);
 }
 
 export function RemoveFromModuleImports(content: string, className: string) {
-
-    content = content.replace(/imports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        if (!_newWordRegex(className).test(text)) return find;
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _removeClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return find;
-    });
-
-    return content;
+    return _removeNgModulePropClass(content, 'imports',className);
 }
 
 export function PushToModuleExports(content: string, className: string) {
-
-    content = content.replace(/exports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _pushClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return 'exports: [ ' + className + ' ]'
-    });
-
-    return content;
+    return _pushNgModulePropClass(content, 'exports',className);
 }
 
 export function RemoveFromModuleExports(content: string, className: string) {
-
-    content = content.replace(/exports\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        if (!_newWordRegex(className).test(text)) return find;
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _removeClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return find;
-    });
-
-    return content;
+    return _removeNgModulePropClass(content, 'exports',className);
 }
 
 export function PushToModuleProviders(content: string, className: string) {
-
-    content = content.replace(/providers\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _pushClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return 'providers: [ ' + className + ' ]'
-    });
-
-    return content;
+    return _pushNgModulePropClass(content, 'providers',className);
 }
 
 export function RemoveFromModuleProviders(content: string, className: string) {
-
-    content = content.replace(/providers\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        if (!_newWordRegex(className).test(text)) return find;
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _removeClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return find;
-    });
-
-    return content;
+    return _removeNgModulePropClass(content, 'providers',className);
 }
 
 let _routingRegex = /const\s+routes\s*:\s*Routes\s*\=\s*\[((?:\n|\r|.)*)\]\s*\;/m;
