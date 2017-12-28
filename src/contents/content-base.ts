@@ -160,7 +160,7 @@ export function CalcImportPath(moduleFile: string, tsFile: string) {
     let tsPath = path.dirname(tsFile);
     let fileName = path.parse(tsFile).name;
     let importPath = ['.', path.relative(mdPath, tsPath), fileName].join('/');
-    return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './').replace(/\/+/g, '/');
+    return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './').replace(/[\/\\]+/g, '/');
 }
 
 let _importRegex = /\/\/\-\-\s*register\s+import/i;
@@ -254,93 +254,93 @@ function _removeClassName(text: string, className: string): string {
 }
 
 interface IContentInfo {
-    start:number;
-    content:string;
+    start: number;
+    content: string;
 }
 
 //#region getContent
 
-function _escape(text:string):string{
+function _escape(text: string): string {
     return encodeURIComponent(text).replace('\'', '%27');
 }
 
-function _unescape(text:string):string{
+function _unescape(text: string): string {
     return decodeURIComponent(text);
 }
 
-function _encodeNotes(content:string){
-    return content.replace(/\/\*\*((?:\n|\r|.)*?)\*\//gm, function(find, text){
-            return ['|>>', _escape(text), '>|'].join('');
-        }).replace(/\/\/(.*)$/gm, function(find, text){
-            return ['|--', _escape(text)].join('');
-        });
+function _encodeNotes(content: string) {
+    return content.replace(/\/\*\*((?:\n|\r|.)*?)\*\//gm, function (find, text) {
+        return ['|>>', _escape(text), '>|'].join('');
+    }).replace(/\/\/(.*)$/gm, function (find, text) {
+        return ['|--', _escape(text)].join('');
+    });
 }
 
-function _decodeNotes(content:string){
-    return content.replace(/\|\>\>((?:\n|\r|.)*?)\>\|/gm, function(find, text){
-            return ['/**', _unescape(text), '*/'].join('');
-        }).replace(/\|\-\-(.*)$/gm, function(find, text){
-            return ['//', _unescape(text)].join('');
-        });
+function _decodeNotes(content: string) {
+    return content.replace(/\|\>\>((?:\n|\r|.)*?)\>\|/gm, function (find, text) {
+        return ['/**', _unescape(text), '*/'].join('');
+    }).replace(/\|\-\-(.*)$/gm, function (find, text) {
+        return ['//', _unescape(text)].join('');
+    });
 }
 
-function _getStrContent(content:string, split:string, start:number):IContentInfo{
+function _getStrContent(content: string, split: string, start: number): IContentInfo {
     start++;
     let len = content.length;
     let prec, c, list = [];
-    for (let i=start;i<len;i++){
+    for (let i = start; i < len; i++) {
         c = content.charAt(i);
-        if (prec != '\\' && c == split){
+        if (prec != '\\' && c == split) {
             break;
         }
         list.push(c);
         prec = prec == '\\' ? '' : c;
     }
     return {
-        start:start,
-        content:list.join('')
+        start: start,
+        content: list.join('')
     };
 }
 
-function _getRegexContent(content:string, start:number):IContentInfo{
+function _getRegexContent(content: string, start: number): IContentInfo {
     start++;
     let len = content.length;
     let prec, c, list = [];
-    for (let i=start;i<len;i++){
+    for (let i = start; i < len; i++) {
         c = content.charAt(i);
-        if (prec != '\\' && c == '/'){
+        if (prec != '\\' && c == '/') {
             break;
         }
         list.push(c);
         prec = prec == '\\' ? '' : c;
     }
     return {
-        start:start,
-        content:list.join('')
+        start: start,
+        content: list.join('')
     };
 }
 
 let _strSplitRegex = /['"`]/;
-function _getContent(content:string, start:number, splitStart:string, splitEnd:string):IContentInfo{
+function _getContentEx(content: string, start: number, splitStart: string, splitEnd: string): IContentInfo {
     start++;
     let len = content.length;
     let prec, c, list = [];
-    let info:IContentInfo, lv = 0;
-    for (let i=start;i<len;i++){
+    let info: IContentInfo, lv = 0;
+    for (let i = start; i < len; i++) {
         c = content.charAt(i);
-        if (prec != '\\'){
-            if (c == '/'){
+        if (prec != '\\') {
+            if (c == '/') {
                 info = _getRegexContent(content, i);
-                list.push(['/'+info.content, '/'].join(''));
+                list.push(['/' + info.content, '/'].join(''));
                 i = info.start + info.content.length;
             } else if (_strSplitRegex.test(c)) {
                 info = _getStrContent(content, c, i);
-                list.push([c+info.content, c].join(''));
+                list.push([c + info.content, c].join(''));
                 i = info.start + info.content.length;
             } else if (c == splitStart) {
                 lv++;
                 list.push(c);
-            } else if (c == splitEnd){
+            } else if (c == splitEnd) {
                 if (lv == 0)
                     break;
                 else {
@@ -355,45 +355,72 @@ function _getContent(content:string, start:number, splitStart:string, splitEnd:s
     }
 
     return {
-        start:start,
+        start: start,
         content: list.join('')
     };
 }
 
-function _getModuleDeclarContent(content: string, propName: string): IContentInfo {
-    
-    content = _encodeNotes(content);
-    let typeRegex = new RegExp('\\b'+propName+'\\b\\s*\\:\\s*\\[');
-    let regText = typeRegex.exec(content);
-    if (regText){
-
-        let start = regText.index - 1 + regText[0].length;
-        let info = _getContent(content, start, '[', ']');
-        info.content = _decodeNotes(info.content);
-        return info;
-    }
-
+function _getContent(content: string, start: number, splitStart: string, splitEnd: string): IContentInfo {
+    content = _encodeNotes(content.substr(start));
+    let info = _getContentEx(content, 0, splitStart, splitEnd);
     return {
-        start: -1,
-        content: ''
+        start: start + 1,
+        content: _decodeNotes(info.content)
     };
+}
 
-};
+function _replaceContent(content:string, info:IContentInfo, newContent):string{
+    let start = info.start;
+    let end = start + info.content.length;
+    return [content.substr(0, start), newContent, content.substr(end)].join('');
+}
 
 //#endregion getContent
 
-export function PushToModuleDeclarations(content: string, className: string) {
-    console.log(content);
-    console.log('============================>');
-    return _getModuleDeclarContent(content, 'declarations').content;
-    content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _pushClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return 'declarations: [ ' + className + ' ]'
-    });
+
+function _getNgModuleContent(content: string): IContentInfo {
+
+    let typeRegex = /\@NgModule\s*\(\s*\{/;
+    let regText = typeRegex.exec(content);
+    if (regText) {
+        let start = regText.index + regText[0].length - 1;//index到'['的位置
+        return _getContent(content, start, '{', '}');
+    }
+
+    return null;
+};
+
+function _getNgModulePropContent(content: string, propName: string): IContentInfo {
+
+    let typeRegex = new RegExp('\\b' + propName + '\\b\\s*\\:\\s*\\[');
+    let regText = typeRegex.exec(content);
+    if (regText) {
+        let start = regText.index + regText[0].length - 1;//index到'['的位置
+        return _getContent(content, start, '[', ']');
+    }
+
+    return null;
+};
+
+function _pushNgModulePropClass(content: string, propName: string, className:string){
+    let ngModuleInfo = _getNgModuleContent(content);
+    if (!ngModuleInfo) return content;
+
+    let info = _getNgModulePropContent(ngModuleInfo.content, propName);
+    let mdConten, descContent;
+    if (info){
+        let isEmpty = !Lib.trim(info.content);
+        descContent = isEmpty ? '\n        ' + className + '\n    '
+            : Lib.trimEnd(info.content) + ',\n        ' + className + '\n    ';
+        mdConten =_replaceContent(ngModuleInfo.content, info, descContent);
+    
+        content = _replaceContent(content, ngModuleInfo, mdConten);
+    
+    } else {
+        descContent = propName + ': [\n        ' + className + '\n    ]'
+        mdConten = Lib.trimEnd(ngModuleInfo.content) + ',\n    ' + descContent + '\n';
+        content = _replaceContent(content, ngModuleInfo, mdConten);
+    }
 
     return content;
 }
@@ -402,48 +429,68 @@ function _newWordRegex(work: string) {
     return new RegExp('\\b' + work + '\\b');
 }
 
-export function RemoveFromModuleDeclarations(content: string, className: string) {
+function _hasClassName(content:string, className:string):boolean{
+    return _newWordRegex(className).test(content);
+}
 
-    content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        if (!_newWordRegex(className).test(text)) return find;
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _removeClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return find;
-    });
+function _removeNgModulePropClass(content: string, propName: string, className:string){
+    let ngModuleInfo = _getNgModuleContent(content);
+    if (!ngModuleInfo) return content;
+
+    let info = _getNgModulePropContent(ngModuleInfo.content, propName);
+    if (info && _hasClassName(info.content, className)){
+
+        let removeRegex = new RegExp('\\,?(?:\\n|\\r|\\s)*\\b'+className+'\\b', 'g');
+        let descContent = info.content.replace(removeRegex, '');
+        let isEmpty = !Lib.trim(descContent);
+        if (isEmpty) descContent = ' ';
+
+        let mdConten =_replaceContent(ngModuleInfo.content, info, descContent);
+    
+        content = _replaceContent(content, ngModuleInfo, mdConten);
+    
+    }
 
     return content;
+}
+
+export function PushToModuleDeclarations(content: string, className: string) {
+    return _pushNgModulePropClass(content, 'declarations',className);
+}
+
+export function RemoveFromModuleDeclarations(content: string, className: string) {
+    return _removeNgModulePropClass(content, 'declarations',className);
 }
 
 export function PushToModuleEntryComponents(content: string, className: string) {
+    return _pushNgModulePropClass(content, 'entryComponents',className);
 
-    content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _pushClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return 'entryComponents: [ ' + className + ' ]'
-    });
+    // content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+    //     let isEmpty = !Lib.trim(text);
+    //     if (!isEmpty) {
+    //         let classText = _pushClassName(text, className);
+    //         return find.replace(text, classText);
+    //     } else
+    //         return 'entryComponents: [ ' + className + ' ]'
+    // });
 
-    return content;
+    // return content;
 }
 
 export function RemoveModuleEntryComponents(content: string, className: string) {
+    return _removeNgModulePropClass(content, 'entryComponents',className);
 
-    content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
-        if (!_newWordRegex(className).test(text)) return find;
-        let isEmpty = !Lib.trim(text);
-        if (!isEmpty) {
-            let classText = _removeClassName(text, className);
-            return find.replace(text, classText);
-        } else
-            return find;
-    });
+    // content = content.replace(/entryComponents\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
+    //     if (!_newWordRegex(className).test(text)) return find;
+    //     let isEmpty = !Lib.trim(text);
+    //     if (!isEmpty) {
+    //         let classText = _removeClassName(text, className);
+    //         return find.replace(text, classText);
+    //     } else
+    //         return find;
+    // });
 
-    return content;
+    // return content;
 }
 
 export function PushToModuleImports(content: string, className: string) {

@@ -32,8 +32,7 @@ export class SipRegModule implements ContentBase {
         let className = MakeClassName(name, prefix);
 
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
-        console.log(PushToModuleDeclarations(content, ''));
-        return;
+
         if (IsInModuel(content, className)) return;
         let curContent: string = fs.readFileSync(fsFile, 'utf-8');
 

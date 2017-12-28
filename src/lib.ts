@@ -76,6 +76,11 @@ export class Lib {
             str.replace(/^(?:\s|\u3000|\ue4c6)*|(?:\s|\u3000|\ue4c6)*$/g, '')) : '';
     }
 
+    static trimEnd(str: string, newline?: boolean) {
+        return str ? (newline ? str.replace(/(?:\s|\u3000|\ue4c6|\n|\r)*$/g, '') :
+            str.replace(/(?:\s|\u3000|\ue4c6)*$/g, '')) : '';
+    }
+
 }
 
 let _tick = 0;
