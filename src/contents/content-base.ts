@@ -246,6 +246,7 @@ function _pushClassName(text: string, className: string): string {
 interface IContentInfo {
     start: number;
     content: string;
+    [key: string]: any;
 }
 
 //#region getContent
@@ -527,34 +528,122 @@ function _makeRoutingItems(contentList: string[], notEnd: boolean): string {
     return content;
 }
 
-export function PushToModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
+//==============================
 
-    content = content.replace(_routingRegex, function (find, text, index) {
-        let isEmpty = !Lib.trim(text);
-        let routingContent = _getRoutingContent(text);
-        let routingItems = _getRoutingItems(routingContent);
-        if (isChild) {
-            routingItems.push(`    {
-        path: '${name.replace(/-routing$/i, '')}',
-        loadChildren: '${importPath}#${className}'
-    }`);
-        } else {
-            routingItems.push(`    {
-        path: '${name}',
-        component: ${className}
-    }`);
-        }
-        let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
-        let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
-        retContent = retContent.replace(/\,{2,}/g, ',');
+interface IRouteItem {
+    route: boolean;
+    endRoute: boolean;
+    content: string;
+}
 
-        let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
-            : find.replace(text, retContent);
-        return retFind.replace(/\n{2,}/g, '\n')
+let _routeItemStartRegex = /\{/;
+function _toRouteItems(content: string, outList: IRouteItem[]) {
+    let find = _routeItemStartRegex.exec(content);
+    if (find) {
+        let start = find.index + find[0].length - 1;//index到'{'的位置
+        outList.push({ route: false, endRoute: false, content: content.substr(0, start) });
+        let info = _getContent(content, start, '{', '}');
+        outList.push({ route: true, endRoute: false, content: info.content });
+        start += info.content.length + 2;
+        _toRouteItems(content.substr(start), outList);
+    } else {
+        outList.push({ route: false, endRoute: false, content: content });
+    }
+}
 
+function _makeEndRoute(list: IRouteItem[]): IRouteItem[] {
+    let endRoute = true;
+    list = list.slice();
+    list.reverse().forEach((item) => {
+        item.endRoute = endRoute;
+        endRoute && (endRoute = false);
     });
+    list.reverse();
+    return list;
+}
 
-    return content;
+function _getRoutingInfo(content: string): IContentInfo {
+
+    let typeRegex = /const\s+routes\s*:\s*Routes\s*\=\s*\[/m;
+    let regText = typeRegex.exec(content);
+    if (regText) {
+        let start = regText.index + regText[0].length - 1;//index到'['的位置
+        let info = _getContent(content, start, '[', ']');
+
+        let outList: IRouteItem[] = [];
+        _toRouteItems(info.content, outList);
+
+        info.routes = outList
+        return info;
+    }
+
+    return null;
+}
+
+function _makeRouteItems(list: IRouteItem[]): string {
+    let retList = [], first = true;
+    list = _makeEndRoute(list);
+    list.forEach((item) => {
+        if (item.route) {
+            retList.push([!first && item.endRoute ? ',' : '', '{', item.content, '}'].join(''));
+            first = false;
+        } else
+            retList.push(item.content);
+    });
+    return retList.join('');
+}
+
+export function PushToModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
+    console.log(_getRoutingInfo(content));
+    let info = _getRoutingInfo(content);
+    if (info) {
+        let routeList: IRouteItem[] = info.routes;
+        if (isChild) {
+            routeList.push({
+                route: true, endRoute: false,
+                content: `
+    path: '${name.replace(/-routing$/i, '')}',
+    loadChildren: '${importPath}#${className}'
+`
+            });
+        } else {
+            routeList.push({
+                route: true, endRoute: false,
+                content: `
+    path: '${name}',
+    component: ${className}
+`
+            });
+        }
+        return _replaceContent(content, info, _makeRouteItems(routeList));
+    } else
+        return content;
+    // content = content.replace(_routingRegex, function (find, text, index) {
+    //     let isEmpty = !Lib.trim(text);
+    //     let routingContent = _getRoutingContent(text);
+    //     let routingItems = _getRoutingItems(routingContent);
+    //     if (isChild) {
+    //         routingItems.push(`
+    //     path: '${name.replace(/-routing$/i, '')}',
+    //     loadChildren: '${importPath}#${className}'
+    // `);
+    //     } else {
+    //         routingItems.push(`
+    //     path: '${name}',
+    //     component: ${className}
+    // `);
+    //     }
+    //     let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
+    //     let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
+    //     retContent = retContent.replace(/\,{2,}/g, ',');
+
+    //     let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
+    //         : find.replace(text, retContent);
+    //     return retFind.replace(/\n{2,}/g, '\n')
+
+    // });
+
+    // return content;
 }
 
 export function RemoveFromModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
