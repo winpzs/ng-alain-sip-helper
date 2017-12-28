@@ -285,6 +285,7 @@ function _decodeNotes(content:string){
 }
 
 function _getStrContent(content:string, split:string, start:number):IContentInfo{
+    start++;
     let len = content.length;
     let prec, c, list = [];
     for (let i=start;i<len;i++){
@@ -302,6 +303,7 @@ function _getStrContent(content:string, split:string, start:number):IContentInfo
 }
 
 function _getRegexContent(content:string, start:number):IContentInfo{
+    start++;
     let len = content.length;
     let prec, c, list = [];
     for (let i=start;i<len;i++){
@@ -320,7 +322,7 @@ function _getRegexContent(content:string, start:number):IContentInfo{
 
 let _strSplitRegex = /['"`]/;
 function _getContent(content:string, start:number, splitStart:string, splitEnd:string):IContentInfo{
-
+    start++;
     let len = content.length;
     let prec, c, list = [];
     let info:IContentInfo, lv = 0;
@@ -328,11 +330,11 @@ function _getContent(content:string, start:number, splitStart:string, splitEnd:s
         c = content.charAt(i);
         if (prec != '\\'){
             if (c == '/'){
-                info = _getRegexContent(content, i+1);
+                info = _getRegexContent(content, i);
                 list.push(['/'+info.content, '/'].join(''));
                 i = info.start + info.content.length;
             } else if (_strSplitRegex.test(c)) {
-                info = _getStrContent(content, c, i+1);
+                info = _getStrContent(content, c, i);
                 list.push([c+info.content, c].join(''));
                 i = info.start + info.content.length;
             } else if (c == splitStart) {
@@ -360,12 +362,12 @@ function _getContent(content:string, start:number, splitStart:string, splitEnd:s
 
 function _getModuleDeclarContent(content: string, propName: string): IContentInfo {
     
-    let typeRegex = new RegExp('\\b'+propName+'\\b\\s*\\:\\s*\\[');
     content = _encodeNotes(content);
+    let typeRegex = new RegExp('\\b'+propName+'\\b\\s*\\:\\s*\\[');
     let regText = typeRegex.exec(content);
     if (regText){
 
-        let start = regText.index + regText[0].length;
+        let start = regText.index - 1 + regText[0].length;
         let info = _getContent(content, start, '[', ']');
         info.content = _decodeNotes(info.content);
         return info;
