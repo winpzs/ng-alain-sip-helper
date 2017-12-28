@@ -154,6 +154,8 @@ export function FindUpwardModuleFiles(rootPath: string, curFile: string): string
     return files;
 };
 
+//#region Import
+
 export function CalcImportPath(moduleFile: string, tsFile: string) {
     let mdPath = path.dirname(moduleFile);
     let tsPath = path.dirname(tsFile);
@@ -164,6 +166,8 @@ export function CalcImportPath(moduleFile: string, tsFile: string) {
 
 let _importRegex = /^\s*\bimport\b.+?from/i;
 export function PushToImport(content: string, className: string, importPath: string, isExport: boolean): string {
+    let _hasImportRegex = new RegExp('^\\s*\\bimport\\b.+?\\b' + className + '\\b.+?from', 'm');
+    if (_hasImportRegex.test(content)) return content;
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
     let hasImport = _importRegex.test(content);
@@ -236,20 +240,15 @@ function _pushToExport(contentList: string[], importPath: string): string[] {
     return contentList
 }
 
-function _pushClassName(text: string, className: string): string {
-    let classText = text.replace(/[\r\n\s]+/g, '') + ',' + className;
-    classText = classText.replace(/,/g, ',\n        ');
-    classText = ['\n        ', classText, '\n    '].join('');
-    return classText;
-}
+//#endregion Import
+
+//#region getContent
 
 interface IContentInfo {
     start: number;
     content: string;
     [key: string]: any;
 }
-
-//#region getContent
 
 function _escape(text: string): string {
     return encodeURIComponent(text).replace('\'', '%27');
@@ -368,6 +367,7 @@ function _replaceContent(content: string, info: IContentInfo, newContent): strin
 
 //#endregion getContent
 
+//#region NgModuleProp
 
 function _getNgModuleContent(content: string): IContentInfo {
 
@@ -485,50 +485,9 @@ export function RemoveFromModuleProviders(content: string, className: string) {
     return _removeNgModulePropClass(content, 'providers', className);
 }
 
-let _routingRegex = /const\s+routes\s*:\s*Routes\s*\=\s*\[((?:\n|\r|.)*)\]\s*\;/m;
-function _isRoutingModule(content: string): boolean {
-    return _routingRegex.test(content);
-}
-function _getRoutingContent(content: string): string {
-    let finds = /\s*\/\/\-\-\s*register(?:\n|\r|.)*\/\/\-\-\s*end\s+register/m.exec(content);
-    return finds ? finds[0] : '';
-}
-export function IsRoutingModule(content: string): boolean {
-    return _isRoutingModule(content);
-}
-function _getRoutingItems(content: string): string[] {
-    let contentList = content.replace(/[\r\n]+/g, '\n').split('\n');
-    let retList: string[] = [],
-        temp = '';
-    contentList.forEach(item => {
-        if (/^\s*\/\/\-\-\s*register/.test(item))
-            temp = '';
-        else if (/^\s*\/\/\-\-\s*end\s+register/.test(item))
-            retList.push(temp);
-        else
-            temp = [temp, item].join('\n');
-    });
-    return retList;
-}
-function _makeRoutingItems(contentList: string[], notEnd: boolean): string {
-    let len = contentList.length;
-    if (notEnd)
-        contentList[len - 1] += ',';
-    else if (len > 1) {
-        contentList[len - 2] += ',';
-    }
+//#endregion NgModuleProp
 
-    let content: string = contentList.map(item => {
-        return ['    //-- register', item, '    //-- end register\n'].join('\n');
-    }).join('\n').replace(/\n{2,}/g, '\n');
-    if (!notEnd) {
-        content = content.replace(/}\s*\,[^\{\}]+$/, '}\n    //-- end register');
-    }
-
-    return content;
-}
-
-//==============================
+//#region route
 
 interface IRouteItem {
     route: boolean;
@@ -555,6 +514,7 @@ function _makeEndRoute(list: IRouteItem[]): IRouteItem[] {
     let endRoute = true;
     list = list.slice();
     list.reverse().forEach((item) => {
+        if (!item.route) return;
         item.endRoute = endRoute;
         endRoute && (endRoute = false);
     });
@@ -625,31 +585,31 @@ export function PushToModuleRouting(content: string, name: string, className: st
 }
 
 export function RemoveFromModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
-
-    let compRegex = new RegExp('\\b' + className + '\\b');
-    let filterChild = `'${importPath}#${className}'`;
-    content = content.replace(_routingRegex, function (find, text, index) {
-        if (!/\/\/\-\-\s*register/i.test(find)) return find;
-        let isEmpty = !Lib.trim(text);
-        let routingContent = _getRoutingContent(text);
-        let routingItems = _getRoutingItems(routingContent);
-        routingItems = routingItems.filter((item) => {
+    let info = _getRoutingInfo(content);
+    if (info) {
+        let routeList: IRouteItem[] = info.routes;
+        let len = routeList.length;
+        let filterChild = `'${importPath}#${className}'`;
+        let compRegex = new RegExp('\\b' + className + '\\b');
+        routeList = routeList.filter(route => {
+            if (!route.route) return true;
+            let item = route.content;
             return isChild ? item.indexOf(filterChild) < 0
                 : !compRegex.test(item);
-        })
+        });
 
-        let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
-        let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
-        retContent = retContent.replace(/\,{2,}/g, ',');
+        let change = len != routeList.length;
 
-        let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
-            : find.replace(text, retContent);
-        return retFind.replace(/\n{2,}/g, '\n');
-
-    });
-
-    return content;
+        if (change) {
+            let retContent = _replaceContent(content, info, _makeRouteItems(routeList));
+            return retContent;
+        } else
+            return content;
+    } else
+        return content;
 }
+
+//#endregion route
 
 export function IsInModuel(content: string, className: string): boolean {
     return new RegExp('\\b' + className + '\\b').test(content);

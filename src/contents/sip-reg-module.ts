@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, IsRoutingModule, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport, RemoveFromModuleRouting, PushToModuleEntryComponents } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport, RemoveFromModuleRouting, PushToModuleEntryComponents } from "./content-base";
 
 export class SipRegModule implements ContentBase {
 
@@ -32,8 +32,9 @@ export class SipRegModule implements ContentBase {
         let className = MakeClassName(name, prefix);
 
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
+        let contentBak = content;
 
-        if (IsInModuel(content, className)) return;
+        // if (IsInModuel(content, className)) return;
 
         let isTargetRouting = /-routing\./i.test(moduleFile);
         let isComponent = false;
@@ -82,7 +83,8 @@ export class SipRegModule implements ContentBase {
 
         }
 
-        fs.writeFileSync(moduleFile, content, 'utf-8');
+        if (contentBak != content)
+            fs.writeFileSync(moduleFile, content, 'utf-8');
 
     }
 
@@ -98,15 +100,18 @@ export class SipRegModule implements ContentBase {
 
         let isModule = /module/i.test(prefix);
 
-        content = RemoveFromImport(content, className, importPath);
-        content = RemoveFromModuleDeclarations(content, className);
-        content = RemoveFromModuleExports(content, className);
-        content = RemoveFromModuleImports(content, className);
-        content = RemoveFromModuleProviders(content, className);
-        content = RemoveModuleEntryComponents(content, className);
-        content = RemoveFromModuleRouting(content, name, className, importPath, isModule);
+        let retContent = content;
 
-        fs.writeFileSync(moduleFile, content, 'utf-8');
+        retContent = RemoveFromImport(retContent, className, importPath);
+        retContent = RemoveFromModuleDeclarations(retContent, className);
+        retContent = RemoveFromModuleExports(retContent, className);
+        retContent = RemoveFromModuleImports(retContent, className);
+        retContent = RemoveFromModuleProviders(retContent, className);
+        retContent = RemoveModuleEntryComponents(retContent, className);
+        retContent = RemoveFromModuleRouting(retContent, name, className, importPath, isModule);
+
+        if (retContent != content)
+            fs.writeFileSync(moduleFile, retContent, 'utf-8');
 
     }
 
