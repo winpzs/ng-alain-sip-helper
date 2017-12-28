@@ -253,50 +253,137 @@ function _removeClassName(text: string, className: string): string {
     return classText;
 }
 
-function _getModuleDeclarContent(content: string, propName: string): {
-    start: number;
-    content: string;
-    end: number;
-} {
-    let ret = {
-        start: -1,
-        content: '',
-        end: -1
+interface IContentInfo {
+    start:number;
+    content:string;
+}
+
+//#region getContent
+
+function _escape(text:string):string{
+    return encodeURIComponent(text).replace('\'', '%27');
+}
+
+function _unescape(text:string):string{
+    return decodeURIComponent(text);
+}
+
+function _encodeNotes(content:string){
+    return content.replace(/\/\*\*((?:\n|\r|.)*?)\*\//gm, function(find, text){
+            return ['|>>', _escape(text), '>|'].join('');
+        }).replace(/\/\/(.*)$/gm, function(find, text){
+            return ['|--', _escape(text)].join('');
+        });
+}
+
+function _decodeNotes(content:string){
+    return content.replace(/\|\>\>((?:\n|\r|.)*?)\>\|/gm, function(find, text){
+            return ['/**', _unescape(text), '*/'].join('');
+        }).replace(/\|\-\-(.*)$/gm, function(find, text){
+            return ['//', _unescape(text)].join('');
+        });
+}
+
+function _getStrContent(content:string, split:string, start:number):IContentInfo{
+    let len = content.length;
+    let prec, c, list = [];
+    for (let i=start;i<len;i++){
+        c = content.charAt(i);
+        if (prec != '\\' && c == split){
+            break;
+        }
+        list.push(c);
+        prec = prec == '\\' ? '' : c;
+    }
+    return {
+        start:start,
+        content:list.join('')
     };
+}
+
+function _getRegexContent(content:string, start:number):IContentInfo{
+    let len = content.length;
+    let prec, c, list = [];
+    for (let i=start;i<len;i++){
+        c = content.charAt(i);
+        if (prec != '\\' && c == '/'){
+            break;
+        }
+        list.push(c);
+        prec = prec == '\\' ? '' : c;
+    }
+    return {
+        start:start,
+        content:list.join('')
+    };
+}
+
+let _strSplitRegex = /['"`]/;
+function _getContent(content:string, start:number, splitStart:string, splitEnd:string):IContentInfo{
+
+    let len = content.length;
+    let prec, c, list = [];
+    let info:IContentInfo, lv = 0;
+    for (let i=start;i<len;i++){
+        c = content.charAt(i);
+        if (prec != '\\'){
+            if (c == '/'){
+                info = _getRegexContent(content, i+1);
+                list.push(['/'+info.content, '/'].join(''));
+                i = info.start + info.content.length;
+            } else if (_strSplitRegex.test(c)) {
+                info = _getStrContent(content, c, i+1);
+                list.push([c+info.content, c].join(''));
+                i = info.start + info.content.length;
+            } else if (c == splitStart) {
+                lv++;
+                list.push(c);
+            } else if (c == splitEnd){
+                if (lv == 0)
+                    break;
+                else {
+                    lv--;
+                    list.push(c);
+                }
+            } else
+                list.push(c);
+        } else
+            list.push(c);
+        prec = prec == '\\' ? '' : c;
+    }
+
+    return {
+        start:start,
+        content: list.join('')
+    };
+}
+
+function _getModuleDeclarContent(content: string, propName: string): IContentInfo {
+    
     let typeRegex = new RegExp('\\b'+propName+'\\b\\s*\\:\\s*\\[');
+    content = _encodeNotes(content);
     let regText = typeRegex.exec(content);
     if (regText){
 
-        let start = ret.start = regText.index + regText[0].length;
-        let contentLen = content.length;
-        let inStr = false, strSplitRegex = /['"`]/;
-        let prec, preSplitc,c, contentList = [];
-        let splitCount = 1;
-        for (let i = start;i<contentLen;i++){
-            c = content.charAt(i);
-            if (!inStr && c == '[')
-                splitCount++;
-            else if (!inStr && c == ']'){
-                splitCount--
-                if (!inStr && splitCount <= 0){
-                    break;
-                }
-            } else if (strSplitRegex.test(c)){
-                if (prec != '\\' && (!preSplitc || preSplitc == c))
-                    inStr = !inStr;
-            }
-            contentList.push(c);
-            prec = prec == '\\' ? '' : c;
-        }
-        ret.content = contentList.join('');
+        let start = regText.index + regText[0].length;
+        let info = _getContent(content, start, '[', ']');
+        info.content = _decodeNotes(info.content);
+        return info;
     }
 
-    return ret;
+    return {
+        start: -1,
+        content: ''
+    };
 
 };
 
-export function PushToModuleDeclarations(content: string, className: string) {
+//#endregion getContent
 
+export function PushToModuleDeclarations(content: string, className: string) {
+    console.log(content);
+    console.log('============================>');
+    return _getModuleDeclarContent(content, 'declarations').content;
     content = content.replace(/declarations\s*\:\s*\[([^\]]*)\]/m, function (find, text, index) {
         let isEmpty = !Lib.trim(text);
         if (!isEmpty) {
