@@ -154,7 +154,6 @@ export function FindUpwardModuleFiles(rootPath: string, curFile: string): string
     return files;
 };
 
-
 export function CalcImportPath(moduleFile: string, tsFile: string) {
     let mdPath = path.dirname(moduleFile);
     let tsPath = path.dirname(tsFile);
@@ -163,33 +162,32 @@ export function CalcImportPath(moduleFile: string, tsFile: string) {
     return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './').replace(/[\/\\]+/g, '/');
 }
 
-let _importRegex = /\/\/\-\-\s*register\s+import/i;
-let _importEndRegex = /\/\/\-\-\s*end\s+import/i;
+let _importRegex = /^\s*\bimport\b.+?from/i;
 export function PushToImport(content: string, className: string, importPath: string, isExport: boolean): string {
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
     let hasImport = _importRegex.test(content);
     let importRegex = /^\s*import\s+/;
-    let index = contentList.findIndex(item => { return hasImport ? _importEndRegex.test(item) : importRegex.test(item); });
+    let index = contentList.findIndex(item => { return _importRegex.test(item); });
+    let has = true;
     if (index < 0) {
         index = contentList.length - 1;
+        has = false;
     }
 
-    if (hasImport)
-        contentList[index] = ["import { ", className, " } from '", importPath, "';\n"].join('') + contentList[index];
+    let str = ["import { ", className, " } from '", importPath, "';"].join('');
+    if (has)
+        contentList[index] += ('\n' + str);
     else
-        contentList[index] = contentList[index] + ["\n\n//-- register import\nimport { ", className, " } from '", importPath, "';"].join('') + '\n//-- end import';
+        contentList[index] = str + '\n' + contentList[index];
 
     if (isExport)
-        _pushToExport(contentList, index, importPath, _exportRegex.test(content));
+        _pushToExport(contentList, importPath);
     return contentList.reverse().join('\n');
 
 }
 
 export function RemoveFromImport(content: string, className: string, importPath: string): string {
-
-    if (!_importRegex.test(content) && !_exportRegex.test(content))
-        return content;
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n');
     let importRegex = new RegExp('^\\s*\\bimport\\b.*\\b' + className + '\\b');
@@ -199,40 +197,41 @@ export function RemoveFromImport(content: string, className: string, importPath:
         return importRegex.test(item)
             || (exportRegex.test(item) && item.indexOf(exportPath) > 0)
     });
+    let retContent = content;
     if (index > -1) {
         contentList.splice(index, 1);
-        return RemoveFromImport(contentList.join('\n'), className, importPath);
+        retContent = RemoveFromImport(contentList.join('\n'), className, importPath);
     }
 
-    return contentList.join('\n');
-
+    return retContent;
 }
 
-let _exportRegex = /\/\/\-\-\s*register\s+export/i;
-let _exportEndRegex = /\/\/\-\-\s*end\s+export/i;
+
+let _exportRegex = /^\s*\bexport\b.+?from/i;
 export function PushToExport(content: string, className: string, importPath: string, isExport: boolean): string {
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
-    let hasImport = _importRegex.test(content);
-    let importRegex = /^\s*import\s+/;
-    let index = contentList.findIndex(item => { return hasImport ? _importEndRegex.test(item) : importRegex.test(item); });
-
-    _pushToExport(contentList, index, importPath, _exportRegex.test(content));
+    _pushToExport(contentList, importPath);
     return contentList.reverse().join('\n');
 
 }
-function _pushToExport(contentList: string[], importIndex: number, importPath: string, hasExport: boolean): string[] {
+function _pushToExport(contentList: string[], importPath: string): string[] {
 
-    let exportRegex = /^\s*export\s+\*/;
-    let index = contentList.findIndex(item => { return hasExport ? _exportEndRegex.test(item) : exportRegex.test(item); });
+    let index = contentList.findIndex(item => { return _exportRegex.test(item); });
+    let has = true;
     if (index < 0) {
-        index = importIndex;
+        index = contentList.findIndex(item => { return _importRegex.test(item); });
+        has = false;
+    }
+    if (index < 0) {
+        index = contentList.length - 1;
     }
 
-    if (hasExport)
-        contentList[index] = ["export * from '", importPath, "';\n"].join('') + contentList[index];
+    let str = ["export * from '", importPath, "';"].join('');
+    if (has)
+        contentList[index] += ('\n' + str);
     else
-        contentList[index] = contentList[index] + ["\n\n//-- register export\nexport * from '", importPath, "';"].join('') + '\n//-- end export';
+        contentList[index] += ('\n\n' + str);
 
     return contentList
 }
@@ -360,7 +359,7 @@ function _getContent(content: string, start: number, splitStart: string, splitEn
     };
 }
 
-function _replaceContent(content:string, info:IContentInfo, newContent):string{
+function _replaceContent(content: string, info: IContentInfo, newContent): string {
     let start = info.start;
     let end = start + info.content.length;
     return [content.substr(0, start), newContent, content.substr(end)].join('');
@@ -393,20 +392,20 @@ function _getNgModulePropContent(content: string, propName: string): IContentInf
     return null;
 };
 
-function _pushNgModulePropClass(content: string, propName: string, className:string){
+function _pushNgModulePropClass(content: string, propName: string, className: string) {
     let ngModuleInfo = _getNgModuleContent(content);
     if (!ngModuleInfo) return content;
 
     let info = _getNgModulePropContent(ngModuleInfo.content, propName);
     let mdConten, descContent;
-    if (info){
+    if (info) {
         let isEmpty = !Lib.trim(info.content);
         descContent = isEmpty ? '\n        ' + className + '\n    '
             : Lib.trimEnd(info.content) + ',\n        ' + className + '\n    ';
-        mdConten =_replaceContent(ngModuleInfo.content, info, descContent);
-    
+        mdConten = _replaceContent(ngModuleInfo.content, info, descContent);
+
         content = _replaceContent(content, ngModuleInfo, mdConten);
-    
+
     } else {
         descContent = propName + ': [\n        ' + className + '\n    ]'
         mdConten = Lib.trimEnd(ngModuleInfo.content) + ',\n    ' + descContent + '\n';
@@ -420,69 +419,69 @@ function _newWordRegex(work: string) {
     return new RegExp('\\b' + work + '\\b');
 }
 
-function _hasClassName(content:string, className:string):boolean{
+function _hasClassName(content: string, className: string): boolean {
     return _newWordRegex(className).test(content);
 }
 
-function _removeNgModulePropClass(content: string, propName: string, className:string){
+function _removeNgModulePropClass(content: string, propName: string, className: string) {
     let ngModuleInfo = _getNgModuleContent(content);
     if (!ngModuleInfo) return content;
 
     let info = _getNgModulePropContent(ngModuleInfo.content, propName);
-    if (info && _hasClassName(info.content, className)){
+    if (info && _hasClassName(info.content, className)) {
 
-        let removeRegex = new RegExp('\\,?(?:\\n|\\r|\\s)*\\b'+className+'\\b', 'g');
+        let removeRegex = new RegExp('\\,?(?:\\n|\\r|\\s)*\\b' + className + '\\b', 'g');
         let descContent = info.content.replace(removeRegex, '');
         let isEmpty = !Lib.trim(descContent);
         if (isEmpty) descContent = ' ';
 
-        let mdConten =_replaceContent(ngModuleInfo.content, info, descContent);
-    
+        let mdConten = _replaceContent(ngModuleInfo.content, info, descContent);
+
         content = _replaceContent(content, ngModuleInfo, mdConten);
-    
+
     }
 
     return content;
 }
 
 export function PushToModuleDeclarations(content: string, className: string) {
-    return _pushNgModulePropClass(content, 'declarations',className);
+    return _pushNgModulePropClass(content, 'declarations', className);
 }
 
 export function RemoveFromModuleDeclarations(content: string, className: string) {
-    return _removeNgModulePropClass(content, 'declarations',className);
+    return _removeNgModulePropClass(content, 'declarations', className);
 }
 
 export function PushToModuleEntryComponents(content: string, className: string) {
-    return _pushNgModulePropClass(content, 'entryComponents',className);
+    return _pushNgModulePropClass(content, 'entryComponents', className);
 }
 
 export function RemoveModuleEntryComponents(content: string, className: string) {
-    return _removeNgModulePropClass(content, 'entryComponents',className);
+    return _removeNgModulePropClass(content, 'entryComponents', className);
 }
 
 export function PushToModuleImports(content: string, className: string) {
-    return _pushNgModulePropClass(content, 'imports',className);
+    return _pushNgModulePropClass(content, 'imports', className);
 }
 
 export function RemoveFromModuleImports(content: string, className: string) {
-    return _removeNgModulePropClass(content, 'imports',className);
+    return _removeNgModulePropClass(content, 'imports', className);
 }
 
 export function PushToModuleExports(content: string, className: string) {
-    return _pushNgModulePropClass(content, 'exports',className);
+    return _pushNgModulePropClass(content, 'exports', className);
 }
 
 export function RemoveFromModuleExports(content: string, className: string) {
-    return _removeNgModulePropClass(content, 'exports',className);
+    return _removeNgModulePropClass(content, 'exports', className);
 }
 
 export function PushToModuleProviders(content: string, className: string) {
-    return _pushNgModulePropClass(content, 'providers',className);
+    return _pushNgModulePropClass(content, 'providers', className);
 }
 
 export function RemoveFromModuleProviders(content: string, className: string) {
-    return _removeNgModulePropClass(content, 'providers',className);
+    return _removeNgModulePropClass(content, 'providers', className);
 }
 
 let _routingRegex = /const\s+routes\s*:\s*Routes\s*\=\s*\[((?:\n|\r|.)*)\]\s*\;/m;

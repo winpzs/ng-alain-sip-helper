@@ -34,7 +34,6 @@ export class SipRegModule implements ContentBase {
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
 
         if (IsInModuel(content, className)) return;
-        let curContent: string = fs.readFileSync(fsFile, 'utf-8');
 
         let isTargetRouting = /-routing\./i.test(moduleFile);
         let isComponent = false;
@@ -47,9 +46,13 @@ export class SipRegModule implements ContentBase {
             content = PushToModuleExports(content, className);
             content = PushToModuleRouting(content, name, className, importPath, false);
 
+
             //将SipUiModal加入到module.entryComponents
-            if (isComponent &&  /\s+extends\s+SipUiModal\s+/.test(curContent))
-                content = PushToModuleEntryComponents(content, className);
+            if (isComponent){
+                let cpContent = fs.readFileSync(fsFile.replace(/\.[^\.]+$/, '.ts'), 'utf-8')
+                if (/\s+extends\s+SipUiModal\s+/.test(cpContent ))
+                    content = PushToModuleEntryComponents(content, className);
+            }
 
         } else if (/service/i.test(prefix)) {
 
