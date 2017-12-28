@@ -413,7 +413,7 @@ function _pushNgModulePropClass(content: string, propName: string, className: st
         content = _replaceContent(content, ngModuleInfo, mdConten);
     }
 
-    return content;
+    return content.replace(/\,{2,}/g, ',');
 }
 
 function _newWordRegex(work: string) {
@@ -580,17 +580,23 @@ function _getRoutingInfo(content: string): IContentInfo {
     return null;
 }
 
+function _trimRouteItem(str: string): string {
+    return Lib.trim(str.replace(/^\,+|\,+$/g, ''), true);
+}
+
 function _makeRouteItems(list: IRouteItem[]): string {
-    let retList = [], first = true;
+    let retList = [], temp;
     list = _makeEndRoute(list);
     list.forEach((item) => {
         if (item.route) {
-            retList.push([!first && item.endRoute ? ',' : '', '{', item.content, '}'].join(''));
-            first = false;
-        } else
-            retList.push(item.content);
+            retList.push(['    {', item.content, '}', item.endRoute ? '' : ','].join(''));
+        } else {
+            temp = _trimRouteItem(item.content);
+            console.log('!'+temp+'!');
+            !temp || retList.push('    ' + temp);
+        }
     });
-    return retList.join('');
+    return '\n' + retList.join('\n') + '\n';
 }
 
 export function PushToModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
@@ -602,48 +608,22 @@ export function PushToModuleRouting(content: string, name: string, className: st
             routeList.push({
                 route: true, endRoute: false,
                 content: `
-    path: '${name.replace(/-routing$/i, '')}',
-    loadChildren: '${importPath}#${className}'
-`
+        path: '${name.replace(/-routing$/i, '')}',
+        loadChildren: '${importPath}#${className}'
+    `
             });
         } else {
             routeList.push({
                 route: true, endRoute: false,
                 content: `
-    path: '${name}',
-    component: ${className}
-`
+        path: '${name}',
+        component: ${className}
+    `
             });
         }
         return _replaceContent(content, info, _makeRouteItems(routeList));
     } else
         return content;
-    // content = content.replace(_routingRegex, function (find, text, index) {
-    //     let isEmpty = !Lib.trim(text);
-    //     let routingContent = _getRoutingContent(text);
-    //     let routingItems = _getRoutingItems(routingContent);
-    //     if (isChild) {
-    //         routingItems.push(`
-    //     path: '${name.replace(/-routing$/i, '')}',
-    //     loadChildren: '${importPath}#${className}'
-    // `);
-    //     } else {
-    //         routingItems.push(`
-    //     path: '${name}',
-    //     component: ${className}
-    // `);
-    //     }
-    //     let notEnd = text.replace(routingContent, '').indexOf('{') >= 0;
-    //     let retContent = text.replace(routingContent, '\n' + _makeRoutingItems(routingItems, notEnd));
-    //     retContent = retContent.replace(/\,{2,}/g, ',');
-
-    //     let retFind = isEmpty ? 'const routes: Routes = [' + retContent + '\n];'
-    //         : find.replace(text, retContent);
-    //     return retFind.replace(/\n{2,}/g, '\n')
-
-    // });
-
-    // return content;
 }
 
 export function RemoveFromModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
