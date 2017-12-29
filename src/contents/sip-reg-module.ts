@@ -19,11 +19,11 @@ export class SipRegModule implements ContentBase {
         if (params.cleanmodlue)
             this.removeFromModule(fsFile, params.moduleFile, name, prefix);
         else
-            this.pushToModule(fsFile, params.moduleFile, name, prefix);
+            this.pushToModule(fsFile, params.moduleFile, name, prefix, params);
 
     }
 
-    pushToModule(fsFile: string, moduleFile: string, name: string, prefix: string) {
+    pushToModule(fsFile: string, moduleFile: string, name: string, prefix: string, params: GenerateParam) {
         if (!moduleFile) return;
         if (!fs.existsSync(moduleFile)) return;
 
@@ -34,55 +34,63 @@ export class SipRegModule implements ContentBase {
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
         let contentBak = content;
 
-        // if (IsInModuel(content, className)) return;
-
-        let isTargetRouting = /-routing\./i.test(moduleFile);
         let isComponent = false;
         if (isComponent = /component/i.test(prefix)
             || /directive/i.test(prefix)
             || /pipe/i.test(prefix)) {
 
-            content = PushToImport(content, className, importPath);
-            if (!isTargetRouting) content = PushToExport(content, className, importPath);
-            content = PushToModuleDeclarations(content, className);
-            content = PushToModuleExports(content, className);
-            content = PushToModuleRouting(content, name, className, importPath, false);
+            if (params.module || params.routing){
+                content = PushToImport(content, className, importPath);
+            }
 
+            if (params.module){
+                content = PushToExport(content, className, importPath);
+                content = PushToModuleDeclarations(content, className);
+                content = PushToModuleExports(content, className);
 
-            //将SipUiModal加入到module.entryComponents
-            if (isComponent){
-                let cpContent = fs.readFileSync(fsFile.replace(/\.[^\.]+$/, '.ts'), 'utf-8')
-                if (/\s+extends\s+SipUiModal\s+/.test(cpContent ))
-                    content = PushToModuleEntryComponents(content, className);
+                //将SipUiModal加入到module.entryComponents
+                if (isComponent){
+                    let cpContent = fs.readFileSync(fsFile.replace(/\.[^\.]+$/, '.ts'), 'utf-8')
+                    if (/\s+extends\s+SipUiModal\s+/.test(cpContent ))
+                        content = PushToModuleEntryComponents(content, className);
+                }
+            }
+
+            if (params.routing){
+                content = PushToModuleRouting(content, name, className, importPath, false);
             }
 
         } else if (/service/i.test(prefix)) {
 
-            content = PushToImport(content, className, importPath);
-            if (!isTargetRouting) content = PushToExport(content, className, importPath);
-            content = PushToModuleProviders(content, className);
-            content = PushToModuleRouting(content, name, className, importPath, false);
+            if (params.module){
 
-        } else if (/module/i.test(prefix)) {
-            let isRouting = /-routing\./i.test(fsFile);
-
-            //如果两都是路由moudle才生成Routes
-            if (isRouting && isTargetRouting)
-                content = PushToModuleRouting(content, name, className, importPath, true);
-            else {
-                content = PushToModuleRouting(content, name, className, importPath, true);
                 content = PushToImport(content, className, importPath);
-                if (!isTargetRouting) content = PushToExport(content, className, importPath);
-                content = PushToModuleImports(content, className);
-                //如果目标不是路由module, 成生module.exports
-                if (!isTargetRouting)
-                    content = PushToModuleExports(content, className);
+                content = PushToExport(content, className, importPath);
+                content = PushToModuleProviders(content, className);
+    
             }
 
-        } else {
+        } else if (/module/i.test(prefix)) {
 
-            if (!isTargetRouting)
+            if (params.module || params.routing){
+                content = PushToImport(content, className, importPath);
+                content = PushToModuleImports(content, className);
+            }
+
+            if (params.module){
                 content = PushToExport(content, className, importPath);
+                content = PushToModuleExports(content, className);
+            }
+
+            if (params.routing){
+                content = PushToModuleRouting(content, name, className, importPath, true);
+            }
+
+
+        } else {
+            if (params.module){
+                content = PushToExport(content, className, importPath);
+            }
         }
 
         if (contentBak != content)

@@ -205,12 +205,19 @@ export function activate(context: ExtensionContext) {
         }
         let rootPath = p.rootPath;
         let curFile = p.path = _curFile;
+        let curPath = path.dirname(_curFile);
         p.name = path.basename(_curFile).split('.')[0];
         let files = FindUpwardModuleFiles(rootPath, curFile);
-        let picks = files.map(file => path.relative(rootPath, file));
+        let routingRegex = /\-routing\./i;
+        files = files.filter((file) => {
+            if (p.module && p.routing) return true;
+            if (p.routing) return routingRegex.test(file);
+            if (p.module) return !routingRegex.test(file);
+        });
+        let picks = files.map(file => path.relative(curPath, file));
         window.showQuickPick(picks).then(file => {
             if (!file) return;
-            file = path.join(rootPath, file);
+            file = path.join(curPath, file);
             p.moduleFile = file;
             genObj.generate(p);
         });
@@ -261,18 +268,18 @@ export function activate(context: ExtensionContext) {
     let showParamsQuickPick = (config: IConfig, path: string, args) => {
         let params = config.params;
 
-        let doneFn = (param: IParam)=>{
+        let doneFn = (param: IParam) => {
             let cmd = config.command;
             if (!cmd) return;
             let input = 'input' in param ? param.input : config.input;
             send_command(param.terminal || config.terminal, path, cmd, param.param, input, args, config);
         };
 
-        if (params.length <= 1){
+        if (params.length <= 1) {
             doneFn(params[0]);
             return;
         }
-        
+
         let picks = params.map(item => item.title);
         window.showQuickPick(picks).then((title) => {
             if (!title) return;
@@ -386,7 +393,7 @@ export function activate(context: ExtensionContext) {
     };
 
     context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.jsontoclass', (textEditor, edit) => {
-        let fsFile:string = textEditor.document.fileName;
+        let fsFile: string = textEditor.document.fileName;
         _calcRootPath(fsFile);
 
         let { document, selection } = textEditor
@@ -406,7 +413,7 @@ export function activate(context: ExtensionContext) {
         }
     }))
 
-    let jsonToClass = (json: object, fsFile:string): string => {
+    let jsonToClass = (json: object, fsFile: string): string => {
         let props = [], defs = [], item, defName;
         Object.keys(json).forEach(key => {
             item = json[key];
