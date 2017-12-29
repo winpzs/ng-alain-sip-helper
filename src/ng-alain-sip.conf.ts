@@ -317,23 +317,39 @@ const config = [
                         "title": "ts"
                     }
                 ]
-            },
+            }
+        ]
+    },
+    {
+        "title": "注册modlue >",
+        "command": "",
+        children: [
             {
-                "title": "注册modlue >",
+                "title": "注册 >",
                 "command": "sip-regmodlue",
                 "path": "%currentPath%",
                 "builtin": true,
-                "input": false
+                "input": false,
+                "params": [
+                    {
+                        "param": "--module",
+                        "title": "module"
+                    },
+                    {
+                        "param": "--routing",
+                        "title": "routing"
+                    }
+                ]
             },
             {
-                "title": "撤消modlue",
+                "title": "撤消 >",
                 "command": "sip-cleanmodlue",
                 "path": "%currentPath%",
                 "builtin": true,
                 "input": false
             },
             {
-                "title": "删除",
+                "title": "删除文件",
                 "command": "sip-gen-del",
                 "path": "%currentPath%",
                 "builtin": true,
