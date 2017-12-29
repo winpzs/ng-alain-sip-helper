@@ -592,7 +592,7 @@ function _hasRouteItem(routeList: IRouteItem[], className: string, importPath: s
     return routeList.filter(item=>{
         return isChild ? item.content.indexOf(childText) >= 0
             : _hasClassName(item.content, className);
-    }).length > 0
+    }).length > 0;
 }
 
 export function PushToModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
