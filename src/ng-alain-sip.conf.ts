@@ -2,7 +2,7 @@
 
 const config = [
     {
-        "title": "serve >",
+        "title": "Serve >",
         //指令可以使用变量 %params%, %input%, %workspaceRoot%, %currentPath%"
         "command": "npm run serve %params%",
         //vscod terminal 名称
@@ -17,25 +17,25 @@ const config = [
         "params": [
             {
                 "param": "-- -o -e=dev",
-                "title": "dev",
+                "title": "Dev",
                 //vscod terminal 名称, 如果没有，取config.terminal
                 "terminal": "",
                 //是否需要输入内容, 并压入%input%变更, 如果没有，取config.input
                 "input": false
             }, {
                 "param": "-- -o --e=dev -pc=\"proxy.conf.js\"",
-                "title": "dev proxy"
+                "title": "Dev Proxy"
             }, {
                 "param": "-- -o --hmr -e=hmr",
-                "title": "hmr"
+                "title": "HMR"
             }, {
                 "param": "-- -o --hmr -e=hmr -pc=\"proxy.conf.js\"",
-                "title": "hmr proxy"
+                "title": "HMR Proxy"
             }
         ]
     },
     {
-        "title": "build >",
+        "title": "Build >",
         "command": "npm run build",
         "terminal": "build-ngalainsiphelper",
         "path": "%workspaceRoot%",
@@ -43,32 +43,32 @@ const config = [
         "params": [
             {
                 "param": "",
-                "title": "build"
+                "title": "Build"
             }, {
                 "param": "-- -prod -e=prod --aot --build-optimizer",
-                "title": "build aot"
+                "title": "Build AOT"
             }
         ]
     },
     {
-        "title": "generate >",
+        "title": "Generate >",
         "command": "",
         "builtin": false,
         children: [
             {
-                "title": "page >",
+                "title": "Page >",
                 "command": "sip-page",
                 "path": "%currentPath%",
                 "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--ts --html --style --dir",
-                        "title": "创建目录, ts, html, style"
-                    },
-                    {
                         "param": "--ts --html --dir",
                         "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --style --dir",
+                        "title": "创建目录, ts, html, style"
                     },
                     {
                         "param": "--ts",
@@ -89,19 +89,19 @@ const config = [
                 ]
             },
             {
-                "title": "modal >",
+                "title": "Modal >",
                 "command": "sip-modal",
                 "path": "%currentPath%",
                 "builtin": true,
                 "input": true,
                 "params": [
                     {
-                        "param": "--ts --html --style --dir",
-                        "title": "创建目录, ts, html, style"
-                    },
-                    {
                         "param": "--ts --html --dir",
                         "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --style --dir",
+                        "title": "创建目录, ts, html, style"
                     },
                     {
                         "param": "--ts",
@@ -122,7 +122,7 @@ const config = [
                 ]
             },
             {
-                "title": "component >",
+                "title": "Component >",
                 "command": "sip-component",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -155,7 +155,7 @@ const config = [
                 ]
             },
             {
-                "title": "module >",
+                "title": "Module >",
                 "command": "sip-module",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -170,21 +170,21 @@ const config = [
                         "title": "ts"
                     },
                     {
-                        "param": "--routingfull",
-                        "title": "routing moudle full（module和routing结合）"
+                        "param": "--spec",
+                        "title": "spec"
                     },
                     {
                         "param": "--routing",
-                        "title": "routing moudle（只做routing）"
+                        "title": "附加：Routing（只做 Routing）"
                     },
                     {
-                        "param": "--spec",
-                        "title": "spec"
+                        "param": "--routingfull",
+                        "title": "附加：Full（Module 和 Routing 结合）"
                     }
                 ]
             },
             {
-                "title": "service >",
+                "title": "Service >",
                 "command": "sip-service",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -205,7 +205,7 @@ const config = [
                 ]
             },
             {
-                "title": "directive >",
+                "title": "Directive >",
                 "command": "sip-directive",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -226,7 +226,7 @@ const config = [
                 ]
             },
             {
-                "title": "pipe >",
+                "title": "Pipe >",
                 "command": "sip-pipe",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -247,7 +247,7 @@ const config = [
                 ]
             },
             {
-                "title": "guard >",
+                "title": "Guard >",
                 "command": "sip-guard",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -268,7 +268,7 @@ const config = [
                 ]
             },
             {
-                "title": "class >",
+                "title": "Class >",
                 "command": "sip-class",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -285,7 +285,7 @@ const config = [
                 ]
             },
             {
-                "title": "interface >",
+                "title": "Interface >",
                 "command": "sip-interface",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -302,7 +302,7 @@ const config = [
                 ]
             },
             {
-                "title": "enum >",
+                "title": "Enum >",
                 "command": "sip-enum",
                 "path": "%currentPath%",
                 "builtin": true,
@@ -317,36 +317,6 @@ const config = [
                         "title": "ts"
                     }
                 ]
-            }
-        ]
-    },
-    {
-        "title": "注册modlue >",
-        "command": "",
-        children: [
-            {
-                "title": "注册 >",
-                "command": "sip-regmodlue",
-                "path": "%currentPath%",
-                "builtin": true,
-                "input": false,
-                "params": [
-                    {
-                        "param": "--module",
-                        "title": "module"
-                    },
-                    {
-                        "param": "--routing",
-                        "title": "routing"
-                    }
-                ]
-            },
-            {
-                "title": "撤消 >",
-                "command": "sip-cleanmodlue",
-                "path": "%currentPath%",
-                "builtin": true,
-                "input": false
             },
             {
                 "title": "删除文件",
@@ -358,12 +328,96 @@ const config = [
         ]
     },
     {
-        "title": "npm >",
+        "title": "注册 Modlue >",
+        "command": "",
+        children: [
+            {
+                "title": "Module >",
+                "command": "sip-regmodlue",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": false,
+                "params": [
+                    {
+                        "param": "--module",
+                        "title": "Module"
+                    }
+                ]
+            },
+            {
+                "title": "Routing >",
+                "command": "sip-regmodlue",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": false,
+                "params": [
+                    {
+                        "param": "--routing",
+                        "title": "Routing"
+                    }
+                ]
+            },
+            {
+                "title": "Module And Routing >",
+                "command": "sip-regmodlue",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": false,
+                "params": [
+                    {
+                        "param": "--module --routing",
+                        "title": "Module And Routing"
+                    }
+                ]
+            },
+            {
+                "title": "撤消 Module >",
+                "command": "sip-regmodlue",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": false,
+                "params": [
+                    {
+                        "param": "--cleanmodule",
+                        "title": "Module"
+                    }
+                ]
+            },
+            {
+                "title": "撤消 Routing >",
+                "command": "sip-regmodlue",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": false,
+                "params": [
+                    {
+                        "param": "--cleanrouting",
+                        "title": "Routing"
+                    }
+                ]
+            },
+            {
+                "title": "撤消 Module And Routing >",
+                "command": "sip-regmodlue",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": false,
+                "params": [
+                    {
+                        "param": "--cleanmodule --cleanrouting",
+                        "title": "Module And Routing"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Npm >",
         "command": "npm",
         "builtin": true
     },
     {
-        "title": "other >",
+        "title": "Other >",
         "command": "",
         children: [
             {
@@ -377,7 +431,7 @@ const config = [
                 "builtin": true
             },
             {
-                "title": "设置",
+                "title": "设 置",
                 "command": "config",
                 "builtin": true
             }

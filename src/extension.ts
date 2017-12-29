@@ -260,15 +260,24 @@ export function activate(context: ExtensionContext) {
     };
     let showParamsQuickPick = (config: IConfig, path: string, args) => {
         let params = config.params;
-        let picks = params.map(item => item.title);
 
+        let doneFn = (param: IParam)=>{
+            let cmd = config.command;
+            if (!cmd) return;
+            let input = 'input' in param ? param.input : config.input;
+            send_command(param.terminal || config.terminal, path, cmd, param.param, input, args, config);
+        };
+
+        if (params.length <= 1){
+            doneFn(params[0]);
+            return;
+        }
+        
+        let picks = params.map(item => item.title);
         window.showQuickPick(picks).then((title) => {
             if (!title) return;
             let param: IParam = params.find(item => item.title == title);
-            let cmd = config.command;
-            let input = 'input' in param ? param.input : config.input;
-            if (!param || !config.command) return;
-            send_command(param.terminal || config.terminal, path, config.command, param.param, input, args, config);
+            param && doneFn(param);
         });
     };
 
