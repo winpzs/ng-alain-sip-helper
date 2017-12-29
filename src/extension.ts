@@ -179,10 +179,6 @@ export function activate(context: ExtensionContext) {
             case 'sip-regmodlue':
                 sipRegmodlue(new SipRegModule(), gParam);
                 break;
-            case 'sip-cleanmodlue':
-                gParam.cleanmodlue = true;
-                sipRegmodlue(new SipRegModule(), gParam);
-                break;
             case 'sip-gen-del':
                 if (IsDirectory(_curFile)) {
                     window.showWarningMessage('不能处理目录!');
@@ -213,6 +209,10 @@ export function activate(context: ExtensionContext) {
             if (p.module && p.routing) return true;
             if (p.routing) return routingRegex.test(file);
             if (p.module) return !routingRegex.test(file);
+
+            if (p.cleanmodule && p.cleanrouting) return true;
+            if (p.cleanrouting) return routingRegex.test(file);
+            if (p.cleanmodule) return !routingRegex.test(file);
         });
         let picks = files.map(file => path.relative(curPath, file));
         window.showQuickPick(picks).then(file => {
