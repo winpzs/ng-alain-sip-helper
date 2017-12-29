@@ -214,9 +214,10 @@ export function RemoveFromImport(content: string, className: string): string {
     return change ? contentList.join('\n') : content;
 }
 
-
 let _exportRegex = /^\s*\bexport\b.+?from/i;
 export function PushToExport(content: string, className: string, importPath: string): string {
+    let _hasExportRegex = new RegExp('^\\s*\\bexport\\b.+?\\bfrom\\b.+?[\'"]' + importPath, 'm');
+    if (_hasExportRegex.test(content)) return content;
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
 
@@ -424,6 +425,8 @@ function _pushNgModulePropClass(content: string, propName: string, className: st
     if (!ngModuleInfo) return content;
 
     let info = _getNgModulePropContent(ngModuleInfo.content, propName);
+    if (_hasClassName(info.content, className)) return content;
+
     let mdConten, descContent;
     if (info) {
         let isEmpty = !Lib.trim(info.content);
@@ -584,8 +587,18 @@ function _makeRouteItems(list: IRouteItem[]): string {
     return '\n' + retList.join('\n') + '\n';
 }
 
+function _hasRouteItem(routeList: IRouteItem[], className: string, importPath: string, isChild:boolean):boolean{
+    let childText = isChild ? `${importPath}#${className}` : '';
+    return routeList.filter(item=>{
+        return isChild ? item.content.indexOf(childText) >= 0
+            : _hasClassName(item.content, className);
+    }).length > 0
+}
+
 export function PushToModuleRouting(content: string, name: string, className: string, importPath: string, isChild?: boolean) {
     let info = _getRoutingInfo(content);
+    if (_hasRouteItem(info.routes, className, importPath, isChild))
+        return content;
     if (info) {
         let routeList: IRouteItem[] = info.routes;
         if (isChild) {

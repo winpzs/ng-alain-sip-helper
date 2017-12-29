@@ -184,8 +184,7 @@ export function activate(context: ExtensionContext) {
                     window.showWarningMessage('不能处理目录!');
                 } else {
                     window.showInformationMessage(`确定要删除 ${path.basename(_curFile)} 吗?`, '确定').then((text) => {
-                        if (text == '确定')
-                            sipGenerateDel(gParam);
+                        if (text == '确定') sipGenerateDel(gParam);
                     });
                 }
                 break;
@@ -223,7 +222,8 @@ export function activate(context: ExtensionContext) {
         });
     };
     let sipGenerateDel = (p: any, args?: any) => {
-        p.cleanmodlue = true;
+        p.cleanmodule = true;
+        p.cleanrouting = true;
         let rootPath = p.rootPath;
         let curFile = p.path = _curFile;
         p.name = path.basename(_curFile).split('.')[0];

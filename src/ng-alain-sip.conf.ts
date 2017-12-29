@@ -178,7 +178,7 @@ const config = [
                         "title": "附加：Routing（只做 Routing）"
                     },
                     {
-                        "param": "--routingfull",
+                        "param": "--ts --routingfull",
                         "title": "附加：Full（Module 和 Routing 结合）"
                     }
                 ]
