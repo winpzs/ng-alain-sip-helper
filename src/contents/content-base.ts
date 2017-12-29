@@ -14,6 +14,8 @@ export interface ContentBase {
     generate: (params: GenerateParam) => string;
 }
 
+//#region about file
+
 /**
  * 名称转换：sip-user_list.component ===> SipUserListComponent
  * @param name 
@@ -154,6 +156,8 @@ export function FindUpwardModuleFiles(rootPath: string, curFile: string): string
     return files;
 };
 
+//#endregion about file
+
 //#region Import
 
 export function CalcImportPath(moduleFile: string, tsFile: string) {
@@ -165,7 +169,7 @@ export function CalcImportPath(moduleFile: string, tsFile: string) {
 }
 
 let _importRegex = /^\s*\bimport\b.+?from/i;
-export function PushToImport(content: string, className: string, importPath: string, isExport: boolean): string {
+export function PushToImport(content: string, className: string, importPath: string): string {
     let _hasImportRegex = new RegExp('^\\s*\\bimport\\b.+?\\b' + className + '\\b.+?from', 'm');
     if (_hasImportRegex.test(content)) return content;
 
@@ -185,59 +189,81 @@ export function PushToImport(content: string, className: string, importPath: str
     else
         contentList[index] = str + '\n' + contentList[index];
 
-    if (isExport)
-        _pushToExport(contentList, importPath);
     return contentList.reverse().join('\n');
 
 }
 
-export function RemoveFromImport(content: string, className: string, importPath: string): string {
+export function RemoveFromImport(content: string, className: string): string {
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n');
     let importRegex = new RegExp('^\\s*\\bimport\\b.*\\b' + className + '\\b');
-    let exportRegex = new RegExp('^\\s*\\bexport\\b.*\\bfrom\\b');
-    let exportPath = '\'' + importPath + '\'';
-    let index = contentList.findIndex(item => {
-        return importRegex.test(item)
-            || (exportRegex.test(item) && item.indexOf(exportPath) > 0)
-    });
-    let retContent = content;
-    if (index > -1) {
-        contentList.splice(index, 1);
-        retContent = RemoveFromImport(contentList.join('\n'), className, importPath);
+    let change = false;
+    let removeFn = function(){
+        let index = contentList.findIndex(item => {
+            return importRegex.test(item)
+        });
+        if (index > -1){
+            contentList.splice(index, 1);
+            change = true;
+            return true;
+        } else
+            return false;
     }
+    while(removeFn()){}
 
-    return retContent;
+    return change ? contentList.join('\n') : content;
 }
 
 
 let _exportRegex = /^\s*\bexport\b.+?from/i;
-export function PushToExport(content: string, className: string, importPath: string, isExport: boolean): string {
+export function PushToExport(content: string, className: string, importPath: string): string {
 
     let contentList = content.replace(/\n\r/g, '\n').split('\n').reverse();
-    _pushToExport(contentList, importPath);
-    return contentList.reverse().join('\n');
-
-}
-function _pushToExport(contentList: string[], importPath: string): string[] {
 
     let index = contentList.findIndex(item => { return _exportRegex.test(item); });
     let has = true;
+    let hasImport = true;
     if (index < 0) {
         index = contentList.findIndex(item => { return _importRegex.test(item); });
         has = false;
     }
     if (index < 0) {
+        hasImport = false;
         index = contentList.length - 1;
     }
 
     let str = ["export * from '", importPath, "';"].join('');
     if (has)
         contentList[index] += ('\n' + str);
-    else
+    else if (hasImport)
         contentList[index] += ('\n\n' + str);
+    else
+        contentList[index] = str + '\n' + contentList[index];
 
-    return contentList
+    return contentList.reverse().join('\n');
+
+}
+
+export function RemoveFromExport(content: string, className: string, importPath: string): string {
+
+    let contentList = content.replace(/\n\r/g, '\n').split('\n');
+    let exportRegex = new RegExp('^\\s*\\bexport\\b.*\\bfrom\\b');
+    let exportPath = '\'' + importPath + '\'';
+    let change = false;
+    let removeFn = function(){
+        let index = contentList.findIndex(item => {
+            return exportRegex.test(item) && item.indexOf(exportPath) > 0
+        });
+        if (index > -1){
+            contentList.splice(index, 1);
+            change = true;
+            return true;
+        } else
+            return false;
+    };
+    while(removeFn()){}
+    
+    return change ? contentList.join('\n') : content;
 }
 
 //#endregion Import
@@ -432,7 +458,7 @@ function _removeNgModulePropClass(content: string, propName: string, className: 
     if (info && _hasClassName(info.content, className)) {
 
         let removeRegex = new RegExp('\\,?(?:\\n|\\r|\\s)*\\b' + className + '\\b', 'g');
-        let descContent = info.content.replace(removeRegex, '');
+        let descContent = info.content.replace(removeRegex, '').replace(/^(?:\n|\r|\s|\,)*|(?:\n|\r|\s|\,)*$/, function(find){ return find.replace(',', ''); });
         let isEmpty = !Lib.trim(descContent);
         if (isEmpty) descContent = ' ';
 

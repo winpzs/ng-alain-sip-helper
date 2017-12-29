@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport, RemoveFromModuleRouting, PushToModuleEntryComponents } from "./content-base";
+import { ContentBase, GenerateParam, MakeFileName, MakeClassName, PushToModuleDeclarations, PushToImport, CalcPath, CalcImportPath, PushToModuleExports, PushToModuleRouting, IsInModuel, PushToModuleProviders, PushToModuleImports, RemoveFromImport, RemoveFromModuleDeclarations, RemoveFromModuleExports, RemoveFromModuleImports, RemoveFromModuleProviders, RemoveModuleEntryComponents, PushToExport, RemoveFromModuleRouting, PushToModuleEntryComponents, RemoveFromExport } from "./content-base";
 
 export class SipRegModule implements ContentBase {
 
@@ -42,7 +42,8 @@ export class SipRegModule implements ContentBase {
             || /directive/i.test(prefix)
             || /pipe/i.test(prefix)) {
 
-            content = PushToImport(content, className, importPath, !isTargetRouting);
+            content = PushToImport(content, className, importPath);
+            if (!isTargetRouting) content = PushToExport(content, className, importPath);
             content = PushToModuleDeclarations(content, className);
             content = PushToModuleExports(content, className);
             content = PushToModuleRouting(content, name, className, importPath, false);
@@ -57,7 +58,8 @@ export class SipRegModule implements ContentBase {
 
         } else if (/service/i.test(prefix)) {
 
-            content = PushToImport(content, className, importPath, !isTargetRouting);
+            content = PushToImport(content, className, importPath);
+            if (!isTargetRouting) content = PushToExport(content, className, importPath);
             content = PushToModuleProviders(content, className);
             content = PushToModuleRouting(content, name, className, importPath, false);
 
@@ -69,7 +71,8 @@ export class SipRegModule implements ContentBase {
                 content = PushToModuleRouting(content, name, className, importPath, true);
             else {
                 content = PushToModuleRouting(content, name, className, importPath, true);
-                content = PushToImport(content, className, importPath, !isTargetRouting);
+                content = PushToImport(content, className, importPath);
+                if (!isTargetRouting) content = PushToExport(content, className, importPath);
                 content = PushToModuleImports(content, className);
                 //如果目标不是路由module, 成生module.exports
                 if (!isTargetRouting)
@@ -79,8 +82,7 @@ export class SipRegModule implements ContentBase {
         } else {
 
             if (!isTargetRouting)
-                content = PushToExport(content, className, importPath, !isTargetRouting);
-
+                content = PushToExport(content, className, importPath);
         }
 
         if (contentBak != content)
@@ -102,7 +104,8 @@ export class SipRegModule implements ContentBase {
 
         let retContent = content;
 
-        retContent = RemoveFromImport(retContent, className, importPath);
+        retContent = RemoveFromImport(retContent, className);
+        retContent = RemoveFromExport(retContent, className, importPath);
         retContent = RemoveFromModuleDeclarations(retContent, className);
         retContent = RemoveFromModuleExports(retContent, className);
         retContent = RemoveFromModuleImports(retContent, className);
