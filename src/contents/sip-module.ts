@@ -69,50 +69,26 @@ export class ${className} { }
         return content;
     }
 
-//     contentFullTS(params: GenerateParam): string {
-//         let name = params.name;
-//         let prefix = this.prefix;
-//         let className = MakeClassName(name, prefix);
-
-//         let content = `import { NgModule } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { RouterModule, Routes } from '@angular/router'
-// import { SharedModule } from '@shared/shared.module';
-
-// const routes: Routes = [];
-
-// @NgModule({
-//     imports: [
-//         CommonModule,
-//         SharedModule,
-//         RouterModule.forChild(routes)
-//     ],
-//     declarations: [],
-//     providers: [],
-//     exports:[],
-//     entryComponents:[]
-// })
-// export class ${className} { }
-// `;
-//         return content;
-//     }
-
     contentRoutingTS(params: GenerateParam): string {
-        let name = [params.name, 'routing'].join('-');
         let prefix = this.prefix;
+        let ipClassName = MakeClassName(params.name, prefix);
+        let name = [params.name, 'routing'].join('-');
         let className = MakeClassName(name, prefix);
+        
+        let importModule = params.ts ? `import { ${ipClassName} } from './${params.name}.module';\n` : '';
+        let importClass  = '\n        ' + ipClassName + ',';
 
         let content = `import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { SharedModule } from '@shared/shared.module';
-
+${importModule}
 const routes: Routes = [];
 
 @NgModule({
     imports: [
         CommonModule,
-        SharedModule,
+        SharedModule,${importClass}
         RouterModule.forChild(routes)
     ]
 })

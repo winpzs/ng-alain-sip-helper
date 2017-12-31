@@ -84,7 +84,8 @@ export class SipRegModule implements ContentBase {
             }
 
             if (params.routing){
-                content = PushToModuleRouting(content, name, className, importPath, true);
+                if (fsFile.replace('-routing', '') != moduleFile)
+                    content = PushToModuleRouting(content, name, className, importPath, true);
             }
 
 
