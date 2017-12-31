@@ -40,57 +40,65 @@ export class SipRegModule implements ContentBase {
             || /directive/i.test(prefix)
             || /pipe/i.test(prefix)) {
 
-            if (params.module || params.routing){
+            if (params.module || params.routing) {
                 content = PushToImport(content, className, importPath);
             }
 
-            if (params.module){
+            if (params.module) {
                 content = PushToExport(content, className, importPath);
                 content = PushToModuleDeclarations(content, className);
                 content = PushToModuleExports(content, className);
 
                 //将SipUiModal加入到module.entryComponents
-                if (isComponent){
+                if (isComponent) {
                     let cpContent = fs.readFileSync(fsFile.replace(/\.[^\.]+$/, '.ts'), 'utf-8')
-                    if (/\s+extends\s+SipUiModal\s+/.test(cpContent ))
+                    if (/\s+extends\s+SipUiModal\s+/.test(cpContent))
                         content = PushToModuleEntryComponents(content, className);
                 }
             }
 
-            if (params.routing){
+            if (params.routing) {
                 content = PushToModuleRouting(content, name, className, importPath, false);
             }
 
         } else if (/service/i.test(prefix)) {
 
-            if (params.module){
+            if (params.module) {
 
                 content = PushToImport(content, className, importPath);
                 content = PushToExport(content, className, importPath);
                 content = PushToModuleProviders(content, className);
-    
+
             }
 
         } else if (/module/i.test(prefix)) {
+            let isModuleSame = (moduleFile.replace('-routing', '') == fsFile);
 
-            if (params.module || params.routing){
+            // if (params.module || params.routing) {
+            //     content = PushToImport(content, className, importPath);
+            //     content = PushToModuleImports(content, className);
+            // }
+
+            if (params.module) {
                 content = PushToImport(content, className, importPath);
                 content = PushToModuleImports(content, className);
-            }
-
-            if (params.module){
                 content = PushToExport(content, className, importPath);
                 content = PushToModuleExports(content, className);
             }
 
-            if (params.routing){
-                if (fsFile.replace('-routing', '') != moduleFile)
+            if (params.routing) {
+
+                if (!isModuleSame)
                     content = PushToModuleRouting(content, name, className, importPath, true);
+                else {
+                    content = PushToImport(content, className, importPath);
+                    content = PushToModuleImports(content, className);
+                }
             }
 
 
         } else {
-            if (params.module){
+            if (params.module) {
                 content = PushToExport(content, className, importPath);
             }
         }
@@ -110,25 +118,37 @@ export class SipRegModule implements ContentBase {
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
 
         let isModule = /module/i.test(prefix);
+        // let isModuleSame = (moduleFile.replace('-routing', '') == fsFile);
 
         let retContent = content;
 
-        if (params.cleanmodule || params.cleanrouting){
-            retContent = RemoveFromImport(retContent, className);
-            retContent = RemoveFromExport(retContent, className, importPath);
-        }
+        // if (params.cleanmodule || params.cleanrouting){
+        //     retContent = RemoveFromImport(retContent, className);
+        //     retContent = RemoveFromExport(retContent, className, importPath);
+        // }
 
-        if (params.cleanmodule){
-            retContent = RemoveFromModuleDeclarations(retContent, className);
-            retContent = RemoveFromModuleExports(retContent, className);
-            retContent = RemoveFromModuleImports(retContent, className);
-            retContent = RemoveFromModuleProviders(retContent, className);
-            retContent = RemoveModuleEntryComponents(retContent, className);
-        }
+        // if (params.cleanmodule){
+        //     retContent = RemoveFromModuleDeclarations(retContent, className);
+        //     retContent = RemoveFromModuleExports(retContent, className);
+        //     retContent = RemoveFromModuleImports(retContent, className);
+        //     retContent = RemoveFromModuleProviders(retContent, className);
+        //     retContent = RemoveModuleEntryComponents(retContent, className);
+        // }
 
-        if (params.cleanrouting){
-            retContent = RemoveFromModuleRouting(retContent, name, className, importPath, isModule);
-        }
+        // if (params.cleanrouting){
+        //     if (isModuleSame)
+        //         retContent = RemoveFromModuleImports(retContent, className);
+
+        //     retContent = RemoveFromModuleRouting(retContent, name, className, importPath, isModule);
+        // }
+        retContent = RemoveFromImport(retContent, className);
+        retContent = RemoveFromExport(retContent, className, importPath);
+        retContent = RemoveFromModuleDeclarations(retContent, className);
+        retContent = RemoveFromModuleExports(retContent, className);
+        retContent = RemoveFromModuleImports(retContent, className);
+        retContent = RemoveFromModuleProviders(retContent, className);
+        retContent = RemoveModuleEntryComponents(retContent, className);
+        retContent = RemoveFromModuleRouting(retContent, name, className, importPath, isModule);
 
         if (retContent != content)
             fs.writeFileSync(moduleFile, retContent, 'utf-8');
