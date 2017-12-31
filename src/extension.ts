@@ -207,18 +207,36 @@ export function activate(context: ExtensionContext) {
         files = files.filter((file) => {
             if (p.module && p.routing) return true;
             if (p.routing) return routingRegex.test(file);
-            if (p.module) return !routingRegex.test(file);
+            if (p.module || p.both) return !routingRegex.test(file);
 
             if (p.cleanmodule && p.cleanrouting) return true;
             if (p.cleanrouting) return routingRegex.test(file);
-            if (p.cleanmodule) return !routingRegex.test(file);
+            if (p.cleanmodule || p.cleanboth) return !routingRegex.test(file);
         });
         let picks = files.map(file => path.relative(curPath, file));
         window.showQuickPick(picks).then(file => {
             if (!file) return;
             file = path.join(curPath, file);
-            p.moduleFile = file;
-            genObj.generate(p);
+            if (p.both || p.cleanboth) {
+                //处理module
+                p.moduleFile = file;
+                p.module = p.both;
+                p.routing = false;
+                p.cleanmodule = p.cleanboth;
+                p.cleanrouting = false;
+                genObj.generate(p);
+                //处理routing
+                p.moduleFile = file.replace(/\.module\.ts$/, '-routing.module.ts');
+                p.module = false;
+                p.routing = p.both;
+                p.cleanmodule = false;
+                p.cleanrouting = p.cleanboth;
+                genObj.generate(p);
+
+            } else {
+                p.moduleFile = file;
+                genObj.generate(p);
+            }
         });
     };
     let sipGenerateDel = (p: any, args?: any) => {

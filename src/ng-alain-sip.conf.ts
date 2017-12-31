@@ -166,20 +166,24 @@ const config = [
                         "title": "创建目录, ts"
                     },
                     {
+                        "param": "--ts --routing --dir",
+                        "title": "创建目录, ts, Routing"
+                    },
+                    {
                         "param": "--ts",
                         "title": "ts"
                     },
                     {
-                        "param": "--spec",
-                        "title": "spec"
+                        "param": "--ts --routing",
+                        "title": "ts, Routing"
                     },
                     {
                         "param": "--routing",
-                        "title": "附加：Routing（只做 Routing）"
+                        "title": "Routing"
                     },
                     {
-                        "param": "--ts --routingfull",
-                        "title": "附加：Full（Module 和 Routing 结合）"
+                        "param": "--spec",
+                        "title": "spec"
                     }
                 ]
             },
@@ -365,7 +369,7 @@ const config = [
                 "input": false,
                 "params": [
                     {
-                        "param": "--module --routing",
+                        "param": "--both",
                         "title": "Module And Routing"
                     }
                 ]
@@ -404,7 +408,7 @@ const config = [
                 "input": false,
                 "params": [
                     {
-                        "param": "--cleanmodule --cleanrouting",
+                        "param": "--cleanboth",
                         "title": "Module And Routing"
                     }
                 ]

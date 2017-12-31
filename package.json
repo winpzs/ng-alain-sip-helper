@@ -53,6 +53,14 @@
         "title": "ng-alain-sip"
       }
     ],
+    "keybindings": [
+      {
+        "command": "ngalainsiphelper.quickpicks",
+        "key": "ctrl+k ctrl+h",
+        "mac": "cmd+k cmd+h",
+        "when": "editorTextFocus"
+      }
+    ],
     "menus": {
       "explorer/context": [
         {
