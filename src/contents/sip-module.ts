@@ -76,7 +76,7 @@ export class ${className} { }
         let className = MakeClassName(name, prefix);
         
         let importModule = params.ts ? `import { ${ipClassName} } from './${params.name}.module';\n` : '';
-        let importClass  = '\n        ' + ipClassName + ',';
+        let importClass  = params.ts ? '\n        ' + ipClassName + ',' : '';
 
         let content = `import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
