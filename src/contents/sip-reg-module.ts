@@ -8,6 +8,7 @@ export class SipRegModule implements ContentBase {
 
     generate(params: GenerateParam): string {
         let fsFile = params.path;
+        fsFile = fsFile.replace(/\.spec\.ts$/i, '.ts');
         if (!fs.existsSync(fsFile)) return;
 
         let fInfo = path.parse(path.parse(fsFile).name);
@@ -72,21 +73,22 @@ export class SipRegModule implements ContentBase {
             }
 
         } else if (/module/i.test(prefix)) {
-            let isModuleSame = (moduleFile.replace('-routing', '') == fsFile);
 
-            // if (params.module || params.routing) {
-            //     content = PushToImport(content, className, importPath);
-            //     content = PushToModuleImports(content, className);
-            // }
+            let isRouting = /\-routing/i.test(fsFile);
 
             if (params.module) {
-                content = PushToImport(content, className, importPath);
-                content = PushToModuleImports(content, className);
-                content = PushToExport(content, className, importPath);
-                content = PushToModuleExports(content, className);
+                if (isRouting) {
+                    content = PushToModuleRouting(content, name, className, importPath, true);
+                } else {
+                    content = PushToImport(content, className, importPath);
+                    content = PushToModuleImports(content, className);
+                    content = PushToExport(content, className, importPath);
+                    content = PushToModuleExports(content, className);
+                }
             }
 
             if (params.routing) {
+                let isModuleSame = (moduleFile.replace('-routing', '') == fsFile);
 
                 if (!isModuleSame)
                     content = PushToModuleRouting(content, name, className, importPath, true);

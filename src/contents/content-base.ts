@@ -380,6 +380,7 @@ function _getContentEx(content: string, start: number, splitStart: string, split
 function _getContent(content: string, start: number, splitStart: string, splitEnd: string): IContentInfo {
     content = _encodeNotes(content.substr(start));
     let info = _getContentEx(content, 0, splitStart, splitEnd);
+    if (!info) return null;
     return {
         start: start + 1,
         content: _decodeNotes(info.content)
@@ -425,7 +426,7 @@ function _pushNgModulePropClass(content: string, propName: string, className: st
     if (!ngModuleInfo) return content;
 
     let info = _getNgModulePropContent(ngModuleInfo.content, propName);
-    if (_hasClassName(info.content, className)) return content;
+    if (info && _hasClassName(info.content, className)) return content;
 
     let mdConten, descContent;
     if (info) {
@@ -558,6 +559,8 @@ function _getRoutingInfo(content: string): IContentInfo {
     if (regText) {
         let start = regText.index + regText[0].length - 1;//index到'['的位置
         let info = _getContent(content, start, '[', ']');
+
+        if (!info) return null;
 
         let outList: IRouteItem[] = [];
         _toRouteItems(info.content, outList);
