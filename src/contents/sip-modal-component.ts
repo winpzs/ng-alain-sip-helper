@@ -17,10 +17,7 @@ export class SipModalComponent extends SipComponent {
 
         let content = `import { Component } from '@angular/core';
 
-import { SipUiModal } from '@core/sip/extends/sip-ui';
-import { EventInit } from '@core/sip/extends/decorators';
-import { SipRestService } from '@core/sip/services/sip-rest.service';
-import { SipUiService } from '@core/sip/services/sip-ui.service';
+import { SipUiModal, SipRestService, SipUiService, EventInit } from '@core/sip/sip-core.module';
 
 @Component({
     selector: 'sip-${name}',

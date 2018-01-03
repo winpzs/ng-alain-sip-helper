@@ -17,10 +17,7 @@ export class SipPageComponent extends SipComponent {
 
         let content = `import { Component } from '@angular/core';
 
-import { EventInit } from '@core/sip/extends/decorators';
-import { SipUiPage } from '@core/sip/extends/sip-ui';
-import { SipRestService } from '@core/sip/services/sip-rest.service';
-import { SipUiService } from '@core/sip/services/sip-ui.service';
+import { SipUiPage, SipRestService, SipUiService, EventInit } from '@core/sip/sip-core.module';
 
 @Component({
     selector: 'sip-${name}',
