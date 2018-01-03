@@ -17,11 +17,19 @@ export class SipRegModule implements ContentBase {
         let prefix = fInfo.ext;
         prefix = prefix ? prefix.substr(1) : prefix;
 
-        if (params.module || params.routing)
+        if (params.module || params.routing) {
             this.pushToModule(fsFile, params.moduleFile, name, prefix, params);
+            this.generate({
+                path:params.moduleFile,
+                moduleFile:fsFile,
+                name:path.basename(params.moduleFile).split('.')[0],
+                rootPath:params.rootPath,
+                cleanmodule:true
+            })
+        }
 
         if (params.cleanmodule || params.cleanrouting)
-            this.removeFromModule(fsFile, params.moduleFile, name, prefix, params);
+            this.removeFromModule(fsFile, params.moduleFile, name, prefix);
 
     }
 
@@ -110,7 +118,7 @@ export class SipRegModule implements ContentBase {
 
     }
 
-    removeFromModule(fsFile: string, moduleFile: string, name: string, prefix: string, params: GenerateParam) {
+    removeFromModule(fsFile: string, moduleFile: string, name: string, prefix: string) {
         if (!moduleFile) return;
         if (!fs.existsSync(moduleFile)) return;
         let importPath = CalcImportPath(moduleFile, fsFile);
@@ -120,29 +128,9 @@ export class SipRegModule implements ContentBase {
         let content: string = fs.readFileSync(moduleFile, 'utf-8');
 
         let isModule = /module/i.test(prefix);
-        // let isModuleSame = (moduleFile.replace('-routing', '') == fsFile);
 
         let retContent = content;
 
-        // if (params.cleanmodule || params.cleanrouting){
-        //     retContent = RemoveFromImport(retContent, className);
-        //     retContent = RemoveFromExport(retContent, className, importPath);
-        // }
-
-        // if (params.cleanmodule){
-        //     retContent = RemoveFromModuleDeclarations(retContent, className);
-        //     retContent = RemoveFromModuleExports(retContent, className);
-        //     retContent = RemoveFromModuleImports(retContent, className);
-        //     retContent = RemoveFromModuleProviders(retContent, className);
-        //     retContent = RemoveModuleEntryComponents(retContent, className);
-        // }
-
-        // if (params.cleanrouting){
-        //     if (isModuleSame)
-        //         retContent = RemoveFromModuleImports(retContent, className);
-
-        //     retContent = RemoveFromModuleRouting(retContent, name, className, importPath, isModule);
-        // }
         retContent = RemoveFromImport(retContent, className);
         retContent = RemoveFromExport(retContent, className, importPath);
         retContent = RemoveFromModuleDeclarations(retContent, className);
