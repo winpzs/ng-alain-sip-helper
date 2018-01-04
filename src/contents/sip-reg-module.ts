@@ -90,15 +90,15 @@ export class SipRegModule implements ContentBase {
                 } else {
                     content = PushToImport(content, className, importPath);
                     content = PushToModuleImports(content, className);
-                    content = PushToExport(content, className, importPath);
+                    // content = PushToExport(content, className, importPath);
                     content = PushToModuleExports(content, className);
                 }
             }
 
             if (params.routing) {
-                let isModuleSame = (moduleFile.replace('-routing', '') == fsFile);
+                // let isModuleSame = (moduleFile.replace('-routing', '') == fsFile);
 
-                if (!isModuleSame)
+                if (isRouting)
                     content = PushToModuleRouting(content, name, className, importPath, true);
                 else {
                     content = PushToImport(content, className, importPath);
