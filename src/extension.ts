@@ -55,12 +55,11 @@ export function activate(context: ExtensionContext) {
     let _rootPath = workspace.rootPath;
     let _getRootPath = (): string => {
         return _rootPath;
-    },
-        _calcRootPath = (curPath: string) => {
-            curPath = CalcPath(curPath);
-            _rootPath = FindPathUpward(workspace.rootPath, curPath, 'package.json')
-                && workspace.rootPath;
-        };
+    }, _calcRootPath = (curPath: string) => {
+        curPath = CalcPath(curPath);
+        _rootPath = FindPathUpward(workspace.rootPath, curPath, 'package.json')
+            && workspace.rootPath;
+    };
 
     context.subscriptions.push({
         dispose: () => {

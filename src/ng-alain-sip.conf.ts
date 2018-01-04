@@ -67,8 +67,8 @@ const config = [
                         "title": "创建目录, ts, html"
                     },
                     {
-                        "param": "--ts --html --style --dir",
-                        "title": "创建目录, ts, html, style"
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
                     },
                     {
                         "param": "--ts",
@@ -79,8 +79,8 @@ const config = [
                         "title": "html"
                     },
                     {
-                        "param": "--style",
-                        "title": "style"
+                        "param": "--less",
+                        "title": "less"
                     },
                     {
                         "param": "--spec",
@@ -100,8 +100,8 @@ const config = [
                         "title": "创建目录, ts, html"
                     },
                     {
-                        "param": "--ts --html --style --dir",
-                        "title": "创建目录, ts, html, style"
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
                     },
                     {
                         "param": "--ts",
@@ -112,8 +112,8 @@ const config = [
                         "title": "html"
                     },
                     {
-                        "param": "--style",
-                        "title": "style"
+                        "param": "--less",
+                        "title": "less"
                     },
                     {
                         "param": "--spec",
@@ -133,8 +133,8 @@ const config = [
                         "title": "创建目录, ts, html"
                     },
                     {
-                        "param": "--ts --html --style --dir",
-                        "title": "创建目录, ts, html, style"
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
                     },
                     {
                         "param": "--ts",
@@ -145,8 +145,8 @@ const config = [
                         "title": "html"
                     },
                     {
-                        "param": "--style",
-                        "title": "style"
+                        "param": "--less",
+                        "title": "less"
                     },
                     {
                         "param": "--spec",

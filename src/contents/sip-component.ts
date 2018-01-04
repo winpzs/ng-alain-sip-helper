@@ -6,6 +6,20 @@ import { ContentBase, GenerateParam, MakeFileName, MakeClassName } from "./conte
 export class SipComponent implements ContentBase {
 
     prefix = 'component';
+    style = 'less';
+
+    isStyle(params: GenerateParam):boolean{
+        return params.style || params.css || params.less || params.sass 
+    }
+
+    styleExt(params: GenerateParam):string{
+        let ext = 'css';
+        if (params.less)
+            ext = 'less';
+        else if (params.sass)
+            ext = 'sass';
+        return ext;
+    }
 
     generate(params: GenerateParam): string {
         let name = params.name,
@@ -34,8 +48,8 @@ export class SipComponent implements ContentBase {
             fs.existsSync(fsFile) || fs.writeFileSync(fsFile, this.contentHtml(params), 'utf-8');
         }
 
-        if (params.style) {
-            fsFile = path.join(fsPath, MakeFileName(name, prefix, 'css'));
+        if (this.isStyle(params)) {
+            fsFile = path.join(fsPath, MakeFileName(name, prefix, this.styleExt(params)));
             retFile || (retFile = fsFile);
             fs.existsSync(fsFile) || fs.writeFileSync(fsFile, this.contentStyle(params), 'utf-8');
         }
@@ -54,9 +68,10 @@ export class SipComponent implements ContentBase {
         let name = params.name;
         let prefix = this.prefix;
         let className = MakeClassName(name, prefix);
+        let styleEx = this.styleExt(params);
 
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
-        let style = !params.style ? `styles:[]` : `styleUrls: ['./${name}.${prefix}.less']`;
+        let style = !this.isStyle(params) ? `styles:[]` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component, OnInit } from '@angular/core';
 

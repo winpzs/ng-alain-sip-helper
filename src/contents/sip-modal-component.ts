@@ -11,9 +11,10 @@ export class SipModalComponent extends SipComponent {
         let name = params.name;
         let prefix = this.prefix;
         let className = MakeClassName(name, prefix);
+        let styleEx = this.styleExt(params);
 
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
-        let style = !params.style ? `styles:[]` : `styleUrls: ['./${name}.${prefix}.less']`;
+        let style = !this.isStyle(params) ? `styles:[]` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component } from '@angular/core';
 
