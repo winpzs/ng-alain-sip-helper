@@ -54,7 +54,7 @@ const config = [
         "title": "Generate >",
         "command": "",
         "builtin": false,
-        children: [
+        'children': [
             {
                 "title": "Page >",
                 "command": "sip-page",
@@ -334,7 +334,7 @@ const config = [
     {
         "title": "注册 Modlue >",
         "command": "",
-        children: [
+        'children': [
             {
                 "title": "Module >",
                 "command": "sip-regmodlue",
@@ -343,7 +343,7 @@ const config = [
                 "input": false,
                 "params": [
                     {
-                        "param": "--module",
+                        "param": "--module",//params: module,routing, both, export(是否自动生成export)
                         "title": "Module"
                     }
                 ]

@@ -20,11 +20,11 @@ export class SipRegModule implements ContentBase {
         if (params.module || params.routing) {
             this.pushToModule(fsFile, params.moduleFile, name, prefix, params);
             this.generate({
-                path:params.moduleFile,
-                moduleFile:fsFile,
-                name:path.basename(params.moduleFile).split('.')[0],
-                rootPath:params.rootPath,
-                cleanmodule:true
+                path: params.moduleFile,
+                moduleFile: fsFile,
+                name: path.basename(params.moduleFile).split('.')[0],
+                rootPath: params.rootPath,
+                cleanmodule: true
             })
         }
 
@@ -54,7 +54,8 @@ export class SipRegModule implements ContentBase {
             }
 
             if (params.module) {
-                content = PushToExport(content, className, importPath);
+                if (params.export)
+                    content = PushToExport(content, className, importPath);
                 content = PushToModuleDeclarations(content, className);
                 content = PushToModuleExports(content, className);
 
@@ -75,7 +76,8 @@ export class SipRegModule implements ContentBase {
             if (params.module) {
 
                 content = PushToImport(content, className, importPath);
-                content = PushToExport(content, className, importPath);
+                if (params.export)
+                    content = PushToExport(content, className, importPath);
                 content = PushToModuleProviders(content, className);
 
             }
@@ -108,7 +110,7 @@ export class SipRegModule implements ContentBase {
 
 
         } else {
-            if (params.module) {
+            if (params.module && params.export) {
                 content = PushToExport(content, className, importPath);
             }
         }
