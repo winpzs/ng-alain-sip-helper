@@ -435,6 +435,11 @@ const config = [
                 "builtin": true
             },
             {
+                "title": "Region Block",
+                "command": "region",
+                "builtin": true
+            },
+            {
                 "title": "设 置",
                 "command": "config",
                 "builtin": true

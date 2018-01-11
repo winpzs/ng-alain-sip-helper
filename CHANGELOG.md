@@ -3,7 +3,7 @@
 # 1.0.2 (2018-1-x)
 
 * 生成module时自动查找可以引用的-shared.module
-
+* ADD: Region Block command
 
 # 1.0.1 (2018-1-7)
 

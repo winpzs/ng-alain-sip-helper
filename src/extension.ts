@@ -138,6 +138,9 @@ export function activate(context: ExtensionContext) {
             case 'json-class':
                 commands.executeCommand('ngalainsiphelper.jsontoclass');
                 break;
+            case 'region':
+                commands.executeCommand('ngalainsiphelper.region');
+                break;
             case 'ng-generate':
                 let generateConfigs: IConfig[] = require('./ng-generate.conf');
                 showQuickPick(generateConfigs, rootPath, args);
@@ -473,6 +476,21 @@ ${props.join('\n')}
 
         return classText;
     };
+
+    context.subscriptions.push(commands.registerTextEditorCommand('ngalainsiphelper.region', (textEditor, edit) => {
+        _calcRootPath(textEditor.document.fileName);
+
+        var { document, selection } = textEditor
+        let isEmpty = textEditor.selection.isEmpty;
+        if (isEmpty) return;
+
+        var text = document.getText(textEditor.selection);
+        var time = new Date().valueOf();
+
+        text = ['    //#region region' + time + '\n', text, '    //#endregion region' + time + '\n'].join('\n');
+        edit.replace(isEmpty ? new Range(new Position(0, 0), new Position(100000, 100000)) :
+            textEditor.selection, text);
+    }))
 
 }
 
