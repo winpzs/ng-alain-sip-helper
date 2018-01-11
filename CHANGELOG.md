@@ -1,5 +1,10 @@
 ## ng-alain-sip Helper Changelog
 
+# 1.0.2 (2018-1-x)
+
+* 生成module时自动查找可以引用的-shared.module
+
+
 # 1.0.1 (2018-1-7)
 
 * command: sip-regmodlue add params --export

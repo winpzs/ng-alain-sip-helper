@@ -133,6 +133,24 @@ export function FindModuleFile(rootPath: string, curPath: string): string {
     }
 };
 
+let _sharedDirRegex = /\-shared$/i;
+function _findSharedFiles(outList: string[], fsPath: string) {
+    fs.readdirSync(fsPath).forEach((name) => {
+        if (_sharedDirRegex.test(name)) {
+            let file = path.join(fsPath, name, [name, 'module.ts'].join('.'));
+            if (fs.existsSync(file))
+                outList.push(file);
+        }
+    });
+}
+
+export function FindSharedModuleFiles(outList: string[], rootPath: string, curPath: string) {
+    if (!IsInRootPath(rootPath, curPath)) return;
+    _findSharedFiles(outList, curPath);
+    curPath = path.dirname(curPath);
+    FindSharedModuleFiles(outList, rootPath, curPath);
+};
+
 export function _FindUpwardModuleFiles(files: string[], rootPath: string, curPath: string, curFile: string, lv: number) {
     if (!IsInRootPath(rootPath, curFile)) return;
 
@@ -198,18 +216,18 @@ export function RemoveFromImport(content: string, className: string): string {
     let contentList = content.replace(/\n\r/g, '\n').split('\n');
     let importRegex = new RegExp('^\\s*\\bimport\\b.*\\b' + className + '\\b');
     let change = false;
-    let removeFn = function(){
+    let removeFn = function () {
         let index = contentList.findIndex(item => {
             return importRegex.test(item)
         });
-        if (index > -1){
+        if (index > -1) {
             contentList.splice(index, 1);
             change = true;
             return true;
         } else
             return false;
     }
-    while(removeFn()){}
+    while (removeFn()) { }
 
     return change ? contentList.join('\n') : content;
 }
@@ -251,19 +269,19 @@ export function RemoveFromExport(content: string, className: string, importPath:
     let exportRegex = new RegExp('^\\s*\\bexport\\b.*\\bfrom\\b');
     let exportPath = '\'' + importPath + '\'';
     let change = false;
-    let removeFn = function(){
+    let removeFn = function () {
         let index = contentList.findIndex(item => {
             return exportRegex.test(item) && item.indexOf(exportPath) > 0
         });
-        if (index > -1){
+        if (index > -1) {
             contentList.splice(index, 1);
             change = true;
             return true;
         } else
             return false;
     };
-    while(removeFn()){}
-    
+    while (removeFn()) { }
+
     return change ? contentList.join('\n') : content;
 }
 
@@ -462,7 +480,7 @@ function _removeNgModulePropClass(content: string, propName: string, className: 
     if (info && _hasClassName(info.content, className)) {
 
         let removeRegex = new RegExp('\\,?(?:\\n|\\r|\\s)*\\b' + className + '\\b', 'g');
-        let descContent = info.content.replace(removeRegex, '').replace(/^(?:\n|\r|\s|\,)*|(?:\n|\r|\s|\,)*$/, function(find){ return find.replace(',', ''); });
+        let descContent = info.content.replace(removeRegex, '').replace(/^(?:\n|\r|\s|\,)*|(?:\n|\r|\s|\,)*$/, function (find) { return find.replace(',', ''); });
         let isEmpty = !Lib.trim(descContent);
         if (isEmpty) descContent = ' ';
 
@@ -590,9 +608,9 @@ function _makeRouteItems(list: IRouteItem[]): string {
     return '\n' + retList.join('\n') + '\n';
 }
 
-function _hasRouteItem(routeList: IRouteItem[], className: string, importPath: string, isChild:boolean):boolean{
+function _hasRouteItem(routeList: IRouteItem[], className: string, importPath: string, isChild: boolean): boolean {
     let childText = isChild ? `${importPath}#${className}` : '';
-    return routeList.filter(item=>{
+    return routeList.filter(item => {
         return isChild ? item.content.indexOf(childText) >= 0
             : _hasClassName(item.content, className);
     }).length > 0;
