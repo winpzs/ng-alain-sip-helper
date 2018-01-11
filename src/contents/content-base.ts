@@ -183,7 +183,7 @@ export function CalcImportPath(moduleFile: string, tsFile: string) {
     let tsPath = path.dirname(tsFile);
     let fileName = path.parse(tsFile).name;
     let importPath = ['.', path.relative(mdPath, tsPath), fileName].join('/');
-    return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './').replace(/[\/\\]+/g, '/');
+    return importPath.replace(/\/{2,}/g, '/').replace(/(?:\.\/){2,}/g, './').replace(/[\/\\]+/g, '/').replace(/^\.\/\.\.\//, '../');
 }
 
 let _importRegex = /^\s*\bimport\b.+?from/i;

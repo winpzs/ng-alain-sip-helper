@@ -56,72 +56,6 @@ const config = [
         "builtin": false,
         'children': [
             {
-                "title": "Page >",
-                "command": "sip-page",
-                "path": "%currentPath%",
-                "builtin": true,
-                "input": true,
-                "params": [
-                    {
-                        "param": "--ts --html --dir",
-                        "title": "创建目录, ts, html"
-                    },
-                    {
-                        "param": "--ts --html --less --dir",
-                        "title": "创建目录, ts, html, less"
-                    },
-                    {
-                        "param": "--ts",
-                        "title": "ts"
-                    },
-                    {
-                        "param": "--html",
-                        "title": "html"
-                    },
-                    {
-                        "param": "--less",
-                        "title": "less"
-                    },
-                    {
-                        "param": "--spec",
-                        "title": "spec"
-                    }
-                ]
-            },
-            {
-                "title": "Modal >",
-                "command": "sip-modal",
-                "path": "%currentPath%",
-                "builtin": true,
-                "input": true,
-                "params": [
-                    {
-                        "param": "--ts --html --dir",
-                        "title": "创建目录, ts, html"
-                    },
-                    {
-                        "param": "--ts --html --less --dir",
-                        "title": "创建目录, ts, html, less"
-                    },
-                    {
-                        "param": "--ts",
-                        "title": "ts"
-                    },
-                    {
-                        "param": "--html",
-                        "title": "html"
-                    },
-                    {
-                        "param": "--less",
-                        "title": "less"
-                    },
-                    {
-                        "param": "--spec",
-                        "title": "spec"
-                    }
-                ]
-            },
-            {
                 "title": "Component >",
                 "command": "sip-component",
                 "path": "%currentPath%",
@@ -319,6 +253,86 @@ const config = [
                     {
                         "param": "--ts",
                         "title": "ts"
+                    }
+                ]
+            },
+            {
+                "title": "删除文件",
+                "command": "sip-gen-del",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": false
+            }
+        ]
+    },
+    {
+        "title": "Sip Generate >",
+        "command": "",
+        "builtin": false,
+        'children': [
+            {
+                "title": "Page >",
+                "command": "sip-page",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--less",
+                        "title": "less"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "Modal >",
+                "command": "sip-modal",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--less",
+                        "title": "less"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
                     }
                 ]
             },

@@ -269,5 +269,33 @@
             ""
         ],
         "description": "modal"
+    },
+    "sip-contentchild": {
+        "prefix": "sip-contentchild",
+        "body": [
+            "@ContentChild(${Component}) ${component1}:${Component};$0"
+        ],
+        "description": "@ContentChild(${Component}) ${component1}:${Component};"
+    },
+    "sip-contentchild-tmplref": {
+        "prefix": "sip-contentchild-tmplref",
+        "body": [
+            "@ContentChild('${id}') ${name}: TemplateRef<any>;$0"
+        ],
+        "description": "@ContentChild('${id}') ${name}: TemplateRef<any>;"
+    },
+    "sip-viewchild": {
+        "prefix": "sip-viewchild",
+        "body": [
+            "@ViewChild(${Component}) ${component1}:${Component};$0"
+        ],
+        "description": "@ViewChild(${Component}) ${component1}:${Component};"
+    },
+    "sip-viewchild-tmplref": {
+        "prefix": "sip-viewchild-tmplref",
+        "body": [
+            "@ViewChild('${id}') ${name}: TemplateRef<any>;$0"
+        ],
+        "description": "@ViewChild('${id}') ${name}: TemplateRef<any>;"
     }
 }

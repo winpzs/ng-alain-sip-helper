@@ -4,6 +4,8 @@
 
 * 生成module时自动查找可以引用的-shared.module
 * ADD: Region Block command
+* ADD: Sip Generate
+* ADD: TypeScript Snippets
 
 # 1.0.1 (2018-1-7)
 

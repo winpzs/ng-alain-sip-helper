@@ -35,7 +35,7 @@ export class SipModule implements ContentBase {
 
         let sharedModuleFiles = [];
         FindSharedModuleFiles(sharedModuleFiles, params.rootPath, fsPath);
-        params.sharedModuleFiles = sharedModuleFiles;
+        params.sharedModuleFiles = sharedModuleFiles.reverse();
 
         if (params.ts) {
             fsFile = path.join(fsPath, MakeFileName(name, prefix, 'ts'));
