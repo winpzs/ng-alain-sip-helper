@@ -402,7 +402,7 @@ export function activate(context: ExtensionContext) {
     let formatSnippetText = (text: string): string => {
 
         let preLen = -1;
-        text = ['["', text.replace(/(\n\r)/g, '\n').split('\n').map(item => {
+        text = ['["', text.replace(/\n\r|\r\n/g, '\n').split('\n').map(item => {
             if (preLen == -1) {
                 preLen = /^\s*/.exec(item)[0].length || 0;
             }

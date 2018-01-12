@@ -45,9 +45,7 @@ export class SipRegModule implements ContentBase {
         let contentBak = content;
 
         let isComponent = false;
-        if (isComponent = /component/i.test(prefix)
-            || /directive/i.test(prefix)
-            || /pipe/i.test(prefix)) {
+        if (isComponent = /component|directive|pipe/i.test(prefix)) {
 
             if (params.module || params.routing) {
                 content = PushToImport(content, className, importPath);
@@ -71,7 +69,7 @@ export class SipRegModule implements ContentBase {
                 content = PushToModuleRouting(content, name, className, importPath, false);
             }
 
-        } else if (/service/i.test(prefix)) {
+        } else if (/service|guard/i.test(prefix)) {
 
             if (params.module) {
 

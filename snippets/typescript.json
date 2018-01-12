@@ -19,6 +19,35 @@
         ],
         "description": "lambda"
     },
+    "sip-showpage": {
+        "prefix": "sip-showpage",
+        "body": [
+            "let url = '/sip/ui-demo/create';",
+            "this.\\$open(url).params({}).receive(r => {",
+            "\tif (!r) return;",
+            "\t$0console.log(url, r);",
+            "});"
+        ],
+        "description": "$open(url)"
+    },
+    "sip-showmodal": {
+        "prefix": "sip-showmodal",
+        "body": [
+            "let url = '/sip/ui-demo/create';",
+            "this.\\$modal(url).params({ id: '' }).receive(r => {",
+            "\tif (!r) return;",
+            "\t$0console.log(url, r);",
+            "});"
+        ],
+        "description": "$modal(url)"
+    },
+    "sip-evnet-var": {
+        "prefix": "sip-evnet-var",
+        "body": [
+            "on${Event}: EventEmitter<${any}> = new EventEmitter<${any}>();"
+        ],
+        "description": "EventEmitter"
+    },
     "sip-list-page": {
         "prefix": "sip-list-page",
         "body": [

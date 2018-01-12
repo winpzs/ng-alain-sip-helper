@@ -6,6 +6,7 @@
 * ADD: Region Block command
 * ADD: Sip Generate
 * ADD: TypeScript Snippets
+* FIX: guard Reg Module
 
 # 1.0.1 (2018-1-7)
 
