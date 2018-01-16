@@ -4,7 +4,7 @@ const config = [
     {
         "title": "Serve >",
         //指令可以使用变量 %params%, %input%, %workspaceRoot%, %currentPath%"
-        "command": "npm run serve %params%",
+        "command": "npm run start %params%",
         //vscod terminal 名称
         "terminal": "serve-ngalainsiphelper",
         //路径可以使用变量 %params%, %input%, %workspaceRoot%, %currentPath%"
@@ -16,20 +16,20 @@ const config = [
         //指令参数(二级选择), 并压入%params%变更
         "params": [
             {
-                "param": "-- -o -e=dev",
+                "param": "-- -e=dev",
                 "title": "Dev",
                 //vscod terminal 名称, 如果没有，取config.terminal
                 "terminal": "",
                 //是否需要输入内容, 并压入%input%变更, 如果没有，取config.input
                 "input": false
             }, {
-                "param": "-- -o --e=dev -pc=\"proxy.conf.js\"",
+                "param": "-- --e=dev -pc=\"proxy.conf.js\"",
                 "title": "Dev Proxy"
             }, {
-                "param": "-- -o --hmr -e=hmr",
+                "param": "-- --hmr -e=hmr",
                 "title": "HMR"
             }, {
-                "param": "-- -o --hmr -e=hmr -pc=\"proxy.conf.js\"",
+                "param": "-- --hmr -e=hmr -pc=\"proxy.conf.js\"",
                 "title": "HMR Proxy"
             }
         ]
