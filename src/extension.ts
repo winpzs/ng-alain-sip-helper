@@ -461,13 +461,15 @@ export function activate(context: ExtensionContext) {
 
         let fInfo = path.parse(fsFile);
         let className = MakeClassName(fInfo.name, '');
-        let classText = `export class ${className} {
+        let classText = `export interface I${className}Params {
+    ${defs.join(';\n    ')}
+}
+
+export class ${className} {
 
 ${props.join('\n')}
 
-    constructor(p?:{
-        ${defs.join(';\n        ')};
-    }) {
+    constructor(p?:I${className}Params) {
         if (p){
             Object.assign(this, p);
         }

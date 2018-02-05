@@ -1,5 +1,9 @@
 ## ng-alain-sip Helper Changelog
 
+# 1.0.3 (2018-2-x)
+
+* CHANGE: jsontoclass
+
 # 1.0.2 (2018-1-12)
 
 * 生成module时自动查找可以引用的-shared.module
