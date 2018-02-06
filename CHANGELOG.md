@@ -3,6 +3,7 @@
 # 1.0.3 (2018-2-x)
 
 * CHANGE: jsontoclass
+* 添加：html,typescript模板
 
 # 1.0.2 (2018-1-12)
 
