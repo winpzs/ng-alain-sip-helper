@@ -434,11 +434,11 @@ export function activate(context: ExtensionContext) {
     }))
 
     let jsonToClass = (json: object, fsFile: string): string => {
-        let props = [], defs = [], item, defName;
+        let props = [], item, defName;
         Object.keys(json).forEach(key => {
             item = json[key];
             if (Lib.isString(item)) {
-                defName = key + ': string';
+                defName = key + '?: string';
                 props.push('    ' + defName + ' = "";');
             } else if (Lib.isBoolean(item)) {
                 defName = key + ': boolean';
@@ -456,24 +456,29 @@ export function activate(context: ExtensionContext) {
                 defName = key + ': any';
                 props.push('    ' + defName + ' = null;');
             }
-            defs.push(defName.replace(':', '?:'));
         });
 
         let fInfo = path.parse(fsFile);
         let className = MakeClassName(fInfo.name, '');
-        let classText = `export interface I${className}Params {
-    ${defs.join(';\n    ')}
-}
-
+        let classText = `//定义模型(model)
 export class ${className} {
 
 ${props.join('\n')}
 
-    constructor(p?:I${className}Params) {
+    constructor(p?:${className}) {
         if (p){
             Object.assign(this, p);
         }
     }
+}
+
+//这里处理扩展方法
+export class ${className}Ex extends ${className} {
+
+    constructor(p?:${className}){
+        super(p);
+    }
+
 }`;
 
         return classText;
