@@ -51,21 +51,25 @@
     },
     "sip-access-item": {
         "prefix": "sip-access-item",
-        "body": ["@SipAccessItem<${TableComponent}>('${access}', {",
+        "body": [
+            "@SipAccessItem<${TableComponent}>('${access}', {",
             "\tmulti: false, hasData: true,",
             "\tcheck: function () {",
             "\t\treturn true;",
             "\t}",
             "})",
             "${access}() {",
-            "}$0"],
+            "}$0"
+        ],
         "description": "@SipAccessItem"
     },
     "sip-access-item-only": {
         "prefix": "sip-access-item",
-        "body": ["@SipAccessItem('${access}')",
+        "body": [
+            "@SipAccessItem('${access}')",
             "${access}() {",
-            "}$0"],
+            "}$0"
+        ],
         "description": "@SipAccessItem"
     },
     "sip-searchContent": {
@@ -186,18 +190,230 @@
     },
     "sip-subscribe": {
         "prefix": "sip-subscribe",
-        "body":["@SipSubscribe('${testsubs}')",
+        "body": [
+            "@SipSubscribe('${testsubs}')",
             "private _${testSubscribe}(p: any) {",
             "    console.log('_${testSubscribe}', p);",
-            "}$0"],
+            "}$0"
+        ],
         "description": "@SipSubscribe"
     },
     "sip-watch": {
         "prefix": "sip-watch",
-        "body":["@SipWatch('this.${propname}')",
-        "private _${watchTitle}(${propname}) {",
-        "    console.log('SipWatch', ${propname});",
-        "}$0"],
+        "body": [
+            "@SipWatch('this.${propname}')",
+            "private _${watchTitle}(${propname}) {",
+            "    console.log('SipWatch', ${propname});",
+            "}$0"
+        ],
         "description": "@SipWatch"
+    },
+    "sip-inject": {
+        "prefix": "sip-inject",
+        "body": [
+            "@SipInject(${TestService})",
+            "private _${test}Srv:${TestService};$0"
+        ],
+        "description": "@SipInject"
+    },
+    "sip-constructor": {
+        "prefix": "sip-constructor",
+        "body": [
+            "constructor(vcf: ViewContainerRef) {",
+            "    super(vcf);",
+            "}$0"
+        ],
+        "description": "constructor(vcf: ViewContainerRef)"
+    },
+    "sip-constructor-injector": {
+        "prefix": "sip-constructor-injector",
+        "body": [
+            "constructor(injector: Injector) {",
+            "    super(injector);",
+            "}$0"
+        ],
+        "description": "constructor(injector: Injector)"
+    },
+    "sip-extends": {
+        "prefix": "sip-extends",
+        "body": [
+            "extends ${className}"
+        ],
+        "description": "extends ${className}"
+    },
+    "sip-extends-page": {
+        "prefix": "sip-extends-page",
+        "body": [
+            "extends SipPage"
+        ],
+        "description": "extends SipPage"
+    },
+    "sip-extends-modal": {
+        "prefix": "sip-extends-modal",
+        "body": [
+            "extends SipModal"
+        ],
+        "description": "extends SipModal"
+    },
+    "sip-extends-component": {
+        "prefix": "sip-extends-component",
+        "body": [
+            "extends SipComponent"
+        ],
+        "description": "extends SipComponent"
+    },
+    "sip-extends-directive": {
+        "prefix": "sip-extends-directive",
+        "body": [
+            "extends SipDirective"
+        ],
+        "description": "extends SipDirective"
+    },
+    "sip-extends-service": {
+        "prefix": "sip-extends-service",
+        "body": [
+            "extends SipService"
+        ],
+        "description": "extends SipService"
+    },
+    "sip-implements": {
+        "prefix": "sip-implements",
+        "body": [
+            "implements ${interfaceName}"
+        ],
+        "description": "implements ${interfaceName}"
+    },
+    "sip-rest-def": {
+        "prefix": "sip-rest-def",
+        "body": [
+            "@SipRestDef<${Class}>({",
+            "    url: 'api/getdata',",
+            "    method: SipRestMethod.GET,",
+            "    map: function (rs) {",
+            "        return rs;",
+            "    }",
+            "})",
+            "${getData}: SipRestFunction<${Class}, ${Class}>;$0"
+        ],
+        "description": "@SipRestDef"
+    },
+    "sip-rest-sql-def": {
+        "prefix": "sip-rest-sql-def",
+        "body": [
+            "@SipRestSqlDef<${Class}>({",
+            "    sqlType: SipRestSqlType.List,",
+            "    connstr: 'iaas',",
+            "    sqlId: 'Iaas_Instance.List.GetByOwnerID',",
+            "    searchparam: { \"content\": \"\" },",
+            "    map: function (rs) {",
+            "        return rs;",
+            "    }",
+            "})",
+            "${getList}: SipRestSqlFunction<{",
+            "    \"content\"?: string",
+            "}, ${Class}>;$0"
+        ],
+        "description": "@SipRestSqlDef"
+    },
+    "sip-rest-dict-def": {
+        "prefix": "sip-rest-dict-def",
+        "body": [
+            "@SipRestDictDef({ code: '${code}' })",
+            "${getDict}: SipRestDictFunction$0"
+        ],
+        "description": "@SipRestDictDef"
+    },
+    "sip-ng-init": {
+        "prefix": "sip-ng-init",
+        "body": [
+            "@SipNgInit()",
+            "private _${init}() {$0",
+            "}"
+        ],
+        "description": "@SipNgInit"
+    },
+    "sip-ng-check": {
+        "prefix": "sip-ng-check",
+        "body": [
+            "@SipNgCheck()",
+            "private _${check}() {$0",
+            "}"
+        ],
+        "description": "@SipNgCheck"
+    },
+    "sip-ng-change": {
+        "prefix": "sip-ng-change",
+        "body": [
+            "@SipNgChange()",
+            "private _${change}() {$0",
+            "}"
+        ],
+        "description": "@SipNgChange"
+    },
+    "sip-ng-afterContentInit": {
+        "prefix": "sip-ng-afterContentInit",
+        "body": [
+            "@SipNgAfterContentInit()",
+            "private _${afterContentInit}() {$0",
+            "}"
+        ],
+        "description": "@SipNgAfterContentInit"
+    },
+    "sip-ng-afterContentChecked": {
+        "prefix": "sip-ng-afterContentChecked",
+        "body": [
+            "@SipNgAfterContentChecked()",
+            "private _${afterContentChecked}() {$0",
+            "}"
+        ],
+        "description": "@SipNgAfterContentChecked"
+    },
+    "sip-ng-afterViewInit": {
+        "prefix": "sip-ng-afterViewInit",
+        "body": [
+            "@SipNgAfterViewInit()",
+            "private _${afterViewInit}() {$0",
+            "}"
+        ],
+        "description": "@SipNgAfterViewInit"
+    },
+    "sip-ng-afterViewChecked": {
+        "prefix": "sip-ng-afterViewChecked",
+        "body": [
+            "@SipNgAfterViewChecked()",
+            "private _${afterViewChecked}() {$0",
+            "}"
+        ],
+        "description": "@SipNgAfterViewChecked"
+    },
+    "sip-ng-destroy": {
+        "prefix": "sip-ng-destroy",
+        "body": [
+            "@SipNgDestroy()",
+            "private _${destroy}() {$0",
+            "}"
+        ],
+        "description": "@SipNgDestroy"
+    },
+    "sip-provide-page": {
+        "prefix": "sip-provide-page",
+        "body": [
+            "...SipProvidePage(${PageComponent})$0"
+        ],
+        "description": "...SipProvidePage(PageComponent)"
+    },
+    "sip-provide-modal": {
+        "prefix": "sip-provide-modal",
+        "body": [
+            "...SipProvideModal(${ModalComponent})$0"
+        ],
+        "description": "...SipProvideModal(ModalComponent)"
+    },
+    "sip-provide-component": {
+        "prefix": "sip-provide-component",
+        "body": [
+            "...SipProvideComponent(${MyComponent})$0"
+        ],
+        "description": "...SipProvideComponent(MyComponent)"
     }
 }
