@@ -2,13 +2,7 @@
     "sip-minitable": {
         "prefix": "sip-minitable",
         "body": [
-            "<sip-minitable #table1 pageSize=\"10\" [multiSelect]=\"true\"",
-            "\tconnstr=\"iaas\" sqlId=\"iaas_Instance.List.GetByOwnerID\"",
-            "\t[searchParams]=\"searchParams\"",
-            "\t(onSelectChanged)=\"onSelectChanged(\\$event)\"",
-            "\t(onLoaded)=\"onLoaded(\\$event)\"",
-            "\t(onCompleted)=\"onCompleted()\"",
-            "\t(onSort)=\"onSort(\\$event)\" (onFilter)=\"onFilter(\\$event)\">",
+            "<sip-minitable [manager]=\"${tableManager1}\">",
             "\t<sip-minicolumn name=\"Status\" title=\"状态\">",
             "\t\t<ng-template #formatter let-row=\"row\" let-column=\"column\" let-data=\"data\">",
             "\t\t\t{{column.getFilterText(data.Status)}}",
@@ -157,7 +151,7 @@
     "sip-searchConent": {
         "prefix": "sip-searchConent",
         "body": [
-            "<sip-searchConent [params]=\"$0searchContent\"></sip-searchConent>"
+            "<sip-searchConent [params]=\"${searchContent}\"></sip-searchConent>$0"
         ],
         "description": "searchConent"
     },
