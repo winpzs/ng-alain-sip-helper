@@ -437,8 +437,9 @@ export function activate(context: ExtensionContext) {
         let props = [], item, defName;
         Object.keys(json).forEach(key => {
             item = json[key];
+            key += '?';
             if (Lib.isString(item)) {
-                defName = key + '?: string';
+                defName = key + ': string';
                 props.push('    ' + defName + ' = "";');
             } else if (Lib.isBoolean(item)) {
                 defName = key + ': boolean';
@@ -470,15 +471,6 @@ ${props.join('\n')}
             Object.assign(this, p);
         }
     }
-}
-
-//这里处理扩展方法
-export class ${className}Ex extends ${className} {
-
-    constructor(p?:${className}){
-        super(p);
-    }
-
 }`;
 
         return classText;

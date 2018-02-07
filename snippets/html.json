@@ -274,12 +274,24 @@
     },
     "sip-RouterLink": {
         "prefix": "sip-RouterLink",
-        "body": ["[sipRouterLink]=\"['$0/sip/ui-demo/detail', {}]\""],
+        "body": [
+            "[sipRouterLink]=\"['$0/sip/ui-demo/detail', {}]\""
+        ],
         "description": "[sipRouterLink]"
     },
     "sip-show": {
         "prefix": "sip-show",
-        "body": ["[sipShow]=\"true"],
+        "body": [
+            "[sipShow]=\"true"
+        ],
         "description": "[sipShow]"
+    },
+    "sip-card": {
+        "prefix": "sip-card",
+        "body": [
+            "<sip-card title=\"\" [loading]=\"false\" [bordered]=\"false\" [noHovering]=\"true\" [noPadding]=\"false\">$0",
+            "</sip-card>"
+        ],
+        "description": "<sip-card>"
     }
 }
