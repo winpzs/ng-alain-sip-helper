@@ -2,7 +2,7 @@
     "sip-minitable": {
         "prefix": "sip-minitable",
         "body": [
-            "<sip-minitable [manager]=\"${tableManager1}\">",
+            "<sip-minitable [manager]=\"${tableManager}\">",
             "\t<sip-minicolumn name=\"Status\" title=\"状态\">",
             "\t\t<ng-template #formatter let-row=\"row\" let-column=\"column\" let-data=\"data\">",
             "\t\t\t{{column.getFilterText(data.Status)}}",

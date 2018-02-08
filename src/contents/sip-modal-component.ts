@@ -16,36 +16,34 @@ export class SipModalComponent extends SipComponent {
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
         let style = !this.isStyle(params) ? `styles:[]` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
-        let content = `import { Component } from '@angular/core';
-
-import { SipUiModal, EventInit } from '@sip/sip-core/extends/extends.module';
-import { SipRestService, SipUiService } from '@sip/sip-core/services/services.module';
+        let content = `import { Component, ViewContainerRef } from '@angular/core';
+import { SipModal, SipNgInit, SipProvideModal } from '@sip/sip-core/extends/extends.module';
 
 @Component({
     selector: 'sip-${name}',
     ${template},
-    ${style}
+    ${style},
+    providers: [...SipProvideModal(${className})]
 })
-export class ${className} extends SipUiModal {
+export class ${className} extends SipModal {
 
-    constructor(private _rest: SipRestService, private _ui: SipUiService) {
-        super();
+    constructor(vcf: ViewContainerRef) {
+        super(vcf);
     }
 
     params = { id: '' };
 
     //等效于ngOnInit, 但可以多次使用
-    @EventInit()
+    @SipNgInit()
     private _init() {
         this.params = this.$params(this.params);
     }
 
     save(event) {
-        this.$close(true);
+        this.$uiLink.publish(true).close();
     }
 
-}
-`;
+}`;
         return content;
     }
 
