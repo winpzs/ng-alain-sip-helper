@@ -19,8 +19,8 @@
         ],
         "description": "lambda"
     },
-    "sip-page": {
-        "prefix": "sip-page",
+    "sip-show-page": {
+        "prefix": "sip-show-page",
         "body": [
             "let url = '/sip/ui-demo/create';",
             "this.\\$open(url).params({}).receive(r => {",
@@ -30,14 +30,13 @@
         ],
         "description": "$open(url)"
     },
-    "sip-modal": {
-        "prefix": "sip-modal",
+    "sip-show-modal": {
+        "prefix": "sip-show-modal",
         "body": [
-            "let url = '/sip/ui-demo/create';",
-            "this.\\$modal(url).params({ id: '' }).receive(r => {",
-            "\tif (!r) return;",
-            "\t$0console.log(url, r);",
-            "});"
+            "this.\\$modal(${TestModalComponent}, { id: '' }).subscribe(r => {",
+            "    if (!r) return;",
+            "    console.log('${TestModalComponent}', r);",
+            "});$0"
         ],
         "description": "$modal(url)"
     },

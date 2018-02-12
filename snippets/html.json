@@ -262,7 +262,7 @@
     "sip-access": {
         "prefix": "sip-access",
         "body": [
-            "sipAccess=\"edit\"$0"
+            "sipAccess=\"${create}\"$0"
         ],
         "description": "sipAccess"
     },
@@ -286,6 +286,23 @@
             "<sip-card title=\"\" [loading]=\"false\" [bordered]=\"false\" [noHovering]=\"true\" [noPadding]=\"false\">$0",
             "</sip-card>"
         ],
-        "description": "<sip-card>"
+        "description": "<div>"
+    },
+    "sip-row": {
+        "prefix": "sip-row",
+        "body": [
+            "<div nz-form-item nz-row>$0",
+            "</div>"
+        ],
+        "description": "<div nz-form-item nz-row>"
+    },
+    "sip-row-label": {
+        "prefix": "sip-row-label",
+        "body": [
+            "<div nz-form-label nz-col [nzSm]=\"6\" [nzXs]=\"24\">",
+            "    <label nz-form-item-required>版本</label>",
+            "</div>$0"
+        ],
+        "description": "<<div nz-form-label>"
     }
 }

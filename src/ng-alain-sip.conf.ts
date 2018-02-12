@@ -304,6 +304,39 @@ const config = [
                 ]
             },
             {
+                "title": "Page List >",
+                "command": "sip-page-list",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--less",
+                        "title": "less"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
                 "title": "Modal >",
                 "command": "sip-modal",
                 "path": "%currentPath%",

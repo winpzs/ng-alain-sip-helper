@@ -57,10 +57,10 @@ export class SipRegModule implements ContentBase {
                 content = PushToModuleDeclarations(content, className);
                 content = PushToModuleExports(content, className);
 
-                //将SipUiModal加入到module.entryComponents
+                //将SipModal加入到module.entryComponents
                 if (isComponent) {
                     let cpContent = fs.readFileSync(fsFile.replace(/\.[^\.]+$/, '.ts'), 'utf-8')
-                    if (/\s+extends\s+SipUiModal\s+/.test(cpContent))
+                    if (/\s+extends\s+SipModal\s+/.test(cpContent))
                         content = PushToModuleEntryComponents(content, className);
                 }
             }

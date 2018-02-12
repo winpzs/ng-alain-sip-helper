@@ -19,6 +19,7 @@ import { SipInterface } from './contents/sip-interface';
 import { SipEnum } from './contents/sip-enum';
 import { SipComponent } from './contents/sip-component';
 import { SipRegModule } from './contents/sip-reg-module';
+import { SipPageListComponent } from './contents/sip-page-list-component';
 
 let stringify = require('json-stable-stringify');
 
@@ -147,6 +148,9 @@ export function activate(context: ExtensionContext) {
                 break;
             case 'sip-page':
                 sipGenerate(new SipPageComponent(), gParam);
+                break;
+            case 'sip-page-list':
+                sipGenerate(new SipPageListComponent(), gParam);
                 break;
             case 'sip-modal':
                 sipGenerate(new SipModalComponent(), gParam);
