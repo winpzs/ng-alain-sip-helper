@@ -288,21 +288,155 @@
         ],
         "description": "<div>"
     },
-    "sip-row": {
-        "prefix": "sip-row",
+    "sip-form": {
+        "prefix": "sip-form",
+        "body": [
+            "<form nz-form [formGroup]=\"form\">$0",
+            "</form>"
+        ],
+        "description": "<form>"
+    },
+    "sip-form-row": {
+        "prefix": "sip-form-row",
         "body": [
             "<div nz-form-item nz-row>$0",
             "</div>"
         ],
-        "description": "<div nz-form-item nz-row>"
+        "description": "<form nz-form-item nz-row>"
     },
-    "sip-row-label": {
-        "prefix": "sip-row-label",
+    "sip-form-row-label": {
+        "prefix": "sip-form-row-label",
         "body": [
-            "<div nz-form-label nz-col [nzSm]=\"6\" [nzXs]=\"24\">",
-            "    <label nz-form-item-required>版本</label>",
+            "<div nz-form-label nz-col [nzSm]=\"${6}\" [nzXs]=\"${24}\">",
+            "    <label nz-form-item-required>${版本}</label>",
             "</div>$0"
         ],
-        "description": "<<div nz-form-label>"
+        "description": "<div nz-form-label>"
+    },
+    "sip-form-row-container": {
+        "prefix": "sip-form-row-container",
+        "body": [
+            "<div nz-form-control nz-col [nzSm]=\"${16}\" [nzXs]=\"${24}\">",
+            "   ${container}$0",
+            "</div>"
+        ],
+        "description": "<div nz-form-container>"
+    },
+    "sip-form-validator-container": {
+        "prefix": "sip-form-validator-container",
+        "body": [
+            "<ng-container *ngIf=\"${form}?.\\$${name}.dirty || ${form}?.\\$${name}.touched\">",
+            "   ${container}$0",
+            "</ng-container>"
+        ],
+        "description": "validator-container"
+    },
+    "sip-form-validator": {
+        "prefix": "sip-form-validator",
+        "body": [
+            "<span nz-form-explain *ngIf=\"${form}.\\$${name}.errors?.${required}\">{{${form}.\\$${name}.errors.${required}Text}}</span>$0"
+        ],
+        "description": "validator"
+    },
+    "sip-form-validator-only": {
+        "prefix": "sip-form-validator-only",
+        "body": [
+            "<span nz-form-explain *ngIf=\"(${form}?.\\$${name}.dirty || ${form}?.\\$${name}.touched) && ${form}?.\\$${name}.errors?.${required}\">",
+            "   {{${form}.\\$${name}.errors.${required}Text}}",
+            "</span>$0"
+        ],
+        "description": "validator-only"
+    },
+    "sip-form-input": {
+        "prefix": "sip-form-input",
+        "body": [
+            "<nz-input formControlName=\"${num}\" nzType=\"text\"></nz-input>$0"
+        ],
+        "description": "input"
+    },
+    "sip-form-input-group": {
+        "prefix": "sip-form-input-group",
+        "body": [
+            "<nz-input-group [nzCompact]=\"true\">",
+            "    <nz-select formControlName=\"${name}Prefix\" style=\"width: 25%;\">",
+            "        <nz-option [nzLabel]=\"'+86'\" [nzValue]=\"'+86'\"></nz-option>",
+            "        <nz-option [nzLabel]=\"'+87'\" [nzValue]=\"'+87'\"></nz-option>",
+            "    </nz-select>",
+            "    <input formControlName=\"${name}\" nz-input style=\"width: 75%;\">",
+            "</nz-input-group>$0"
+        ],
+        "description": "input-group"
+    },
+    "sip-form-select": {
+        "prefix": "sip-form-select",
+        "body": [
+            "<nz-select formControlName=\"${name}\" [nzAllowClear]=\"false\">",
+            "    <nz-option *ngFor=\"let item of statuList\" [nzLabel]=\"item.text\" [nzValue]=\"item.value\">",
+            "    </nz-option>$0",
+            "</nz-select>"
+        ],
+        "description": "select"
+    },
+    "sip-form-select-multiple": {
+        "prefix": "sip-form-select-multiple",
+        "body": [
+            "<nz-select formControlName=\"${name}\" [nzAllowClear]=\"false\" nzMode=\"multiple\" nzNotFoundContent=\"无法找到\">",
+            "    <nz-option *ngFor=\"let item of statuList\" [nzLabel]=\"item.text\" [nzValue]=\"item.value\">",
+            "    </nz-option>$0",
+            "</nz-select>"
+        ],
+        "description": "select-multiple"
+    },
+    "sip-form-radio-group": {
+        "prefix": "sip-form-radio-group",
+        "body": [
+            "<nz-radio-group formControlName=\"${name}\">",
+            "    <label nz-radio [nzValue]=\"'normal'\">",
+            "        <span>Normal</span>",
+            "    </label>$0",
+            "</nz-radio-group>"
+        ],
+        "description": "radio-group"
+    },
+    "sip-form-radio-group-button": {
+        "prefix": "sip-form-radio-group-button",
+        "body": [
+            "<nz-radio-group formControlName=\"${name}\">",
+            "    <label nz-radio-button [nzValue]=\"'normal'\">",
+            "        <span>Normal</span>",
+            "    </label>$0",
+            "</nz-radio-group>"
+        ],
+        "description": "radio-group-button"
+    },
+    "sip-form-text": {
+        "prefix": "sip-form-text",
+        "body": [
+            "<div nz-form-extra>${text}$0</div>"
+        ],
+        "description": "form-text"
+    },
+    "sip-form-checkbox": {
+        "prefix": "sip-form-checkbox",
+        "body": [
+            "<label nz-checkbox formControlName=\"${name}\">",
+            "    <span>${text}$0</span>",
+            "</label>"
+        ],
+        "description": "checkbox"
+    },
+    "sip-form-datepicker": {
+        "prefix": "sip-form-datepicker",
+        "body": [
+            "<nz-datepicker formControlName=\"${name}\"></nz-datepicker>"
+        ],
+        "description": "datepicker"
+    },
+    "sip-form-textarea": {
+        "prefix": "sip-form-textarea",
+        "body": [
+            "<nz-input formControlName=\"${name}\" nzType=\"textarea\" nzRows=\"4\" nzPlaceHolder=\"\"></nz-input>$0"
+        ],
+        "description": "textarea"
     }
 }

@@ -411,5 +411,34 @@
             "...SipProvideComponent(${MyComponent})$0"
         ],
         "description": "...SipProvideComponent(MyComponent)"
+    },
+    "sip-validator-def": {
+        "prefix": "sip-validator-def",
+        "body": [
+            "${required}Validator = (control: FormControl): { [s: string]: any } => {",
+            "    if (!control.value) {",
+            "        return { ${required}: true, ${required}Text:'文本' };",
+            "    }",
+            "};$0"
+        ],
+        "description": "Validator"
+    },
+    "sip-validator-observable-def": {
+        "prefix": "sip-validator-observable-def",
+        "body": [
+            "${name}Validator = (control: FormControl): Observable<any> => {",
+            "    return control.valueChanges.pipe(",
+            "        debounceTime(500),",
+            "        map((value) => {$0",
+            "            if (value !== 'cipchk') {",
+            "                control.setErrors({ ${name}: true, ${name}Text:'文本' });",
+            "                return;",
+            "            }",
+            "            control.setErrors(null);",
+            "        })",
+            "    );",
+            "};"
+        ],
+        "description": "Validator Observable"
     }
 }
