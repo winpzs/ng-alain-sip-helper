@@ -279,12 +279,13 @@
         ],
         "description": "implements ${interfaceName}"
     },
-    "sip-rest-def": {
-        "prefix": "sip-rest-def",
+    "sip-def-rest": {
+        "prefix": "sip-def-rest",
         "body": [
             "@SipRestDef<${Class}>({",
             "    url: 'api/getdata',",
             "    method: SipRestMethod.GET,",
+            "    cache: false,",
             "    map: function (rs) {",
             "        return rs;",
             "    }",
@@ -293,14 +294,15 @@
         ],
         "description": "@SipRestDef"
     },
-    "sip-rest-sql-def": {
-        "prefix": "sip-rest-sql-def",
+    "sip-def-rest-sql": {
+        "prefix": "sip-def-rest-sql",
         "body": [
             "@SipRestSqlDef<${Class}>({",
             "    sqlType: SipRestSqlType.List,",
             "    connstr: 'iaas',",
             "    sqlId: 'Iaas_Instance.List.GetByOwnerID',",
             "    searchparam: { \"content\": \"\" },",
+            "    cache: false,",
             "    map: function (rs) {",
             "        return rs;",
             "    }",
@@ -311,13 +313,40 @@
         ],
         "description": "@SipRestSqlDef"
     },
-    "sip-rest-dict-def": {
-        "prefix": "sip-rest-dict-def",
+    "sip-def-rest-dict": {
+        "prefix": "sip-def-rest-dict",
         "body": [
-            "@SipRestDictDef({ code: '${code}' })",
+            "@SipRestDictDef({ code: '${code}', cache: true })",
             "${getDict}: SipRestDictFunction$0"
         ],
         "description": "@SipRestDictDef"
+    },
+    "sip-rest-fun": {
+        "prefix": "sip-rest-fun",
+        "body": [
+            "this.${getRest}(p, { owner: this }).subscribe((rs) => {",
+            "    console.log('${getRest}', rs.datas);$0",
+            "});"
+        ],
+        "description": "getRestFun"
+    },
+    "sip-rest-sql-fun": {
+        "prefix": "sip-rest-fun",
+        "body": [
+            "this.${getRestSql}(p, { owner: this }).subscribe((rs) => {",
+            "    console.log('${getRestSql}', rs.datas);$0",
+            "});"
+        ],
+        "description": "getRestSqlFun"
+    },
+    "sip-rest-dict-fun": {
+        "prefix": "sip-rest-fun",
+        "body": [
+            "this.${getDict}({ owner: this }).subscribe((rs) => {",
+            "    console.log('${getDict}', rs.datas);$0",
+            "});"
+        ],
+        "description": "getRestDictFun"
     },
     "sip-ng-init": {
         "prefix": "sip-ng-init",

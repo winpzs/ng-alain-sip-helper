@@ -307,7 +307,7 @@
     "sip-form-row-label": {
         "prefix": "sip-form-row-label",
         "body": [
-            "<div nz-form-label nz-col [nzSm]=\"6\" [nzXs]=\"24\">",
+            "<div nz-form-label nz-col [nzSm]=\"4\" [nzXs]=\"24\">",
             "    <label nz-form-item-required>${label}</label>",
             "</div>$0"
         ],
@@ -316,7 +316,7 @@
     "sip-form-row-container": {
         "prefix": "sip-form-row-container",
         "body": [
-            "<div nz-form-control nz-col [nzSm]=\"16\" [nzXs]=\"24\">",
+            "<div nz-form-control nz-col [nzSm]=\"18\" [nzXs]=\"24\">",
             "   ${container}$0",
             "</div>"
         ],
