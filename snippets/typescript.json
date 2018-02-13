@@ -331,7 +331,7 @@
         "description": "getRestFun"
     },
     "sip-rest-sql-fun": {
-        "prefix": "sip-rest-fun",
+        "prefix": "sip-rest-sql-fun",
         "body": [
             "this.${getRestSql}(p, { owner: this }).subscribe((rs) => {",
             "    console.log('${getRestSql}', rs.datas);$0",
@@ -340,7 +340,7 @@
         "description": "getRestSqlFun"
     },
     "sip-rest-dict-fun": {
-        "prefix": "sip-rest-fun",
+        "prefix": "sip-dict-fun",
         "body": [
             "this.${getDict}({ owner: this }).subscribe((rs) => {",
             "    console.log('${getDict}', rs.datas);$0",
