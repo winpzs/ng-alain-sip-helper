@@ -340,13 +340,22 @@
         "description": "getRestSqlFun"
     },
     "sip-rest-dict-fun": {
-        "prefix": "sip-dict-fun",
+        "prefix": "sip-rest-dict-fun",
         "body": [
             "this.${getDict}({ owner: this }).subscribe((rs) => {",
             "    console.log('${getDict}', rs.datas);$0",
             "});"
         ],
         "description": "getRestDictFun"
+    },
+    "sip-onshow": {
+        "prefix": "sip-onshow",
+        "body": [
+            "@SipOnShow()",
+            "private _${show}() {$0",
+            "}"
+        ],
+        "description": "@SipOnShow"
     },
     "sip-ng-init": {
         "prefix": "sip-ng-init",
