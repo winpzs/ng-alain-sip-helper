@@ -40,7 +40,7 @@ export class ${className} extends SipModal {
     }
 
     save(event) {
-        this.$uiLink.publish(true).close();
+        this.$close(true);
     }
 
 }`;

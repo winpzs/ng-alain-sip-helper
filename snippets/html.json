@@ -193,6 +193,22 @@
         ],
         "description": "page-body"
     },
+    "sip-page-row": {
+        "prefix": "sip-page-row",
+        "body": [
+            "<div nz-row [nzGutter]=\"24\">$0",
+            "</div>"
+        ],
+        "description": "page-row"
+    },
+    "sip-page-col": {
+        "prefix": "sip-page-col",
+        "body": [
+            "<div nz-col [nzXl]=\"18\" [nzMd]=\"16\" >$0",
+            "</div>"
+        ],
+        "description": "page-col"
+    },
     "sip-page-toolbar": {
         "prefix": "sip-page-toolbar",
         "body": [

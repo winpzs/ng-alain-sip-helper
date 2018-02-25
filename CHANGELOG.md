@@ -1,6 +1,14 @@
 ## ng-alain-sip Helper Changelog
 
-# 1.0.3 (2018-2-x)
+# 1.0.4 (2018-2-x)
+
+* 同步sip：html,typescript模板
+* 添加sip-modal 页面生成
+* 添加sip-modal-form 页面生成
+* 添加sip-page-detail 页面生成
+* 添加sip-page-form 页面生成
+
+# 1.0.3 (2018-2-25)
 
 * CHANGE: jsontoclass
 * 同步sip：html,typescript模板

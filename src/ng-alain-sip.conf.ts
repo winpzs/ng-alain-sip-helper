@@ -36,7 +36,7 @@ const config = [
     },
     {
         "title": "Build >",
-        "command": "npm run build",
+        "command": "ng build",
         "terminal": "build-ngalainsiphelper",
         "path": "%workspaceRoot%",
         "input": false,
@@ -45,8 +45,8 @@ const config = [
                 "param": "",
                 "title": "Build"
             }, {
-                "param": "-- -prod -e=prod --aot --build-optimizer",
-                "title": "Build AOT"
+                "param": "-prod -e=prod --build-optimizer",
+                "title": "Build PROD"
             }
         ]
     },
@@ -337,8 +337,107 @@ const config = [
                 ]
             },
             {
+                "title": "Page Detail >",
+                "command": "sip-page-detail",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--less",
+                        "title": "less"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "Page Form >",
+                "command": "sip-page-form",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--less",
+                        "title": "less"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
                 "title": "Modal >",
                 "command": "sip-modal",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --html --dir",
+                        "title": "创建目录, ts, html"
+                    },
+                    {
+                        "param": "--ts --html --less --dir",
+                        "title": "创建目录, ts, html, less"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--html",
+                        "title": "html"
+                    },
+                    {
+                        "param": "--less",
+                        "title": "less"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "Modal Form >",
+                "command": "sip-modal-form",
                 "path": "%currentPath%",
                 "builtin": true,
                 "input": true,

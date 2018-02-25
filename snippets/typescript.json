@@ -22,13 +22,13 @@
     "sip-show-page": {
         "prefix": "sip-show-page",
         "body": [
-            "let url = '/sip/ui-demo/create';",
-            "this.\\$open(url).params({}).receive(r => {",
-            "\tif (!r) return;",
-            "\t$0console.log(url, r);",
+            "let url = '/sip/ui-demo/test1/test1-page-form';",
+            "this.\\$navigate(url, { id: '' }).subscribe(r => {",
+            "    if (!r) return;",
+            "    console.log(url, r);$0",
             "});"
         ],
-        "description": "$open(url)"
+        "description": "$navigate(url)"
     },
     "sip-show-modal": {
         "prefix": "sip-show-modal",
