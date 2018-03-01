@@ -17,8 +17,7 @@ export class SipPageListComponent extends SipComponent {
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipPage, SipNgInit, SipProvidePage, SipAccess, SipAccessManager, Lib, SipAccessItem } from '@sip/sip-core/extends/extends.module';
-import { MinitableManager } from '@sip/sip-shared/components/sip-components.module';
+import { SipPage, SipNgInit, SipProvidePage, SipAccess, SipAccessManager, Lib, SipAccessItem, MinitableManager } from 'sip-alain';
 
 @Component({
     selector: 'sip-${name}',

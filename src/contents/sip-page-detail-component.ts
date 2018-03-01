@@ -19,7 +19,7 @@ export class SipPageDetailComponent extends SipComponent {
         let content = `import { Component, ViewContainerRef } from '@angular/core';
 import * as moment from 'moment';
 import { AdChartsModule } from '@delon/abc';
-import { SipPage, SipProvidePage, SipNgInit } from '@sip/sip-core/extends/extends.module';
+import { SipPage, SipProvidePage, SipNgInit } from 'sip-alain';
         
 @Component({
     selector: 'sip-${name}',

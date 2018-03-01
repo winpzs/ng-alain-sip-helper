@@ -17,7 +17,7 @@ export class SipModalComponent extends SipComponent {
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipModal, SipNgInit, SipProvideModal } from '@sip/sip-core/extends/extends.module';
+import { SipModal, SipNgInit, SipProvideModal } from 'sip-alain';
 
 @Component({
     selector: 'sip-${name}',
