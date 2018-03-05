@@ -544,6 +544,99 @@ const config = [
                 ]
             },
             {
+                "title": "Pipe >",
+                "command": "sip-pipe",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --dir",
+                        "title": "创建目录, ts"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "Guard >",
+                "command": "sip-guard",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --dir",
+                        "title": "创建目录, ts"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
+                "title": "Class >",
+                "command": "sip-class",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --dir",
+                        "title": "创建目录, ts"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    }
+                ]
+            },
+            {
+                "title": "Interface >",
+                "command": "sip-interface",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --dir",
+                        "title": "创建目录, ts"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    }
+                ]
+            },
+            {
+                "title": "Enum >",
+                "command": "sip-enum",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --dir",
+                        "title": "创建目录, ts"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    }
+                ]
+            },
+            {
                 "title": "删除文件",
                 "command": "sip-gen-del",
                 "path": "%currentPath%",
