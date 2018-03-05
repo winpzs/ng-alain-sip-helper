@@ -24,6 +24,7 @@ import { SipModalFormComponent } from './contents/sip-modal-form-component';
 import { SipPageFormComponent } from './contents/sip-page-form-component';
 import { SipPageDetailComponent } from './contents/sip-page-detail-component';
 import { SipServiceEx } from './contents/sip-service-ex';
+import { SipComponentEx } from './contents/sip-component-ex';
 
 let stringify = require('json-stable-stringify');
 
@@ -170,6 +171,9 @@ export function activate(context: ExtensionContext) {
                 break;
             case 'sip-component':
                 sipGenerate(new SipComponent(), gParam);
+                break;
+            case 'sip-component-ex':
+                sipGenerate(new SipComponentEx(), gParam);
                 break;
             case 'sip-module':
                 sipGenerate(new SipModule(), gParam);
