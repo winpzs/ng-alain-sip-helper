@@ -461,5 +461,12 @@
             "<nz-divider nzTitle=\"\" nzDashed></nz-divider>$0"
         ],
         "description": "divider"
+    },
+    "sip-form-controlName": {
+        "prefix": "sip-form-controlName",
+        "body": [
+            "formControlName=\"${name}\"$0"
+        ],
+        "description": "controlName"
     }
 }
