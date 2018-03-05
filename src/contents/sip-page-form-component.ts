@@ -19,7 +19,7 @@ export class SipPageFormComponent extends SipComponent {
         let content = `import { Component, ViewContainerRef } from '@angular/core';
 import { SipPage, SipNgInit, SipOnShow, SipFormGroup, ISipFormGroup, SipFormSubmit } from 'sip-alain';
 import { SipValidators } from '@core/sip/sip-validators';
-        
+
 @Component({
     selector: 'sip-${name}',
     ${template},
