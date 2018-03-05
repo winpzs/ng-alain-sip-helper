@@ -523,6 +523,27 @@ const config = [
                 ]
             },
             {
+                "title": "Directive >",
+                "command": "sip-directive-ex",
+                "path": "%currentPath%",
+                "builtin": true,
+                "input": true,
+                "params": [
+                    {
+                        "param": "--ts --dir",
+                        "title": "创建目录, ts"
+                    },
+                    {
+                        "param": "--ts",
+                        "title": "ts"
+                    },
+                    {
+                        "param": "--spec",
+                        "title": "spec"
+                    }
+                ]
+            },
+            {
                 "title": "删除文件",
                 "command": "sip-gen-del",
                 "path": "%currentPath%",

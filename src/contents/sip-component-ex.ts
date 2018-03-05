@@ -87,8 +87,8 @@ export class ${className} extends SipComponent {
 		super(vcf);
 	}
 
-	@SipNgInit()
-	private _init() {
+    @SipNgInit()
+    private _init() {
 
     }
 
