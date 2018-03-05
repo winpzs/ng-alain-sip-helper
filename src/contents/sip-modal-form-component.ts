@@ -16,8 +16,8 @@ export class SipModalFormComponent extends SipComponent {
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
-        let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipModal, SipNgInit, SipFormGroup, ISipFormGroup, SipFormSubmit, SipRestDef, SipRestMethod, SipRestFunction, SipRestDictDef, SipRestDictFunction, SipOnShow } from 'sip-alain';
+        let content = `import { Component, ViewContainerRef, forwardRef } from '@angular/core';
+import { SipModal, SipNgInit, SipFormGroup, ISipFormGroup, SipBusinessComponent, SipFormSubmit, SipRestDef, SipRestMethod, SipRestFunction, SipRestDictDef, SipRestDictFunction, SipOnShow } from 'sip-alain';
 import { SipValidators } from '@core/sip/sip-validators';
 
 @Component({

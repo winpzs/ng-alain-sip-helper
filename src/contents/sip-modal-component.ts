@@ -16,8 +16,8 @@ export class SipModalComponent extends SipComponent {
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
-        let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipModal, SipNgInit } from 'sip-alain';
+        let content = `import { Component, ViewContainerRef, forwardRef } from '@angular/core';
+import { SipModal, SipNgInit, SipBusinessComponent } from 'sip-alain';
 
 @Component({
     selector: 'sip-${name}',

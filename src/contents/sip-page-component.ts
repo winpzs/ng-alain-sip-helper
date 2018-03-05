@@ -16,8 +16,8 @@ export class SipPageComponent extends SipComponent {
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
-        let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipPage, SipNgInit } from 'sip-alain';
+        let content = `import { Component, ViewContainerRef, forwardRef } from '@angular/core';
+import { SipPage, SipNgInit, SipBusinessComponent } from 'sip-alain';
 
 @Component({
     selector: 'sip-${name}',

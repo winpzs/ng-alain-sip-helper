@@ -16,8 +16,8 @@ export class SipPageFormComponent extends SipComponent {
         let template = !params.html ? `template:''` : `templateUrl: './${name}.${prefix}.html'`;
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
-        let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipPage, SipNgInit, SipOnShow, SipFormGroup, ISipFormGroup, SipFormSubmit } from 'sip-alain';
+        let content = `import { Component, ViewContainerRef, forwardRef } from '@angular/core';
+import { SipPage, SipNgInit, SipOnShow, SipBusinessComponent, SipFormGroup, ISipFormGroup, SipFormSubmit } from 'sip-alain';
 import { SipValidators } from '@core/sip/sip-validators';
 
 @Component({
