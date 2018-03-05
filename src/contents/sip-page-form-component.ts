@@ -17,13 +17,14 @@ export class SipPageFormComponent extends SipComponent {
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipProvidePage, SipPage, SipNgInit, SipOnShow, SipFormGroup, SipValidators, ISipFormGroup, SipFormSubmit } from 'sip-alain';
+import { SipPage, SipNgInit, SipOnShow, SipFormGroup, ISipFormGroup, SipFormSubmit } from 'sip-alain';
+import { SipValidators } from '@core/sip/sip-validators';
         
 @Component({
     selector: 'sip-${name}',
     ${template},
     ${style},
-    providers: [...SipProvidePage(${className})]
+    providers: [{ provide: SipBusinessComponent, useExisting: forwardRef(() => ${className}) }]
 })
 export class ${className} extends SipPage {
 

@@ -432,16 +432,16 @@
     "sip-provide-page": {
         "prefix": "sip-provide-page",
         "body": [
-            "...SipProvidePage(${PageComponent})$0"
+            "{ provide: SipBusinessComponent, useExisting: forwardRef(() => ${PageComponent}) }$0"
         ],
-        "description": "...SipProvidePage(PageComponent)"
+        "description": "{ provide: SipBusinessComponent, useExisting: forwardRef(() => PageComponent) }"
     },
     "sip-provide-modal": {
         "prefix": "sip-provide-modal",
         "body": [
-            "...SipProvideModal(${ModalComponent})$0"
+            "{ provide: SipBusinessComponent, useExisting: forwardRef(() => ${ModalComponent}) }$0"
         ],
-        "description": "...SipProvideModal(ModalComponent)"
+        "description": "{ provide: SipBusinessComponent, useExisting: forwardRef(() => ModalComponent} }"
     },
     "sip-provide-component": {
         "prefix": "sip-provide-component",

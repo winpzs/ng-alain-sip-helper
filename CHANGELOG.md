@@ -7,6 +7,7 @@
 * 添加sip-modal-form 页面生成
 * 添加sip-page-detail 页面生成
 * 添加sip-page-form 页面生成
+* remove SipProvideModal and SipProvidePage
 
 # 1.0.3 (2018-2-25)
 

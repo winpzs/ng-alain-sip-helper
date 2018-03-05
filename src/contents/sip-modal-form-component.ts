@@ -17,13 +17,14 @@ export class SipModalFormComponent extends SipComponent {
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipProvideModal, SipModal, SipNgInit, SipFormGroup, SipValidators, ISipFormGroup, SipFormSubmit, SipRestDef, SipRestMethod, SipRestFunction, SipRestDictDef, SipRestDictFunction, SipOnShow } from 'sip-alain';
+import { SipModal, SipNgInit, SipFormGroup, ISipFormGroup, SipFormSubmit, SipRestDef, SipRestMethod, SipRestFunction, SipRestDictDef, SipRestDictFunction, SipOnShow } from 'sip-alain';
+import { SipValidators } from '@core/sip/sip-validators';
 
 @Component({
     selector: 'sip-${name}',
     ${template},
     ${style},
-    providers: [...SipProvideModal(${className})]
+    providers: [{ provide: SipBusinessComponent, useExisting: forwardRef(() => ${className}) }]
 })
 export class ${className} extends SipModal {
 

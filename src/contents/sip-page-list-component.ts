@@ -17,13 +17,13 @@ export class SipPageListComponent extends SipComponent {
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipPage, SipNgInit, SipProvidePage, SipAccess, SipAccessManager, Lib, SipAccessItem, MinitableManager } from 'sip-alain';
+import { SipPage, SipNgInit, SipAccess, SipAccessManager, Lib, SipAccessItem, MinitableManager } from 'sip-alain';
 
 @Component({
     selector: 'sip-${name}',
     ${template},
     ${style},
-    providers: [...SipProvidePage(${className})]
+    providers: [{ provide: SipBusinessComponent, useExisting: forwardRef(() => ${className}) }]
 })
 export class ${className} extends SipPage {
 

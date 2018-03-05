@@ -17,13 +17,13 @@ export class SipModalComponent extends SipComponent {
         let style = !this.isStyle(params) ? `styles: []` : `styleUrls: ['./${name}.${prefix}.${styleEx}']`;
 
         let content = `import { Component, ViewContainerRef } from '@angular/core';
-import { SipModal, SipNgInit, SipProvideModal } from 'sip-alain';
+import { SipModal, SipNgInit } from 'sip-alain';
 
 @Component({
     selector: 'sip-${name}',
     ${template},
     ${style},
-    providers: [...SipProvideModal(${className})]
+    providers: [{ provide: SipBusinessComponent, useExisting: forwardRef(() => ${className}) }]
 })
 export class ${className} extends SipModal {
 
