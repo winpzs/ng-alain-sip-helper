@@ -76,7 +76,7 @@ export class ${className} extends SipPage {
 
     @SipFormSubmit('this.form')
     save() {
-        let datas = this.form.$model.$toJSONObject();
+        let datas = this.form.$toJSONObject();
         this.loading = true;
         console.log('datas', datas);
         setTimeout(() => {
