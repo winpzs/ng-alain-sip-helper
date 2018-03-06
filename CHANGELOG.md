@@ -1,4 +1,7 @@
 ## ng-alain-sip Helper Changelog
+# 1.0.5 (2018-3-x)
+
+* update config
 
 # 1.0.4 (2018-3-6)
 
