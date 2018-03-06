@@ -4,7 +4,7 @@ const config = [
     {
         "title": "Serve >",
         //指令可以使用变量 %params%, %input%, %workspaceRoot%, %currentPath%"
-        "command": "npm run start %params%",
+        "command": "npm run sip-serve %params%",
         //vscod terminal 名称
         "terminal": "serve-ngalainsiphelper",
         //路径可以使用变量 %params%, %input%, %workspaceRoot%, %currentPath%"
@@ -36,7 +36,7 @@ const config = [
     },
     {
         "title": "Build >",
-        "command": "ng build",
+        "command": "npm run sip-build %params%",
         "terminal": "build-ngalainsiphelper",
         "path": "%workspaceRoot%",
         "input": false,
@@ -45,7 +45,7 @@ const config = [
                 "param": "",
                 "title": "Build"
             }, {
-                "param": "-prod -e=prod --build-optimizer",
+                "param": "-- -prod -e=prod --build-optimizer",
                 "title": "Build PROD"
             }
         ]
