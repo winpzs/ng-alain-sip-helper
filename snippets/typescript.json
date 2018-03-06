@@ -478,5 +478,16 @@
             "};"
         ],
         "description": "Validator Observable"
+    },
+    "sip-form-group": {
+        "prefix": "sip-form-group",
+        "body": [
+            "@SipFormGroup(new ${Test}(), {",
+            "        num: [SipValidators.rangeLength(1, 20)],",
+            "        name: [SipValidators.required]",
+            "    })",
+            "${form}: ISipFormGroup<${Test}>;$0"
+        ],
+        "description": "form-group"
     }
 }
